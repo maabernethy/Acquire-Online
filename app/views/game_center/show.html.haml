@@ -1,0 +1,6 @@
+- if @users.any?
+  %ul
+    %h4 Users Online:
+    = render partial: 'user', collection: @users
+- else
+  No users online now.
