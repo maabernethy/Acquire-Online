@@ -2,15 +2,7 @@ class LandingController < ApplicationController
   def show
   end
 
-  def resource_name
-    :user
-  end
-
-  def resource
-    @resource ||= User.new
-  end
-
-  def devise_mapping
-    @devise_mapping ||= Devise.mappings[:user]
+  def after_sign_in_path_for(resource)
+    game_center_path
   end
 end
