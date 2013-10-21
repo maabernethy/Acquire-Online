@@ -3,6 +3,7 @@ Acquire::Application.routes.draw do
   devise_for :users
 
   get 'game_center' => 'game_center#show'
+  resources :games
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
