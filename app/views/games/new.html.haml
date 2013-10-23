@@ -1,4 +1,4 @@
 = simple_form_for @game do |f|
   = f.input :name
-  = f.association :users, as: :check_boxes
+  = f.association :users, label_method: :username, collection: @users_online, as: :check_boxes
   = f.button :submit, 'Create Game'

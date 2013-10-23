@@ -1,3 +1,4 @@
 = @game.name
 - if @game.users.exists?
-  = @game.users.first.username
+  -@game.users.each do |user|
+    = user.username
