@@ -1,0 +1,12 @@
+= button_to 'Start New Game', new_game_path, method: :get
+- if @users.count > 1
+  %ul
+    %h4 Users Online:
+    = render partial: 'user', collection: @users
+- else
+  No users online at this time.
+
+- if @games.any?
+  %ul
+    %h4 Current Games:
+    = render partial: 'game', collection: @games

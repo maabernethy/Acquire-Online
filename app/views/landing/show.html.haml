@@ -1,4 +1,12 @@
 %body
-  %ul.actions
-    %li= link_to 'Sign in', user_session_path
-    %li= link_to 'Sign up', new_user_session_path
+  .actions
+    - if user_signed_in?
+      = "Welcome back, #{current_user.username}!"
+      = link_to 'Sign out', destroy_user_session_path, :method => :delete
+    - else
+      = simple_form_for(resource, :as => resource_name,  :url => session_path(resource_name)) do |f|
+        = f.input :username
+        = f.input :password
+        = f.submit 'Sign in'
+        = link_to "Forgot your password?", new_password_path('user')
+      = link_to 'Sign up', new_user_registration_path
