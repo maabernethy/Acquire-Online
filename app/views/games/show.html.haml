@@ -1,11 +1,10 @@
 %h2= @game.name
 %ul Players in Game:
-- if @game.users.exists?
+- if !@game.users.empty?
   -@game.users.each do |user|
     %li= user.username
 
 %ul Who's Turn?
-  %li= @up_next.username
 
 %ul Your Hand:
 

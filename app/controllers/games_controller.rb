@@ -12,7 +12,7 @@ class GamesController < ApplicationController
   def create
     @game = Game.new(game_params)
     @game.users << current_user
-    if (@game.users.count >= 3) && (@game.users.count <= 6)
+    if (@game.users.size >= 3) && (@game.users.size <= 6)
       if @game.save
         render :show
       else
@@ -27,7 +27,6 @@ class GamesController < ApplicationController
   def show
     @game = Game.find(params[:id])
     @order = @game.users
-    @up_next= @order.first
   end
 
   private
