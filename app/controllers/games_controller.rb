@@ -26,6 +26,8 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
+    @order = @game.users
+    @up_next= @order.first
   end
 
   private

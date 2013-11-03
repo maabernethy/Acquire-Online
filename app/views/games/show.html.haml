@@ -1,4 +1,11 @@
-= @game.name
+%h2= @game.name
+%ul Players in Game:
 - if @game.users.exists?
   -@game.users.each do |user|
-    = user.username
+    %li= user.username
+
+%ul Who's Turn?
+  %li= @up_next.username
+
+%ul Your Hand:
+
