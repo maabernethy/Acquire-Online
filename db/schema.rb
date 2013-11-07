@@ -11,7 +11,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131106233620) do
+ActiveRecord::Schema.define(version: 20131107015549) do
+
+  create_table "game_player_stock_cards", force: true do |t|
+    t.integer  "game_player_id"
+    t.integer  "stock_card_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "game_player_tiles", force: true do |t|
+    t.integer  "game_player_id"
+    t.integer  "tile_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "game_players", force: true do |t|
     t.integer  "game_id"
@@ -23,8 +37,37 @@ ActiveRecord::Schema.define(version: 20131106233620) do
   add_index "game_players", ["game_id"], name: "index_game_players_on_game_id"
   add_index "game_players", ["user_id"], name: "index_game_players_on_user_id"
 
+  create_table "game_stock_cards", force: true do |t|
+    t.integer  "game_id"
+    t.integer  "stock_card_id"
+    t.integer  "price"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "game_tiles", force: true do |t|
+    t.integer  "game_id"
+    t.integer  "tile_id"
+    t.string   "hotel"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "games", force: true do |t|
     t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "stock_cards", force: true do |t|
+    t.string   "hotel"
+    t.integer  "price"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "tiles", force: true do |t|
+    t.string   "position"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
