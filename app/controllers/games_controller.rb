@@ -26,7 +26,7 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
-    @order = @game.users
+    # @players = @game.users
   end
 
   private
