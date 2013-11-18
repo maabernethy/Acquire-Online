@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131107015549) do
+ActiveRecord::Schema.define(version: 20131118221829) do
 
   create_table "game_player_stock_cards", force: true do |t|
     t.integer  "game_player_id"
@@ -57,6 +57,7 @@ ActiveRecord::Schema.define(version: 20131107015549) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "up_next"
   end
 
   create_table "stock_cards", force: true do |t|
