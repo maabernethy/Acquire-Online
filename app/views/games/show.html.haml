@@ -1,4 +1,12 @@
-= @game.name
-- if @game.users.exists?
+%h2= @game.name
+%ul Players in Game:
+- if !@game.users.empty?
   -@game.users.each do |user|
-    = user.username
+    %li= user.username
+
+%ul Who's Turn?
+
+%ul Your Hand:
+
+= render partial: 'game_board'
+
