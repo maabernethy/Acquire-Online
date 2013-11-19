@@ -8,7 +8,7 @@ class Game < ActiveRecord::Base
 
   def start_game
     self.deal_tiles
-    self.make_stock_cards
+    self.make_stock_card_deck
     up_first = self.users.first.username
     self.up_next = up_first
     self.bank = 100000 - (self.game_players.length*6000)
