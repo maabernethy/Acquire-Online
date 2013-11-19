@@ -14,6 +14,7 @@ class GamesController < ApplicationController
     @game.users << current_user
     if (@game.users.size >= 3) && (@game.users.size <= 6)
       if @game.save
+        @game.start_game
         render :show
       else
         render :new
@@ -26,13 +27,13 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
-    @game.start_game
+    # @game.start_game
     # @players = @game.users
   end
 
   private
 
   def game_params
-    params.require(:game).permit(:name, {:user_ids => []})
+    params.require(:game).permit(:bank, :up_next, :name, {:user_ids => []})
   end
 end

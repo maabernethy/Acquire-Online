@@ -23,7 +23,7 @@
 
 %ul Cash:
 - if !player.cash.nil?
-  %li= player.cash.to_english
+  %li= player.cash_to_english
 
 = render partial: 'game_board'
 

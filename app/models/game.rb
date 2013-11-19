@@ -13,11 +13,13 @@ class Game < ActiveRecord::Base
     self.up_next = up_first
     self.bank = 100000 - (self.game_players.length*6000)
     self.deal_cash
+    self.save
   end
 
   def deal_cash
     self.game_players.each do |player|
       player.cash = 6000
+      player.save
     end
   end
 

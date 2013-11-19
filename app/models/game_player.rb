@@ -6,7 +6,7 @@ class GamePlayer < ActiveRecord::Base
   has_many :game_player_stock_cards
   has_many :stock_cards, through: :game_player_stock_cards
 
-  def to_english
+  def cash_to_english
     '$' + cash.to_s
   end
 end
