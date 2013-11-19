@@ -26,8 +26,7 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
-    @up_first = @game.users.first.username
-    @game.up_next = @up_first
+    @game.start_game
     # @players = @game.users
   end
 

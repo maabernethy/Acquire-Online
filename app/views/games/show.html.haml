@@ -8,6 +8,9 @@
 %li= @game.up_next
 
 %ul Your Hand:
+- player = current_user.game_players.where(game_id: @game.id).first
+- player.tiles.each do |tile|
+  %li= tile.to_english
 
 %ul Your Stocks:
 
