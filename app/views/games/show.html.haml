@@ -13,6 +13,16 @@
   %li= tile.to_english
 
 %ul Your Stocks:
+%li= 'American: ' + player.stock_cards.where(hotel: 'American').length + pluralize(1, 'share')
+%li= 'Continental: ' + player.stock_cards.where(hotel: 'Continental').length + pluralize(1, 'share')
+%li= 'Festival: ' + player.stock_cards.where(hotel: 'Festival').length + pluralize(1, 'share')
+%li= 'Imperial: ' + player.stock_cards.where(hotel: 'Imperial').length + pluralize(1, 'share')
+%li= 'Sackson: ' + player.stock_cards.where(hotel: 'Sackson').length + pluralize(1, 'share')
+%li= 'Tower: ' + player.stock_cards.where(hotel: 'Tower').length + pluralize(1, 'share')
+%li= 'Worldwide: ' + player.stock_cards.where(hotel: 'Worldwide').length + pluralize(1, 'share')
+
+%ul Cash:
+%li= player.cash.to_english
 
 = render partial: 'game_board'
 

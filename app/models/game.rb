@@ -11,6 +11,14 @@ class Game < ActiveRecord::Base
     self.make_stock_cards
     up_first = self.users.first.username
     self.up_next = up_first
+    self.bank = 100000 - (self.game_players.length*6000)
+    self.deal_cash
+  end
+
+  def deal_cash
+    self.game_players.each do |player|
+      player.cash = 6000
+    end
   end
 
   def deal_tiles
