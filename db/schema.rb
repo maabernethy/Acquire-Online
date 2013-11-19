@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131118221829) do
+ActiveRecord::Schema.define(version: 20131119034405) do
 
   create_table "game_player_stock_cards", force: true do |t|
     t.integer  "game_player_id"
@@ -68,9 +68,10 @@ ActiveRecord::Schema.define(version: 20131118221829) do
   end
 
   create_table "tiles", force: true do |t|
-    t.string   "position"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "row"
+    t.integer  "column"
   end
 
   create_table "users", force: true do |t|
