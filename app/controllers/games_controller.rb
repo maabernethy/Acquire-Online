@@ -1,5 +1,5 @@
 class GamesController < ApplicationController
-  respond_to :json
+  # respond_to :json
 
   def new
     @game = Game.new
@@ -29,9 +29,13 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
-    respond_with @game
-    # @game.start_game
-    # @players = @game.users
+    respond_to do |format|
+      format.json do
+        render :json => {
+          :hello => @game.hello
+        }
+      end
+    end
   end
 
   private

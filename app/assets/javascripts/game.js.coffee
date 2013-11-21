@@ -4,15 +4,9 @@
 
 $ ->
   $("a[data-background-color]").click (event) ->
-    event.preventdDefault()
-    backgroundColor = $(this).data("background-color")
-    paintIt(this, backgroundColor)
+    event.preventDefault()
 
-    $.getJSON("/games_controller/show").then((data) ->
-      id = data.id
+    $.getJSON(window.location.pathname).then((game) ->
+      id = game.id
       console.log(id)
     )
-
-  paintIt = (element, backgroundColor, textColor) ->
-    element.style.backgroundColor = backgroundColor
-

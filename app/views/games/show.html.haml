@@ -25,5 +25,5 @@
 - if !player.cash.nil?
   %li= player.cash_to_english
 
-= render partial: 'game_board'
+= render partial: 'game_board', locals: {game: @game }
 
