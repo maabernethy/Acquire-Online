@@ -1,4 +1,6 @@
 class GamesController < ApplicationController
+  respond_to :json
+
   def new
     @game = Game.new
     @users_online = []
@@ -27,6 +29,7 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
+    respond_with @game
     # @game.start_game
     # @players = @game.users
   end
