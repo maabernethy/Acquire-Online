@@ -30,11 +30,8 @@ class GamesController < ApplicationController
   def show
     @game = Game.find(params[:id])
     respond_to do |format|
-      format.json do
-        render :json => {
-          :hello => @game.hello
-        }
-      end
+      format.html { render :show}
+      format.json { render json: @game}
     end
   end
 

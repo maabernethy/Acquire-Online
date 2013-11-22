@@ -6,7 +6,7 @@ $ ->
   $("a[data-background-color]").click (event) ->
     event.preventDefault()
 
-    $.getJSON(window.location.pathname).then((game) ->
+    $.getJSON(window.location.pathname+'.json').then((game) ->
       id = game.id
       console.log(id)
     )
