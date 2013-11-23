@@ -33,7 +33,7 @@ class GamesController < ApplicationController
       format.html { render :show}
       format.json do
         render :json => {
-          :hello => @game.hello
+          :isCurrentPlayersTurn => @game.is_current_players_turn?(current_user.username)
         }
       end
     end

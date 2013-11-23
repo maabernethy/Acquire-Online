@@ -5,8 +5,8 @@
 $ ->
   $("a[data-background-color]").click (event) ->
     event.preventDefault()
+    console.log('yo')
 
     $.getJSON(window.location.pathname+'.json').then((game) ->
-      if game.hello
-        console.log('Hello')
+      console.log(game.isCurrentPlayersTurn)
     )
