@@ -17,7 +17,7 @@ class GamesController < ApplicationController
     if (@game.users.size >= 3) && (@game.users.size <= 6)
       if @game.save
         @game.start_game
-        render :show
+        redirect_to game_path(@game)
       else
         render :new
       end
@@ -31,7 +31,11 @@ class GamesController < ApplicationController
     @game = Game.find(params[:id])
     respond_to do |format|
       format.html { render :show}
-      format.json { render json: @game}
+      format.json do
+        render :json => {
+          :hello => @game.hello
+        }
+      end
     end
   end
 

@@ -7,6 +7,9 @@ class Game < ActiveRecord::Base
   has_many :stock_cards, through: :game_stock_cards
 
 
+  def hello
+    true
+  end
   def start_game
     self.deal_tiles
     self.make_stock_card_deck

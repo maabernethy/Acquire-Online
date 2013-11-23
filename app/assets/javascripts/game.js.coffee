@@ -7,6 +7,6 @@ $ ->
     event.preventDefault()
 
     $.getJSON(window.location.pathname+'.json').then((game) ->
-      id = game.id
-      console.log(id)
+      if game.hello
+        console.log('Hello')
     )
