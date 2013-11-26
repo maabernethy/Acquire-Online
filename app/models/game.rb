@@ -55,6 +55,15 @@ class Game < ActiveRecord::Base
     end
   end
 
+  def player_hand(current_user)
+    player = current_user.game_players.where(game_id: self.id).first
+    tiles = []
+    player.tiles.each do |tile|
+      tiles << (tile.column.to_s + tile.row)
+    end
+    tiles
+  end
+
   def is_orphan?
 
   end

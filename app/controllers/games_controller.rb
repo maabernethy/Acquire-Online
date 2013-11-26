@@ -33,7 +33,8 @@ class GamesController < ApplicationController
       format.html { render :show}
       format.json do
         render :json => {
-          :isCurrentPlayersTurn => @game.is_current_players_turn?(current_user.username)
+          :isCurrentPlayersTurn => @game.is_current_players_turn?(current_user.username),
+          :playerHand => @game.player_hand(current_user)
         }
       end
     end
