@@ -29,12 +29,14 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
+    @cell = params[:cell]
     respond_to do |format|
       format.html { render :show}
       format.json do
         render :json => {
           :isCurrentPlayersTurn => @game.is_current_players_turn?(current_user.username),
-          :playerHand => @game.player_hand(current_user)
+          :playerHand => @game.player_hand(current_user),
+          :test => @game.test(@cell)
         }
       end
     end

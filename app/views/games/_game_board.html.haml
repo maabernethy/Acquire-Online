@@ -1,4 +1,3 @@
-= game.is_current_players_turn?(current_user.username)
 .board
   %table{:border => "1"}
     %tr
@@ -16,8 +15,8 @@
       %td 12A
     %tr
       %td
-        %a.cell{ href: '#', data: { id: '1B'} } 1B
-      %td 2B
+        %a.cell{ type: 'hidden', value: '1B', name: 'cell', href: '#', data: { id: '1B'} } 1B
+      %td= link_to '2B', game_path(game, cell: '2B'), class: 'cell'
       %td 3B
       %td 4B
       %td 5B
