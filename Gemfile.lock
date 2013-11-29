@@ -49,7 +49,12 @@ GEM
     context_validations (0.1.1)
       activesupport
     daemons (1.1.9)
+    debugger (1.6.2)
+      columnize (>= 0.3.1)
+      debugger-linecache (~> 1.2.0)
+      debugger-ruby_core_source (~> 1.2.3)
     debugger-linecache (1.2.0)
+    debugger-ruby_core_source (1.2.4)
     devise (3.1.1)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.1)
@@ -159,6 +164,7 @@ DEPENDENCIES
   capybara (~> 2.1)
   coffee-rails (~> 4.0.0)
   context_validations (~> 0.1.1)
+  debugger
   devise
   haml-rails (~> 0.4.0)
   high_voltage

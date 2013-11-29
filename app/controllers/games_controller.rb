@@ -29,17 +29,36 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
+    # respond_to do |format|
+      # format.html { render :show}
+      # format.json do
+        # render :json => {
+          # :isCurrentPlayersTurn => @game.is_current_players_turn?(current_user.username),
+          # :playerHand => @game.player_hand(current_user),
+          # :test => @game.test(@cell)
+        # }
+      # end
+    # end
+  end
+
+  def place_piece
     @cell = params[:cell]
-    respond_to do |format|
-      format.html { render :show}
-      format.json do
-        render :json => {
-          :isCurrentPlayersTurn => @game.is_current_players_turn?(current_user.username),
-          :playerHand => @game.player_hand(current_user),
-          :test => @game.test(@cell)
-        }
+    num, letter = params[:num].to_i, params[:letter]
+    @game = Game.find(params[:id])
+    player = current_user.game_players.where(game_id: @game.id).first
+    # if @game.is_current_players_turn?(current_user)
+    if true
+      if @game.player_hand(current_user, @cell)
+        new_tile = @game.tiles[rand(@game.tiles.length)]
+        player.tiles.delete_if {|tile| tile.row == num and tile.column == letter }
+        player.tiles << new_tile
+        new_tiles = player.tiles.map {|tile| tile.to_english }
+        answer = {legal: true, new_tiles: new_tiles}
       end
+    else
+      answer = {legal: false}
     end
+    render :json => answer
   end
 
   private
