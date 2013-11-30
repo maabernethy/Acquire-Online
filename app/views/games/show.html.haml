@@ -5,10 +5,26 @@
     %li= player.username
 
 %ul Who's Turn?
+%li= @game.up_next
 
 %ul Your Hand:
+- player = current_user.game_players.where(game_id: @game.id).first
+- player.tiles.each do |tile|
+  %li= tile.to_english
 
 %ul Your Stocks:
+%li= 'American: ' + pluralize(player.stock_cards.where(hotel: 'American').length.to_s , 'share')
+%li= 'Continental: ' + pluralize(player.stock_cards.where(hotel: 'Continental').length.to_s , 'share')
+%li= 'Festival: ' + pluralize( player.stock_cards.where(hotel: 'Festival').length.to_s , 'share')
+%li= 'Imperial: ' + pluralize(player.stock_cards.where(hotel: 'Imperial').length.to_s , 'share')
+%li= 'Sackson: ' + pluralize(player.stock_cards.where(hotel: 'Sackson').length.to_s , 'share')
+%li= 'Tower: ' + pluralize(player.stock_cards.where(hotel: 'Tower').length.to_s , 'share')
+%li= 'Worldwide: ' + pluralize(player.stock_cards.where(hotel: 'Worldwide').length.to_s , 'share')
 
-= render partial: 'game_board'
+%ul Cash:
+- if !player.cash.nil?
+  %li= player.cash_to_english
+
+= @cell
+= render partial: 'game_board', locals: {game: @game }
 

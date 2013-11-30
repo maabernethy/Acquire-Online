@@ -5,3 +5,17 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+
+#Make all tiles on board
+%w(A B C D E F G H I).each do |row|
+  %w(1 2 3 4 5 6 7 8 9 10 11 12).each do |column|
+    Tile.create(row: row, column: column)
+  end
+end
+
+#Make all stock_cards
+%w(American Continental Festival Imperial Sackson Tower Worldwide).each do |hotel|
+  %w(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25).each do |card_number|
+    StockCard.create(hotel: hotel, card_number: card_number)
+  end
+end
