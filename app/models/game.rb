@@ -6,11 +6,6 @@ class Game < ActiveRecord::Base
   has_many :game_stock_cards
   has_many :stock_cards, through: :game_stock_cards
 
-  @current_user = ''
-
-  def hello
-    true
-  end
 
   def start_game
     self.deal_tiles
@@ -30,11 +25,17 @@ class Game < ActiveRecord::Base
   end
 
   def deal_tiles
-    self.tiles = Tile.all
+    Tile.all.each do |tile|
+      GameTile.create(tile_id: tile.id, game_id: self.id, hotel: 'none', placed: false, available: true)
+    end
     self.game_players.each do |player|
       6.times do
-        random_tile = self.tiles[rand(tiles.length)]
-        GamePlayerTile.create(game_player_id: player.id, tile_id: random_tile.id)
+        available_tiles = self.game_tiles.where(available: true)
+        random_tile = available_tiles[rand(available_tiles.length)]
+        random_tile.available = false
+        random_tile.save
+        # self.game_tiles.where(tile_id: random_tile.id).first.available = false
+        GamePlayerTile.create(game_player_id: player.id, tile_id: random_tile.tile_id)
       end
     end
   end
@@ -43,20 +44,12 @@ class Game < ActiveRecord::Base
     self.stock_cards = StockCard.all
   end
 
-  def set_current_user(current_player)
-    @current_user = current_player
-  end
-
   def is_current_players_turn?(current_player)
     if self.up_next == current_player
       true
     else
       false
     end
-  end
-
-  def test(test)
-    test
   end
 
   def player_hand(current_user, tile)

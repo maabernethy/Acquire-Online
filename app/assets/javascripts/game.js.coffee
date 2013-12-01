@@ -1,7 +1,3 @@
-# $ ->
-  # $(".board").click ->
-      # $(this).css "background", "yellow"
-
 $ ->
   $('a.change_cell').bind("ajax:success", (event, data, status, xhr) ->
       $(this).parent().css "background", "blue"
