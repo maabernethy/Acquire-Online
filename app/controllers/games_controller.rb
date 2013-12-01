@@ -50,7 +50,8 @@ class GamesController < ApplicationController
     if true
       if @game.player_hand(current_user, @cell)
         new_tile = @game.tiles[rand(@game.tiles.length)]
-        player.tiles.delete_if {|tile| tile.row == num and tile.column == letter }
+        placed_tile = player.tiles.where(row: num).where(column: letter).first
+        player.tiles.delete(placed_tile)
         player.tiles << new_tile
         new_tiles = player.tiles.map {|tile| tile.to_english }
         answer = {legal: true, new_tiles: new_tiles}
