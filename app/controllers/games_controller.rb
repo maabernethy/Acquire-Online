@@ -49,15 +49,18 @@ class GamesController < ApplicationController
     # if @game.is_current_players_turn?(current_user)
     if true
       if @game.player_hand(current_user, @cell)
+        # NEED TO GET NEW TILE FROM AVAILABLE TILES
         new_tile = @game.tiles[rand(@game.tiles.length)]
-        placed_tile = player.tiles.where(row: num).where(column: letter).first
+        placed_tile = player.tiles.where(row: letter).where(column: num).first
         player.tiles.delete(placed_tile)
         player.tiles << new_tile
         new_tiles = player.tiles.map {|tile| tile.to_english }
         answer = {legal: true, new_tiles: new_tiles}
+      else
+        answer = {legal: false}
       end
     else
-      answer = {legal: false}
+      answer = {legal: false, new_tiles: {}}
     end
     render :json => answer
   end
