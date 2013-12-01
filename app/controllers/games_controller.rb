@@ -54,6 +54,8 @@ class GamesController < ApplicationController
         player.tiles << new_tile
         new_tiles = player.tiles.map {|tile| tile.to_english }
         answer = {legal: true, new_tiles: new_tiles}
+      else
+        answer = {legal: false}
       end
     else
       answer = {legal: false}
