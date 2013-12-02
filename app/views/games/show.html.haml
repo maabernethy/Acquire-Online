@@ -8,9 +8,10 @@
 %li= @game.up_next
 
 %ul Your Hand:
-- player = current_user.game_players.where(game_id: @game.id).first
-- player.tiles.each do |tile|
-  %li= tile.to_english
+.hand
+  - player = current_user.game_players.where(game_id: @game.id).first
+  - player.tiles.each do |tile|
+    %li= tile.to_english
 
 %ul Your Stocks:
 %li= 'American: ' + pluralize(player.stock_cards.where(hotel: 'American').length.to_s , 'share')
@@ -27,4 +28,3 @@
 
 = @cell
 = render partial: 'game_board', locals: {game: @game }
-

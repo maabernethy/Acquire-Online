@@ -3,6 +3,16 @@ $ ->
       $(this).parent().css "background", "blue"
       $("#response1").text(data.new_tiles)
       $("#response2").text(data.legal)
+      list = ""
+      for tile in data.new_tiles
+        list =  list + "<li>" + tile + "</li>"
+      console.log(list)
+      $('.hand').html(list)
+      # .html( ->
+      #   for tile in data.new_tiles
+      #     list = list + "<li>" + tile + "</li>"
+      #   return list
+      # )
       console.log(data)
     )
 
