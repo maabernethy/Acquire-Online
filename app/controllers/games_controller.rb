@@ -52,6 +52,7 @@ class GamesController < ApplicationController
         available_tiles = @game.game_tiles.where(available: true)
         new_game_tile = available_tiles[rand(available_tiles.length)]
         new_game_tile.available = false
+        new_game_tile.placed = true
         new_game_tile.save
         new_tile = @game.tiles.where(id: new_game_tile.tile_id)
         placed_tile = player.tiles.where(row: letter).where(column: num).first

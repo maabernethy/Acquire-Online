@@ -8,11 +8,6 @@ $ ->
         list =  list + "<li>" + tile + "</li>"
       console.log(list)
       $('.hand').html(list)
-      # .html( ->
-      #   for tile in data.new_tiles
-      #     list = list + "<li>" + tile + "</li>"
-      #   return list
-      # )
       console.log(data)
     )
 
