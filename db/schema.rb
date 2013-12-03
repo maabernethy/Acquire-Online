@@ -11,7 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131201164420) do
+ActiveRecord::Schema.define(version: 20131203051426) do
+
+  create_table "game_hotels", force: true do |t|
+    t.integer  "share_price"
+    t.integer  "chain_size"
+    t.string   "tiles"
+    t.integer  "game_id"
+    t.integer  "hotel_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "game_player_stock_cards", force: true do |t|
     t.integer  "game_player_id"
@@ -62,6 +72,13 @@ ActiveRecord::Schema.define(version: 20131201164420) do
     t.datetime "updated_at"
     t.string   "up_next"
     t.integer  "bank"
+  end
+
+  create_table "hotels", force: true do |t|
+    t.string   "name"
+    t.string   "color"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "stock_cards", force: true do |t|

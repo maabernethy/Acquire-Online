@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  share_price: 1
+  chain_size: 1
+  tiles: MyString
+  game_id: 1
+  hotel_id: 1
+
+two:
+  share_price: 1
+  chain_size: 1
+  tiles: MyString
+  game_id: 1
+  hotel_id: 1
