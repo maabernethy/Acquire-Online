@@ -52,13 +52,16 @@ class GamesController < ApplicationController
         available_tiles = @game.game_tiles.where(available: true)
         new_game_tile = available_tiles[rand(available_tiles.length)]
         new_game_tile.available = false
-        new_game_tile.placed = true
         new_game_tile.save
         new_tile = @game.tiles.where(id: new_game_tile.tile_id)
         placed_tile = player.tiles.where(row: letter).where(column: num).first
+        placed_game_tile = @game.game_tiles.where(tile_id: placed_tile.id).first
+        placed_game_tile.placed = true
+        placed_game_tile.save
         player.tiles.delete(placed_tile)
         player.tiles << new_tile
         new_tiles = player.tiles.map {|tile| tile.to_english }
+
         color = @game.choose_color(letter, num, @cell)
         answer = {legal: true, color: color, new_tiles: new_tiles}
       else

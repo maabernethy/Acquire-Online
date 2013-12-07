@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131203051426) do
+ActiveRecord::Schema.define(version: 20131207173902) do
 
   create_table "game_hotels", force: true do |t|
     t.integer  "share_price"
@@ -64,6 +64,7 @@ ActiveRecord::Schema.define(version: 20131203051426) do
     t.datetime "updated_at"
     t.boolean  "available"
     t.boolean  "placed"
+    t.string   "cell"
   end
 
   create_table "games", force: true do |t|

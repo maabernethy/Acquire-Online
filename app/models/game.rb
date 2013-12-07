@@ -49,7 +49,8 @@ class Game < ActiveRecord::Base
 
   def deal_tiles
     Tile.all.each do |tile|
-      GameTile.create(tile_id: tile.id, game_id: self.id, hotel: 'none', placed: false, available: true)
+      cell = tile.column.to_s + tile.row
+      GameTile.create(tile_id: tile.id, game_id: self.id, hotel: 'none', cell: cell, placed: false, available: true)
     end
     self.game_players.each do |player|
       6.times do
@@ -91,10 +92,9 @@ class Game < ActiveRecord::Base
   def choose_color(row, column, cell)
     placed_tiles = []
     self.game_tiles.where(placed: true).each do |game_tile|
-      placed_tile << game_tile.tile.column.to_s + game_tile.tile.row
+      placed_tiles << game_tile.tile.column.to_s + game_tile.tile.row
     end
     sur_tiles = get_surrounding_tiles(row, column, cell)
-    debugger
     placed_sur_tiles = get_placed_surrounding_tiles(sur_tiles, placed_tiles)
     if placed_sur_tiles.length == 0
       color = "grey"
@@ -122,14 +122,15 @@ class Game < ActiveRecord::Base
   end
 
   def get_placed_surrounding_tiles(sur_tiles, placed_tiles)
-    debugger
     placed_sur_tiles = []
     sur_tiles.each do |tile|
       if placed_tiles.include?(tile)
-        placed_sur_tiles << tile
+        tile_object = self.game_tiles.where(cell: tile).first
+        placed_sur_tiles << tile_object
       end
     end
 
+    debugger
     placed_sur_tiles
   end
 
