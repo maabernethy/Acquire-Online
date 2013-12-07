@@ -62,8 +62,10 @@ class GamesController < ApplicationController
         player.tiles << new_tile
         new_tiles = player.tiles.map {|tile| tile.to_english }
 
-        color = @game.choose_color(letter, num, @cell)
-        answer = {legal: true, color: color, new_tiles: new_tiles}
+        array = @game.choose_color(letter, num, @cell)
+        color = array[0]
+        other_tile = array[1]
+        answer = {legal: true, color: color, other_tile: other_tile, new_tiles: new_tiles}
       else
         answer = {legal: false}
       end

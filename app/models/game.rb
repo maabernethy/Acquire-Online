@@ -100,14 +100,15 @@ class Game < ActiveRecord::Base
       color = "grey"
     elsif placed_sur_tiles.length == 1
       if placed_sur_tiles[0].hotel == 'none'
-        color = "blue" #NEW CHAIN GET INPUT FROM USER
+        color = "blue"
+        other_tile = placed_sur_tiles[0].cell #NEW CHAIN GET INPUT FROM USER
       else
         hotel = placed_sur_tiles[0].hotel
         color = HOTEL_COLORS.hotel
       end
     end
 
-    color
+    [color, other_tile]
   end
 
   def get_surrounding_tiles(row, column, cell)
