@@ -19,3 +19,10 @@ end
     StockCard.create(hotel: hotel, card_number: card_number)
   end
 end
+
+#Make all hotels
+hotel = ['American', 'Continental', 'Festival', 'Imperial', 'Sackson', 'Tower', 'Worldwide']
+color = ['blue', 'yellow', 'red', 'green', 'orange', 'purple', 'pink']
+hotel.zip(color) do |hotel, color|
+	Hotel.create(name: hotel, color: color)
+end

@@ -59,7 +59,8 @@ class GamesController < ApplicationController
         player.tiles.delete(placed_tile)
         player.tiles << new_tile
         new_tiles = player.tiles.map {|tile| tile.to_english }
-        answer = {legal: true, new_tiles: new_tiles}
+        color = @game.choose_color(letter, num, @cell)
+        answer = {legal: true, color: color, new_tiles: new_tiles}
       else
         answer = {legal: false}
       end

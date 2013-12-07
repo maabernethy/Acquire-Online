@@ -7,4 +7,4 @@
         - ['A','B','C','D','E','F', 'G','H','I'].each do |letter|
           - cell_name = (num.to_s + letter)
           %td{id: cell_name}
-            = link_to cell_name, { action: 'place_piece', num:num, letter:letter, cell:cell_name}, class: 'change_cell', remote: true
+            = link_to cell_name, { action: 'place_piece', num:num, letter:letter, cell:cell_name}, class: 'change_cell', remote: true, style: "text-decoration:none;"

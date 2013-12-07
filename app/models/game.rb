@@ -89,9 +89,13 @@ class Game < ActiveRecord::Base
   end
 
   def choose_color(row, column, cell)
-    placed_tiles = self.game_tiles.where(placed: true)
+    placed_tiles = []
+    self.game_tiles.where(placed: true).each do |game_tile|
+      placed_tile << game_tile.tile.column.to_s + game_tile.tile.row
+    end
     sur_tiles = get_surrounding_tiles(row, column, cell)
-    placed_sur_tiles = get_placed_surounding_tiles(sur_tiles, placed_tiles)
+    debugger
+    placed_sur_tiles = get_placed_surrounding_tiles(sur_tiles, placed_tiles)
     if placed_sur_tiles.length == 0
       color = "grey"
     elsif placed_sur_tiles.length == 1
@@ -109,23 +113,16 @@ class Game < ActiveRecord::Base
   def get_surrounding_tiles(row, column, cell)
     surrounding_tiles = []
     index = GAME_BOARD[column-1].index(cell)
-    if GAME_BOARD[column-1][index-1].exist?
-      surrounding_tiles << GAME_BOARD[column-1][index-1]
-    end
-    if GAME_BOARD[column-1][index+1].exist?
-      surrounding_tiles << GAME_BOARD[column-1][index+1]
-    end
-    if GAME_BOARD[column-2][index].exist?
-      surrounding_tiles << GAME_BOARD[column-2][index]
-    end
-    if GAME_BOARD[column][index].exist?
-      surrounding_tiles << GAME_BOARD[column][index]
-    end
+    surrounding_tiles << GAME_BOARD[column-1][index-1] if !GAME_BOARD[column-1].nil? && !GAME_BOARD[column-1][index-1].nil?
+    surrounding_tiles << GAME_BOARD[column-1][index+1] if !GAME_BOARD[column-1].nil? && !GAME_BOARD[column-1][index+1].nil?
+    surrounding_tiles << GAME_BOARD[column-2][index] if !GAME_BOARD[column-2].nil? && !GAME_BOARD[column-1][index].nil?
+    surrounding_tiles << GAME_BOARD[column][index] if !GAME_BOARD[column].nil? && !GAME_BOARD[column][index].nil?
 
     surrounding_tiles
   end
 
   def get_placed_surrounding_tiles(sur_tiles, placed_tiles)
+    debugger
     placed_sur_tiles = []
     sur_tiles.each do |tile|
       if placed_tiles.include?(tile)
