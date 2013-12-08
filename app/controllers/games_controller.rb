@@ -64,8 +64,8 @@ class GamesController < ApplicationController
 
         array = @game.choose_color(letter, num, @cell)
         color = array[0]
-        other_tile = array[1]
-        answer = {legal: true, color: color, other_tile: other_tile, new_tiles: new_tiles}
+        other_tiles = array[1]
+        answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: new_tiles}
       else
         answer = {legal: false}
       end

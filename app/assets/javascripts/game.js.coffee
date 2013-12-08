@@ -5,8 +5,9 @@ $ ->
       if data.legal
         color = data.color
         $(this).parent().css "background", color
-        id_string = "'#" + data.other_tile + "'"
-        $(id_string).css "background", color
+        for tile in data.other_tiles
+          id_string = "'#" + tile + "'"
+          $(id_string).css "background", color
         list = ""
         for tile in data.new_tiles
           list =  list + "<li>" + tile + "</li>"

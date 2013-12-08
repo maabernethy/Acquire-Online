@@ -100,15 +100,19 @@ class Game < ActiveRecord::Base
       color = "grey"
     elsif placed_sur_tiles.length == 1
       if placed_sur_tiles[0].hotel == 'none'
-        color = "blue"
-        other_tile = placed_sur_tiles[0].cell #NEW CHAIN GET INPUT FROM USER
+        color = "blue" #NEW CHAIN GET INPUT FROM USER
+        other_tiles = placed_sur_tiles[0].cell 
       else
         hotel = placed_sur_tiles[0].hotel
         color = HOTEL_COLORS.hotel
       end
+    elsif placed_sur_tiles.length == 2
+      response = self.merger(placed_sur_tiles)
+      color = response[0]
+      other_tiles = response[1]
     end
 
-    [color, other_tile]
+    [color, other_tiles]
   end
 
   def get_surrounding_tiles(row, column, cell)
@@ -135,7 +139,27 @@ class Game < ActiveRecord::Base
     placed_sur_tiles
   end
 
-  def is_merger?
+  def merger
+    hotel_name1 = placed_sur_tiles[0].hotel
+    hotel_name2 = placed_sur_tiles[1].hotel
+    id1 = Hotel.where(name: hotel_name1)
+    id2 = Hotel.where(name: hotel_name2)
+    game_hotel1 = self.game_hotels.where(hotel_id: id1)
+    game_hotel2 = self.game_hotels.where(hotel_id: id2)
+    if game_hotel1.chain_size > game_hotel2.chain_size
+      color = game_hotel1.hotel.color
+    elsif game_hotel2.chain_size > game_hotel1.chain_size
+      color = game_hotel2.hotel.color
+    end
 
+    tiles1 = self.game_tiles.where(hotel: hotel_name1)
+    tiles2 = self.game_tiles.where(hotel: hotel_name2)
+    tiles = tiles1 + tiles2
+    other_tiles = []
+    tiles.each do |tile|
+      other_tiles << tile.cell
+    end
+
+    [color, other_tiles]
   end
 end
