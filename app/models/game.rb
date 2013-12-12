@@ -37,6 +37,7 @@ class Game < ActiveRecord::Base
     self.up_next = up_first
     self.bank = 100000 - (self.game_players.length*6000)
     self.deal_cash
+    self.initialize_hotels
     self.save
   end
 
@@ -65,6 +66,12 @@ class Game < ActiveRecord::Base
 
   def make_stock_card_deck
     self.stock_cards = StockCard.all
+  end
+
+  def initialize_hotels
+    Hotel.all.each do |hotel|
+      GameHotel.create(hotel_id: hotel.id, game_id: self.id, chain_size: 0, share_price: 0)
+    end
   end
 
   def is_current_players_turn?(current_player)
@@ -135,7 +142,6 @@ class Game < ActiveRecord::Base
       end
     end
 
-    debugger
     placed_sur_tiles
   end
 

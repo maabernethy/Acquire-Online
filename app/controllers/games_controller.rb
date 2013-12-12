@@ -29,16 +29,7 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
-    # respond_to do |format|
-      # format.html { render :show}
-      # format.json do
-        # render :json => {
-          # :isCurrentPlayersTurn => @game.is_current_players_turn?(current_user.username),
-          # :playerHand => @game.player_hand(current_user),
-          # :test => @game.test(@cell)
-        # }
-      # end
-    # end
+    @game_hotels = @game.game_hotels
   end
 
   def place_piece
