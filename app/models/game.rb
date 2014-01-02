@@ -107,7 +107,7 @@ class Game < ActiveRecord::Base
       color = "grey"
     elsif placed_sur_tiles.length == 1
       if placed_sur_tiles[0].hotel == 'none'
-        color = "blue" #NEW CHAIN GET INPUT FROM USER
+        color = 'none'
         other_tiles = placed_sur_tiles[0].cell 
       else
         hotel = placed_sur_tiles[0].hotel
@@ -167,5 +167,14 @@ class Game < ActiveRecord::Base
     end
 
     [color, other_tiles]
+  end
+
+  def new_chain_color(cell, other_tile)
+    tile = self.game_tiles.where(cell: cell)
+    hotel = tile.hotel
+    other_tile.hotel = hotel
+    game_hotel = self.game_hotels.where(name: hotel)
+    game_hotel.chain_size = 2
+    color = HOTEL_COLORS.hotel
   end
 end

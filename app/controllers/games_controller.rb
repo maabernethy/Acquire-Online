@@ -1,5 +1,4 @@
 class GamesController < ApplicationController
-  # respond_to :json
 
   def new
     @game = Game.new
@@ -55,6 +54,10 @@ class GamesController < ApplicationController
 
         array = @game.choose_color(letter, num, @cell)
         color = array[0]
+        if color == 'none'
+          load_div
+          color = @game.new_chain_color(@cell, array[1])
+        end
         other_tiles = array[1]
         answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: new_tiles}
       else
@@ -64,6 +67,12 @@ class GamesController < ApplicationController
       answer = {legal: false}
     end
     render :json => answer
+  end
+
+  def load_div
+    @game = Game.find(params[:id])
+    game = {game: @game }
+    render :json => game
   end
 
   private
