@@ -1,0 +1,52 @@
+<%= javascript_include_tag 'handlebars-1.1.2', 'ember-1.3.0', 'ember-app' %>
+
+<script type="text/javascript">
+window.payload = <%= @payload.to_json.html_safe %>;
+</script>
+
+<script type="text/x-handlebars">
+<h2>{{game.name}}</h2>
+
+<ul>
+  {{#each player in users}}
+    <li>{{player.username}}</li>
+  {{/each}}
+</ul>
+<h3> Who's Turn? </h3>
+{{game.up_next}}
+<h2> Your Hand: </h2>
+<ul>
+  {{#each tile in tiles}}
+    <li>{{tile.to_english}}</li>
+  {{/each}}
+</ul>
+<h3> Your Stocks: </h3>
+<ul>
+  {{#each stock in stocks}}
+    <li>{{stock.name}} {{stock.amount}}</li>
+  {{else}}
+    No stocks
+  {{/each}}
+</ul>
+<h3>Cash:</h3>
+{{player.cash_to_english}}
+
+{{game-board}}
+
+</script>
+
+<script type="text/x-handlebars" id="components/game-board">
+<div class="board">
+  <table border="1">
+    {{#each row in rows}}
+      <tr>
+      {{#each column in columns}}
+        {{#view App.GameBoardSquareView row=row column=column}}
+          {{row}}{{column}}
+        {{/view}}
+      {{/each}}
+      </tr>
+    {{/each}}
+  </table>
+</div>
+</script>

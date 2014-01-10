@@ -9,4 +9,14 @@ class GamePlayer < ActiveRecord::Base
   def cash_to_english
     '$' + cash.to_s
   end
+
+  def stock_cards_by_name_payload
+    stock_cards.map(&:hotel).uniq.each do |hotel|
+      { name: name, amount: stock_cards.where(hotel: hotel).count }
+    end
+  end
+
+  def as_json(*)
+    super(methods: :cash_to_english)
+  end
 end

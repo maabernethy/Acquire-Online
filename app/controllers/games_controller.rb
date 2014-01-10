@@ -27,9 +27,11 @@ class GamesController < ApplicationController
   end
 
   def show
-    @game = Game.find(params[:id])
-    @game_hotels = @game.game_hotels
-    @available_tiles = @available_hotels
+    game = Game.find(params[:id])
+    player = current_user.game_players.where(game: game).first
+    tiles = player.tiles
+    stocks = player.stock_cards_by_name_payload
+    @payload = { game: game, users: game.users, tiles: tiles, player: player }
   end
 
   def place_piece
