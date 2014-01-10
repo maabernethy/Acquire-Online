@@ -26,7 +26,8 @@
 - if !player.cash.nil?
   %li= player.cash_to_english
 
-= @cell
+= @available_tiles
+= @game_tile
 = render partial: 'game_board', locals: {game: @game }
 = render partial: 'stock_chart', locals: { game_hotels: @game_hotels }
-= render partial: 'choose_chain', locals: {game: @game_tile }
+= render partial: 'choose_chain', locals: {game_tile: @game_tile, available_hotels: @available_hotels}

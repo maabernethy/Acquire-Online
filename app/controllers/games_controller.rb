@@ -29,12 +29,15 @@ class GamesController < ApplicationController
   def show
     @game = Game.find(params[:id])
     @game_hotels = @game.game_hotels
+    @available_tiles = @available_hotels
   end
 
   def place_piece
     @cell = params[:cell]
     num, letter = params[:num].to_i, params[:letter]
     @game = Game.find(params[:id])
+    @game_tile = @game.game_tiles.where(cell: @cell)
+    @available_hotels = @game.game_hotels.where(chain_size: 0)
     player = current_user.game_players.where(game_id: @game.id).first
     # if @game.is_current_players_turn?(current_user)
     if true

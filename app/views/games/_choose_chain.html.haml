@@ -1,1 +1,7 @@
-%div#form{style:'visibility:hidden'} Hello
+%div#form{style:'visibility:hidden'}
+  = 'Form'
+  = available_hotels
+  = game_tile
+  -# = simple_form_for game_tile do |f|
+    -# = f.input :hotel, collection: available_hotels, as: :select
+    -# = f.submit
