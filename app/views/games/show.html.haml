@@ -30,6 +30,3 @@
 = render partial: 'game_board', locals: {game: @game }
 = render partial: 'stock_chart', locals: { game_hotels: @game_hotels }
 = render partial: 'choose_chain', locals: {game: @game_tile }
-
-%div#test
-= link_to 'Click', { action: 'load_div'}, class: 'load_div', remote: true

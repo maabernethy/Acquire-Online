@@ -32,47 +32,46 @@ class GamesController < ApplicationController
   end
 
   def place_piece
-    @cell = params[:cell]
-    num, letter = params[:num].to_i, params[:letter]
-    @game = Game.find(params[:id])
-    player = current_user.game_players.where(game_id: @game.id).first
-    # if @game.is_current_players_turn?(current_user)
-    if true
-      if @game.player_hand(current_user, @cell)
-        available_tiles = @game.game_tiles.where(available: true)
-        new_game_tile = available_tiles[rand(available_tiles.length)]
-        new_game_tile.available = false
-        new_game_tile.save
-        new_tile = @game.tiles.where(id: new_game_tile.tile_id)
-        placed_tile = player.tiles.where(row: letter).where(column: num).first
-        placed_game_tile = @game.game_tiles.where(tile_id: placed_tile.id).first
-        placed_game_tile.placed = true
-        placed_game_tile.save
-        player.tiles.delete(placed_tile)
-        player.tiles << new_tile
-        new_tiles = player.tiles.map {|tile| tile.to_english }
+    load_div
+    # @cell = params[:cell]
+    # num, letter = params[:num].to_i, params[:letter]
+    # @game = Game.find(params[:id])
+    # player = current_user.game_players.where(game_id: @game.id).first
+    # # if @game.is_current_players_turn?(current_user)
+    # if true
+      # if @game.player_hand(current_user, @cell)
+        # available_tiles = @game.game_tiles.where(available: true)
+        # new_game_tile = available_tiles[rand(available_tiles.length)]
+        # new_game_tile.available = false
+        # new_game_tile.save
+        # new_tile = @game.tiles.where(id: new_game_tile.tile_id)
+        # placed_tile = player.tiles.where(row: letter).where(column: num).first
+        # placed_game_tile = @game.game_tiles.where(tile_id: placed_tile.id).first
+        # placed_game_tile.placed = true
+        # placed_game_tile.save
+        # player.tiles.delete(placed_tile)
+        # player.tiles << new_tile
+        # new_tiles = player.tiles.map {|tile| tile.to_english }
 
-        array = @game.choose_color(letter, num, @cell)
-        color = array[0]
-        if color == 'none'
-          load_div
-          color = @game.new_chain_color(@cell, array[1])
-        end
-        other_tiles = array[1]
-        answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: new_tiles}
-      else
-        answer = {legal: false}
-      end
-    else
-      answer = {legal: false}
-    end
-    render :json => answer
+        # array = @game.choose_color(letter, num, @cell)
+        # color = array[0]
+        # if color == 'none'
+          # load_div
+        # end
+        # other_tiles = array[1]
+        # answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: new_tiles}
+      # else
+        # answer = {legal: false}
+      # end
+    # else
+      # answer = {legal: false}
+    # end
+    # render :json => answer
   end
 
   def load_div
-    @game = Game.find(params[:id])
-    game = {game: @game }
-    render :json => game
+    form = {form: '#form' }
+    render :json => form
   end
 
   private
