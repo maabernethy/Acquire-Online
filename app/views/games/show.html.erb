@@ -12,7 +12,7 @@ window.payload = <%= @payload.to_json.html_safe %>;
     <li>{{player.username}}</li>
   {{/each}}
 </ul>
-<h3> Who's Turn? </h3>
+<h3> Whose Turn? </h3>
 {{game.up_next}}
 <h2> Your Hand: </h2>
 <ul>
@@ -31,7 +31,7 @@ window.payload = <%= @payload.to_json.html_safe %>;
 <h3>Cash:</h3>
 {{player.cash_to_english}}
 
-{{game-board}}
+{{game-board model=model}}
 
 <div>
   <table border="1">
@@ -50,6 +50,9 @@ window.payload = <%= @payload.to_json.html_safe %>;
     {{/each}}
   </table>
 </div>
+
+{{outlet modal}}
+<button {{action 'openModal' 'modal' model}}>Open Modal</button>
 </script>
 
 <script type="text/x-handlebars" id="components/game-board">
@@ -66,4 +69,20 @@ window.payload = <%= @payload.to_json.html_safe %>;
     {{/each}}
   </table>
 </div>
+</script>
+
+<script type="text/x-handlebars" data-template-name="modal">
+  {{#modal-dialog action="close"}}
+    <h3 class="flush--top">Popup!</h5>
+    <button {{action "close"}}>Done</button>
+  {{/modal-dialog}}
+</script>
+
+<script type="text/x-handlebars" id="components/modal-dialog">
+  <div class="overlay" {{action "close"}}>
+    <div class="modal" {{action bubbles=false}}>
+      <h3 class="flush--top">Popup!</h5>
+      <button {{action "close"}}>Done</button>
+    </div>
+  </div>
 </script>

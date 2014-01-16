@@ -107,7 +107,7 @@ class Game < ActiveRecord::Base
       color = "grey"
     elsif placed_sur_tiles.length == 1
       if placed_sur_tiles[0].hotel == 'none'
-        color = 'none'
+        raise 'Ambiguous color'
         other_tiles = placed_sur_tiles[0].cell 
       else
         hotel = placed_sur_tiles[0].hotel
