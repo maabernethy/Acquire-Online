@@ -13,7 +13,7 @@ App.GameBoardComponent = Ember.Component.extend({
 
 App.GameBoardSquareView = Ember.View.extend({
   tagName: 'td',
-  classNameBindings: ['isHover', 'color'],
+  classNameBindings: ['isHover', 'color', 'grey', 'blue', 'yellow', 'red', 'green', 'orange', 'purple', 'pink'],
   mouseEnter: function() {
     this.set('isHover', true);
   },
@@ -32,8 +32,8 @@ App.GameBoardSquareView = Ember.View.extend({
       }
     }).then(function(json) {
       if (json.legal) {
-        _this.set('color', json.color);
+        _this.set(json.color, true);
       }
     });
-  }
+  },
 });

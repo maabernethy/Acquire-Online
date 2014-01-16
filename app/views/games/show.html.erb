@@ -33,6 +33,23 @@ window.payload = <%= @payload.to_json.html_safe %>;
 
 {{game-board}}
 
+<div>
+  <table border="1">
+    <tr>Stock Chart</tr>
+    <tr>
+      <td>Hotel Name</td>
+      <td>Chain Size</td>
+      <td>Share Price</td>
+    </tr>
+    {{#each game_hotel in game_hotels}}
+      <tr>
+        <td>{{game_hotel.name}}</td>
+        <td>{{game_hotel.size}}</td>
+        <td>{{game_hotel.price}}</td>
+      </tr>
+    {{/each}}
+  </table>
+</div>
 </script>
 
 <script type="text/x-handlebars" id="components/game-board">

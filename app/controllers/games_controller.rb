@@ -31,7 +31,13 @@ class GamesController < ApplicationController
     player = current_user.game_players.where(game: game).first
     tiles = player.tiles
     stocks = player.stock_cards_by_name_payload
-    @payload = { game: game, users: game.users, tiles: tiles, player: player }
+    game_hotels = game.game_hotels
+    hotels_by_name = []
+    game_hotels.each do |hotel|
+      hotels_by_name << {name: hotel.hotel.name, size: hotel.chain_size, price: hotel.share_price}
+    end
+    @payload = { game: game, users: game.users, tiles: tiles, player: player, stocks: stocks, game_hotels: hotels_by_name }
+    byebug
   end
 
   def place_piece
@@ -71,6 +77,7 @@ class GamesController < ApplicationController
     else
       answer = {legal: false}
     end
+    byebug
     render :json => answer
   end
 
