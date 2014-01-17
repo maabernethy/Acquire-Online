@@ -51,8 +51,6 @@ window.payload = <%= @payload.to_json.html_safe %>;
   </table>
 </div>
 
-{{outlet modal}}
-<button {{action 'openModal' 'modal' model}}>Open Modal</button>
 </script>
 
 <script type="text/x-handlebars" id="components/game-board">
@@ -69,20 +67,12 @@ window.payload = <%= @payload.to_json.html_safe %>;
     {{/each}}
   </table>
 </div>
-</script>
-
-<script type="text/x-handlebars" data-template-name="modal">
-  {{#modal-dialog action="close"}}
-    <h3 class="flush--top">Popup!</h5>
-    <button {{action "close"}}>Done</button>
-  {{/modal-dialog}}
-</script>
-
-<script type="text/x-handlebars" id="components/modal-dialog">
-  <div class="overlay" {{action "close"}}>
-    <div class="modal" {{action bubbles=false}}>
-      <h3 class="flush--top">Popup!</h5>
-      <button {{action "close"}}>Done</button>
-    </div>
-  </div>
+{{#if errored}}
+  <div class="overlay" >
+    <div class="modal" >
+<h1 class="flush--top">Oh Crap</h1>
+<button {{action "resolveIssue"}}>Resolve</button>
+</div>
+</div>
+{{/if}}
 </script>

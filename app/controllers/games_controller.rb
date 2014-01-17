@@ -55,7 +55,8 @@ class GamesController < ApplicationController
         begin
           array = @game.choose_color(letter, num, @cell)
         rescue
-          render :json => ''
+          render :json => { hi: 'marin'} , :status => :unprocessable_entity
+          return
         end
         color = array[0]
         other_tiles = array[1]

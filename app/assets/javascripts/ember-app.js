@@ -41,7 +41,12 @@ App.ModalDialogComponent = Ember.Component.extend({
 App.GameBoardComponent = Ember.Component.extend({
   needs: ['application'],
   rows: [1,2,3,4,5,6,7,8,9,10,11,12],
-  columns: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
+  columns: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
+  actions: {
+    resolveIssue: function() {
+      this.set('errored', false);
+    }
+  }
 });
 
 App.GameBoardSquareView = Ember.View.extend({
@@ -75,6 +80,7 @@ App.GameBoardSquareView = Ember.View.extend({
         _this.set('controller.model.tiles', json.answer.new_tiles);
       }
     }, function(json) {
+      _this.set('controller.errored', true);
       debugger;
     });
   },
