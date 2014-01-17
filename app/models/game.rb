@@ -70,7 +70,7 @@ class Game < ActiveRecord::Base
 
   def initialize_hotels
     Hotel.all.each do |hotel|
-      GameHotel.create(hotel_id: hotel.id, game_id: self.id, chain_size: 0, share_price: 0)
+      GameHotel.create(name: hotel.name, hotel_id: hotel.id, game_id: self.id, chain_size: 0, share_price: 0)
     end
   end
 

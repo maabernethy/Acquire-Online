@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140110212520) do
+ActiveRecord::Schema.define(version: 20140117192014) do
 
   create_table "game_hotels", force: true do |t|
     t.integer  "share_price"
@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(version: 20140110212520) do
     t.integer  "hotel_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "name"
   end
 
   create_table "game_player_stock_cards", force: true do |t|

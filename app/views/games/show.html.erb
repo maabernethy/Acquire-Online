@@ -31,7 +31,7 @@ window.payload = <%= @payload.to_json.html_safe %>;
 <h3>Cash:</h3>
 {{player.cash_to_english}}
 
-{{game-board model=model}}
+{{game-board model=model game_hotels=game_hotels}}
 
 <div>
   <table border="1">
@@ -44,8 +44,8 @@ window.payload = <%= @payload.to_json.html_safe %>;
     {{#each game_hotel in game_hotels}}
       <tr>
         <td>{{game_hotel.name}}</td>
-        <td>{{game_hotel.size}}</td>
-        <td>{{game_hotel.price}}</td>
+        <td>{{game_hotel.chain_size}}</td>
+        <td>{{game_hotel.share_price}}</td>
       </tr>
     {{/each}}
   </table>
@@ -70,9 +70,14 @@ window.payload = <%= @payload.to_json.html_safe %>;
 {{#if errored}}
   <div class="overlay" >
     <div class="modal" >
-<h1 class="flush--top">Oh Crap</h1>
-<button {{action "resolveIssue"}}>Resolve</button>
-</div>
-</div>
+      <h1 class="flush--top">Which Hotel chain would you like to found?</h1>
+      {{view Ember.Select
+       content=game_hotels
+       optionValuePath="content.id"
+       optionLabelPath="content.name"
+       value=selectedHotel.name}}
+      <button {{action "resolveIssue"}}>Done</button>
+    </div>
+  </div>
 {{/if}}
 </script>

@@ -35,7 +35,7 @@ class GamesController < ApplicationController
     num, letter = params[:num].to_i, params[:letter]
     @game = Game.find(params[:id])
     @game_tile = @game.game_tiles.where(cell: @cell)
-    @available_hotels = @game.game_hotels.where(chain_size: 0)
+    available_hotels = @game.game_hotels.where(chain_size: 0)
     player = current_user.game_players.where(game_id: @game.id).first
     # if @game.is_current_players_turn?(current_user)
     if true
@@ -55,7 +55,7 @@ class GamesController < ApplicationController
         begin
           array = @game.choose_color(letter, num, @cell)
         rescue
-          render :json => { hi: 'marin'} , :status => :unprocessable_entity
+          render :json => available_hotels, :status => :unprocessable_entity
           return
         end
         color = array[0]
@@ -80,11 +80,7 @@ class GamesController < ApplicationController
     tiles = player.tiles
     stocks = player.stock_cards_by_name_payload
     game_hotels = game.game_hotels
-    hotels_by_name = []
-    game_hotels.each do |hotel|
-      hotels_by_name << {name: hotel.hotel.name, size: hotel.chain_size, price: hotel.share_price}
-    end
-    @payload = { game: game, users: game.users, tiles: tiles, player: player, stocks: stocks, game_hotels: hotels_by_name }
+    @payload = { game: game, users: game.users, tiles: tiles, player: player, stocks: stocks, game_hotels: game_hotels }
   end
 
   def game_params
