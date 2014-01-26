@@ -12,10 +12,33 @@ App.GameBoardComponent = Ember.Component.extend({
   columns: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
   selectedHotel: {
     name: null
-  } 
+  },
   actions: {
     resolveIssue: function() {
-      this.set('errored', false)
+      this.set('errored', false);
+      debugger;
+      console.log(this.get('selectedHotel').name);
+      var _this = window.view;
+      var cell = window.view.get('row') + window.view.get('column');
+      Ember.$.ajax({
+        url: '/games/'+window.payload.game.id+'/place_piece',
+        data: {
+          num: window.view.get('row'),
+          letter: window.view.get('column'),
+          cell: cell
+        }
+      }).then(function(json) {
+        if (json.answer.legal) {
+          _this.set(json.answer.color, true);
+          _this.set('controller.model.game', json.game);
+          _this.set('controller.model.game_hotels', json.game_hotels);
+          _this.set('controller.model.player', json.player);
+          _this.set('controller.model.stocks', json.stocks);
+          _this.set('controller.model.users', json.users);
+          _this.set('controller.model.tiles', json.answer.new_tiles);
+          _this.set('controller.model.available_hotels', json.available_hotels);
+        }
+      });
     }
   }
 });
@@ -49,6 +72,8 @@ App.GameBoardSquareView = Ember.View.extend({
         _this.set('controller.model.stocks', json.stocks);
         _this.set('controller.model.users', json.users);
         _this.set('controller.model.tiles', json.answer.new_tiles);
+        _this.set('controller.model.available_hotels', json.answer.available_hotels);
+
       }
     }, function(json) {
       debugger;

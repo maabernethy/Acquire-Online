@@ -31,7 +31,7 @@ window.payload = <%= @payload.to_json.html_safe %>;
 <h3>Cash:</h3>
 {{player.cash_to_english}}
 
-{{game-board model=model game_hotels=game_hotels}}
+{{game-board model=model available_hotels=available_hotels}}
 
 <div>
   <table border="1">
@@ -72,8 +72,8 @@ window.payload = <%= @payload.to_json.html_safe %>;
     <div class="modal" >
       <h1 class="flush--top">Which Hotel chain would you like to found?</h1>
       {{view Ember.Select
-       content=game_hotels
-       optionValuePath="content.id"
+       content=available_hotels
+       optionValuePath="content.name"
        optionLabelPath="content.name"
        value=selectedHotel.name}}
       <button {{action "resolveIssue"}}>Done</button>
