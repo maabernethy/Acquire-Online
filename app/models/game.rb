@@ -21,13 +21,13 @@ class Game < ActiveRecord::Base
 
   #MOVE TO HOTEL MODEL WHEN CREATED
   HOTEL_COLORS = {
-    American: "blue",
-    Continental: "yellow",
-    Festival: "red",
-    Imperial: "green",
-    Sackson: "orange",
-    Tower: "black",
-    Worldwide: "purple"
+    "American" => "blue",
+    "Continental" => "yellow",
+    "Festival" => "red",
+    "Imperial" => "green",
+    "Sackson" => "orange",
+    "Tower" => "black",
+    "Worldwide" => "purple"
   }   
   
   def start_game
@@ -96,7 +96,7 @@ class Game < ActiveRecord::Base
     end
   end
 
-  def choose_color(row, column, cell)
+  def choose_color(row, column, cell, selected_hotel)
     placed_tiles = []
     self.game_tiles.where(placed: true).each do |game_tile|
       placed_tiles << game_tile.tile.column.to_s + game_tile.tile.row
@@ -107,11 +107,17 @@ class Game < ActiveRecord::Base
       color = "grey"
     elsif placed_sur_tiles.length == 1
       if placed_sur_tiles[0].hotel == 'none'
-        raise 'Ambiguous color'
-        other_tiles = placed_sur_tiles[0].cell 
+        byebug
+        if selected_hotel == 'none'
+          raise 'Ambiguous color'
+        else
+          byebug
+          other_tiles = placed_sur_tiles[0].cell 
+          color = HOTEL_COLORS[selected_hotel]
+        end
       else
         hotel = placed_sur_tiles[0].hotel
-        color = HOTEL_COLORS.hotel
+        color = HOTEL_COLORS[hotel]
       end
     elsif placed_sur_tiles.length == 2
       response = self.merger(placed_sur_tiles)

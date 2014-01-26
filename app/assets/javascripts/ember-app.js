@@ -16,7 +16,6 @@ App.GameBoardComponent = Ember.Component.extend({
   actions: {
     resolveIssue: function() {
       this.set('errored', false);
-      debugger;
       console.log(this.get('selectedHotel').name);
       var _this = window.view;
       var cell = window.view.get('row') + window.view.get('column');
@@ -25,7 +24,8 @@ App.GameBoardComponent = Ember.Component.extend({
         data: {
           num: window.view.get('row'),
           letter: window.view.get('column'),
-          cell: cell
+          cell: cell,
+          hotel: this.get('selectedHotel').name
         }
       }).then(function(json) {
         if (json.answer.legal) {
@@ -72,7 +72,7 @@ App.GameBoardSquareView = Ember.View.extend({
         _this.set('controller.model.stocks', json.stocks);
         _this.set('controller.model.users', json.users);
         _this.set('controller.model.tiles', json.answer.new_tiles);
-        _this.set('controller.model.available_hotels', json.answer.available_hotels);
+        _this.set('controller.model.available_hotels', json.available_hotels);
 
       }
     }, function(json) {

@@ -31,6 +31,11 @@ class GamesController < ApplicationController
   end
 
   def place_piece
+    if !params[:hotel].nil?
+      selected_hotel = params[:hotel]
+    else
+      selected_hotel = 'none'
+    end
     @cell = params[:cell]
     num, letter = params[:num].to_i, params[:letter]
     @game = Game.find(params[:id])
@@ -39,6 +44,13 @@ class GamesController < ApplicationController
     # if @game.is_current_players_turn?(current_user)
     if true
       if @game.player_hand(current_user, @cell)
+        begin
+          array = @game.choose_color(letter, num, @cell, selected_hotel)
+        rescue
+          render :json => @game, :status => :unprocessable_entity
+          return
+        end
+
         available_tiles = @game.game_tiles.where(available: true)
         new_game_tile = available_tiles[rand(available_tiles.length)]
         new_game_tile.available = false
@@ -51,12 +63,6 @@ class GamesController < ApplicationController
         player.tiles.delete(placed_tile)
         player.tiles << new_tile
 
-        begin
-          array = @game.choose_color(letter, num, @cell)
-        rescue
-          render :json => available_hotels, :status => :unprocessable_entity
-          return
-        end
         color = array[0]
         other_tiles = array[1]
         answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: player.tiles}
