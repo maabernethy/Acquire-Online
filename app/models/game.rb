@@ -109,23 +109,46 @@ class Game < ActiveRecord::Base
       if placed_sur_tiles[0].hotel == 'none'
         byebug
         if selected_hotel == 'none'
+          byebug
+          # need input from user for new chain
           raise 'Ambiguous color'
         else
+          # new chain
           byebug
-          other_tiles = placed_sur_tiles[0].cell 
+          other_tiles = convert_tiles_to_number({'row' => placed_sur_tiles[0].tile.row, 'column' => placed_sur_tiles[0].tile.column})
           color = HOTEL_COLORS[selected_hotel]
+          # chosen_game_hotel = game.game_hotels.where(name: selected_hotel)
+          # chosen_game_hotel.chain_size = 2
+          # chosen_game_hotel.save
         end
       else
+        # extending chain
         hotel = placed_sur_tiles[0].hotel
         color = HOTEL_COLORS[hotel]
       end
     elsif placed_sur_tiles.length == 2
+      # merger
       response = self.merger(placed_sur_tiles)
       color = response[0]
       other_tiles = response[1]
     end
 
+    byebug
     [color, other_tiles]
+  end
+
+  # convert to number so that can change color with javascript
+  def convert_tiles_to_number(cell)
+    byebug
+    row = cell['row']
+    column = cell['column']
+    convert = {}
+    nums = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    letters = ['A', 'B', 'C', 'D', 'E', 'F', 'H', 'I']
+    letters.zip(nums) do |letter, num|
+      convert[letter] = num
+    end
+    cell_number = ((column - 1)* 9) + (convert[row]) - 1
   end
 
   def get_surrounding_tiles(row, column, cell)

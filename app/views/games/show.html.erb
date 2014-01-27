@@ -56,9 +56,9 @@ window.payload = <%= @payload.to_json.html_safe %>;
 <script type="text/x-handlebars" id="components/game-board">
 <div class="board">
   <table border="1">
-    {{#each row in rows}}
+    {{#each column in columns}}
       <tr>
-      {{#each column in columns}}
+      {{#each row in rows}}
         {{#view App.GameBoardSquareView row=row column=column}}
           {{row}}{{column}}
         {{/view}}
