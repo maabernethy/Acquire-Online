@@ -103,6 +103,7 @@ class Game < ActiveRecord::Base
     end
     sur_tiles = get_surrounding_tiles(row, column, cell)
     placed_sur_tiles = get_placed_surrounding_tiles(sur_tiles, placed_tiles)
+    byebug
     if placed_sur_tiles.length == 0
       color = "grey"
     elsif placed_sur_tiles.length == 1
@@ -145,7 +146,7 @@ class Game < ActiveRecord::Base
       convert[letter] = num
     end
     byebug
-    cell_number = ((column - 1)* 9) + (convert[row]) - 1
+    cell_number = ((convert[row] - 1)* 12) + (column - 1)
   end
 
   def get_surrounding_tiles(row, column, cell)

@@ -30,6 +30,7 @@ App.GameBoardComponent = Ember.Component.extend({
       }).then(function(json) {
         if (json.answer.legal) {
           console.log(json.answer.other_tiles)
+          _this.get('parentView').get('childViews')[json.answer.other_tiles].set(json.answer.color, true)
           _this.set(json.answer.color, true);
           _this.set('controller.model.game', json.game);
           _this.set('controller.model.game_hotels', json.game_hotels);
