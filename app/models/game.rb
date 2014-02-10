@@ -97,6 +97,7 @@ class Game < ActiveRecord::Base
   end
 
   def choose_color(row, column, cell, selected_hotel)
+    tile = self.game_tiles.where(cell: cell).first
     placed_tiles = []
     self.game_tiles.where(placed: true).each do |game_tile|
       placed_tiles << game_tile.tile.column.to_s + game_tile.tile.row
@@ -112,21 +113,38 @@ class Game < ActiveRecord::Base
           # need input from user for new chain
           raise 'Ambiguous color'
         else
+          byebug
           # new chain
           other_tiles = convert_tiles_to_number({'row' => placed_sur_tiles[0].tile.row, 'column' => placed_sur_tiles[0].tile.column})
-          byebug
           color = HOTEL_COLORS[selected_hotel]
-          # chosen_game_hotel = game.game_hotels.where(name: selected_hotel)
-          # chosen_game_hotel.chain_size = 2
-          # chosen_game_hotel.save
+          byebug
+          #save game hotel chain size
+          chosen_game_hotel = self.game_hotels.where(name: selected_hotel).first
+          chosen_game_hotel.chain_size = 2
+          chosen_game_hotel.save
+          #save other tile hotel
+          placed_sur_tiles[0].hotel = selected_hotel
+          placed_sur_tiles[0].save
+          #save placed tile hotel
+          tile.hotel = selected_hotel
+          tile.save
         end
       else
+        byebug
         # extending chain
         hotel = placed_sur_tiles[0].hotel
         color = HOTEL_COLORS[hotel]
+        #save game hotel chain size
+        hotel_chain = self.game_hotels.where(name: hotel).first
+        hotel_chain.chain_size += 1
+        hotel_chain.save
+        #save placed tile hotel
+        tile.hotel = hotel
+        tile.save
       end
     elsif placed_sur_tiles.length == 2
-      # merger
+      byebug
+      # merger - will need to work with a lot of "other tiles"
       response = self.merger(placed_sur_tiles)
       color = response[0]
       other_tiles = response[1]
@@ -141,7 +159,7 @@ class Game < ActiveRecord::Base
     column = cell['column']
     convert = {}
     nums = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    letters = ['A', 'B', 'C', 'D', 'E', 'F', 'H', 'I']
+    letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
     letters.zip(nums) do |letter, num|
       convert[letter] = num
     end
