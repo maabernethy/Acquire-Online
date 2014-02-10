@@ -107,15 +107,13 @@ class Game < ActiveRecord::Base
       color = "grey"
     elsif placed_sur_tiles.length == 1
       if placed_sur_tiles[0].hotel == 'none'
-        byebug
         if selected_hotel == 'none'
-          byebug
           # need input from user for new chain
           raise 'Ambiguous color'
         else
           # new chain
-          byebug
           other_tiles = convert_tiles_to_number({'row' => placed_sur_tiles[0].tile.row, 'column' => placed_sur_tiles[0].tile.column})
+          byebug
           color = HOTEL_COLORS[selected_hotel]
           # chosen_game_hotel = game.game_hotels.where(name: selected_hotel)
           # chosen_game_hotel.chain_size = 2
@@ -133,13 +131,11 @@ class Game < ActiveRecord::Base
       other_tiles = response[1]
     end
 
-    byebug
     [color, other_tiles]
   end
 
   # convert to number so that can change color with javascript
   def convert_tiles_to_number(cell)
-    byebug
     row = cell['row']
     column = cell['column']
     convert = {}
@@ -148,6 +144,7 @@ class Game < ActiveRecord::Base
     letters.zip(nums) do |letter, num|
       convert[letter] = num
     end
+    byebug
     cell_number = ((column - 1)* 9) + (convert[row]) - 1
   end
 
