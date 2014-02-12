@@ -115,7 +115,7 @@ class Game < ActiveRecord::Base
         else
           byebug
           # new chain
-          other_tiles = convert_tiles_to_number({'row' => placed_sur_tiles[0].tile.row, 'column' => placed_sur_tiles[0].tile.column})
+          other_tiles = convert_tile_to_number({'row' => placed_sur_tiles[0].tile.row, 'column' => placed_sur_tiles[0].tile.column})
           color = HOTEL_COLORS[selected_hotel]
           byebug
           #save game hotel chain size
@@ -145,7 +145,7 @@ class Game < ActiveRecord::Base
     elsif placed_sur_tiles.length == 2
       byebug
       # merger - will need to work with a lot of "other tiles"
-      response = self.merger(placed_sur_tiles)
+      response = merger(placed_sur_tiles)
       color = response[0]
       other_tiles = response[1]
     end
@@ -154,7 +154,7 @@ class Game < ActiveRecord::Base
   end
 
   # convert to number so that can change color with javascript
-  def convert_tiles_to_number(cell)
+  def convert_tile_to_number(cell)
     row = cell['row']
     column = cell['column']
     convert = {}
@@ -165,6 +165,15 @@ class Game < ActiveRecord::Base
     end
     byebug
     cell_number = ((convert[row] - 1)* 12) + (column - 1)
+  end
+
+  def convert_tiles_to_numbers(cells)
+    numbers = []
+    cells.each do |cell|
+      numbers = convert_tile_to_number({'row' => cell[0], 'column' => cell[1]})
+    end
+
+    numbers
   end
 
   def get_surrounding_tiles(row, column, cell)
@@ -191,24 +200,25 @@ class Game < ActiveRecord::Base
   end
 
   def merger
+    other_tiles = []
     hotel_name1 = placed_sur_tiles[0].hotel
     hotel_name2 = placed_sur_tiles[1].hotel
-    id1 = Hotel.where(name: hotel_name1)
-    id2 = Hotel.where(name: hotel_name2)
-    game_hotel1 = self.game_hotels.where(hotel_id: id1)
-    game_hotel2 = self.game_hotels.where(hotel_id: id2)
+    game_hotel1 = self.game_hotels.where(name: hotel_name1).first
+    game_hotel2 = self.game_hotels.where(name: hotel_name2).first
     if game_hotel1.chain_size > game_hotel2.chain_size
       color = game_hotel1.hotel.color
+      game_tiles = self.game_tiles.where(hotel: hotel_name2)
+      game_tiles.each do |tile|
+        temp = [tile.tile.row, tile.tile.column]
+        other_tiles << temp
+      end
     elsif game_hotel2.chain_size > game_hotel1.chain_size
       color = game_hotel2.hotel.color
-    end
-
-    tiles1 = self.game_tiles.where(hotel: hotel_name1)
-    tiles2 = self.game_tiles.where(hotel: hotel_name2)
-    tiles = tiles1 + tiles2
-    other_tiles = []
-    tiles.each do |tile|
-      other_tiles << tile.cell
+      game_tiles = self.game_tiles.where(hotel: hotel_name1)
+      game_tiles.each do |tile|
+        temp = [tile.tile.row, tile.tile.column]
+        other_tiles << tile.cell
+      end
     end
 
     [color, other_tiles]
