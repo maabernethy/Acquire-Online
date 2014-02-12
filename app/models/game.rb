@@ -166,14 +166,10 @@ class Game < ActiveRecord::Base
       elsif (placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none')
         #merger of 3 chains
         byebug
-      elsif (((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel != 'none')) 
-        || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none'))
-        || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none')))
+      elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel != 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none'))
         # merger with 2 chains and 1 orphan
         byebug
-      elsif (((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none')) 
-        || ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none'))
-        || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel == 'none')))
+      elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none')) || ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel == 'none'))
         # extension of chain with 2 orphans
         byebug
       end 
@@ -206,13 +202,48 @@ class Game < ActiveRecord::Base
   end
 
   def get_surrounding_tiles(row, column, cell)
+    byebug
     surrounding_tiles = []
     index = GAME_BOARD[column-1].index(cell)
-    surrounding_tiles << GAME_BOARD[column-1][index-1] if !GAME_BOARD[column-1].nil? && !GAME_BOARD[column-1][index-1].nil?
-    surrounding_tiles << GAME_BOARD[column-1][index+1] if !GAME_BOARD[column-1].nil? && !GAME_BOARD[column-1][index+1].nil?
-    surrounding_tiles << GAME_BOARD[column-2][index] if !GAME_BOARD[column-2].nil? && !GAME_BOARD[column-1][index].nil?
-    surrounding_tiles << GAME_BOARD[column][index] if !GAME_BOARD[column].nil? && !GAME_BOARD[column][index].nil?
+    if column == 1 
+      if index == 0
+        surrounding_tiles << GAME_BOARD[column-1][index-1]
+        surrounding_tiles << GAME_BOARD[column][index]
+      elsif index == 8
+        surrounding_tiles << GAME_BOARD[column-1][index+1]
+        surrounding_tiles << GAME_BOARD[column][index]
+      else
+        surrounding_tiles << GAME_BOARD[column-1][index-1] 
+        surrounding_tiles << GAME_BOARD[column-1][index+1] 
+        surrounding_tiles << GAME_BOARD[column][index]
+      end
+    elsif column == 12
+      if index == 0
+        surrounding_tiles << GAME_BOARD[column-1][index-1]
+        surrounding_tiles << GAME_BOARD[column-2][index] 
+      elsif index == 8
+        surrounding_tiles << GAME_BOARD[column-1][index+1]
+        surrounding_tiles << GAME_BOARD[column-2][index] 
+      else
+        surrounding_tiles << GAME_BOARD[column-1][index-1] 
+        surrounding_tiles << GAME_BOARD[column-1][index+1] 
+        surrounding_tiles << GAME_BOARD[column-2][index]
+      end
+    elsif index == 0
+      surrounding_tiles << GAME_BOARD[column-1][index+1] 
+      surrounding_tiles << GAME_BOARD[column][index]
+      surrounding_tiles << GAME_BOARD[column-2][index]
+    elsif index == 8
+      surrounding_tiles << GAME_BOARD[column-1][index-1] 
+      surrounding_tiles << GAME_BOARD[column][index]
+      surrounding_tiles << GAME_BOARD[column-2][index]
+    end
 
+    # surrounding_tiles << GAME_BOARD[column-1][index-1] if !GAME_BOARD[column-1].nil? && !GAME_BOARD[column-1][index-1].nil?
+    # surrounding_tiles << GAME_BOARD[column-1][index+1] if !GAME_BOARD[column-1].nil? && !GAME_BOARD[column-1][index+1].nil?
+    # surrounding_tiles << GAME_BOARD[column-2][index] if !GAME_BOARD[column-2].nil? && !GAME_BOARD[column-1][index].nil?
+    # surrounding_tiles << GAME_BOARD[column][index] if !GAME_BOARD[column].nil? && !GAME_BOARD[column][index].nil?
+    byebug
     surrounding_tiles
   end
 
