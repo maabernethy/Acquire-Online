@@ -145,9 +145,8 @@ class Game < ActiveRecord::Base
     elsif placed_sur_tiles.length == 2
       byebug
       if (placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none')
-        #new chain with 2
+        #new chain with chain size 3
         byebug
-        x = 1
       elsif (placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none')
         #merger of 2 chains
         byebug
@@ -155,13 +154,29 @@ class Game < ActiveRecord::Base
         color = response[0]
         other_tiles = response[1]
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none'))
-        byebug
-        x = 1
         #extend chain with 2
+        byebug
       end
     elsif placed_sur_tiles.length == 3
       # same options as with 2
       byebug
+      if (placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel == 'none')
+        #new chain with chain size 4
+        byebug
+      elsif (placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none')
+        #merger of 3 chains
+        byebug
+      elsif (((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel != 'none')) 
+        || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none'))
+        || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none')))
+        # merger with 2 chains and 1 orphan
+        byebug
+      elsif (((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none')) 
+        || ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none'))
+        || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel == 'none')))
+        # extension of chain with 2 orphans
+        byebug
+      end 
     end
 
     [color, other_tiles]
