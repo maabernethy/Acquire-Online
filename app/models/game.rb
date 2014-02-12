@@ -144,10 +144,24 @@ class Game < ActiveRecord::Base
       end
     elsif placed_sur_tiles.length == 2
       byebug
-      # merger - will need to work with a lot of "other tiles"
-      response = merger(placed_sur_tiles)
-      color = response[0]
-      other_tiles = response[1]
+      if (placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none')
+        #new chain with 2
+        byebug
+        x = 1
+      elsif (placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none')
+        #merger of 2 chains
+        byebug
+        response = merger(placed_sur_tiles)
+        color = response[0]
+        other_tiles = response[1]
+      elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none'))
+        byebug
+        x = 1
+        #extend chain with 2
+      end
+    elsif placed_sur_tiles.length == 3
+      # same options as with 2
+      byebug
     end
 
     [color, other_tiles]
@@ -200,6 +214,7 @@ class Game < ActiveRecord::Base
   end
 
   def merger
+    byebug
     other_tiles = []
     hotel_name1 = placed_sur_tiles[0].hotel
     hotel_name2 = placed_sur_tiles[1].hotel
@@ -220,6 +235,7 @@ class Game < ActiveRecord::Base
         other_tiles << tile.cell
       end
     end
+    byebug
 
     [color, other_tiles]
   end
