@@ -26,7 +26,7 @@ class Game < ActiveRecord::Base
     "Festival" => "red",
     "Imperial" => "green",
     "Sackson" => "orange",
-    "Tower" => "black",
+    "Tower" => "pink",
     "Worldwide" => "purple"
   }   
   
@@ -104,7 +104,6 @@ class Game < ActiveRecord::Base
     end
     sur_tiles = get_surrounding_tiles(row, column, cell)
     placed_sur_tiles = get_placed_surrounding_tiles(sur_tiles, placed_tiles)
-    byebug
     if placed_sur_tiles.length == 0
       color = "grey"
     elsif placed_sur_tiles.length == 1
@@ -117,7 +116,6 @@ class Game < ActiveRecord::Base
           # new chain
           other_tiles = convert_tile_to_number({'row' => placed_sur_tiles[0].tile.row, 'column' => placed_sur_tiles[0].tile.column})
           color = HOTEL_COLORS[selected_hotel]
-          byebug
           #save game hotel chain size
           chosen_game_hotel = self.game_hotels.where(name: selected_hotel).first
           chosen_game_hotel.chain_size = 2
@@ -151,8 +149,9 @@ class Game < ActiveRecord::Base
         #merger of 2 chains
         byebug
         response = merger(placed_sur_tiles)
+        byebug
         color = response[0]
-        other_tiles = response[1]
+        other_tiles = convert_tiles_to_numbers(response[1])
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none'))
         #extend chain with 2
         byebug
@@ -188,7 +187,7 @@ class Game < ActiveRecord::Base
     letters.zip(nums) do |letter, num|
       convert[letter] = num
     end
-    byebug
+
     cell_number = ((convert[row] - 1)* 12) + (column - 1)
   end
 
@@ -197,20 +196,19 @@ class Game < ActiveRecord::Base
     cells.each do |cell|
       numbers = convert_tile_to_number({'row' => cell[0], 'column' => cell[1]})
     end
-
+    byebug
     numbers
   end
 
   def get_surrounding_tiles(row, column, cell)
-    byebug
     surrounding_tiles = []
     index = GAME_BOARD[column-1].index(cell)
     if column == 1 
       if index == 0
-        surrounding_tiles << GAME_BOARD[column-1][index-1]
+        surrounding_tiles << GAME_BOARD[column-1][index+1]
         surrounding_tiles << GAME_BOARD[column][index]
       elsif index == 8
-        surrounding_tiles << GAME_BOARD[column-1][index+1]
+        surrounding_tiles << GAME_BOARD[column-1][index-1]
         surrounding_tiles << GAME_BOARD[column][index]
       else
         surrounding_tiles << GAME_BOARD[column-1][index-1] 
@@ -219,10 +217,10 @@ class Game < ActiveRecord::Base
       end
     elsif column == 12
       if index == 0
-        surrounding_tiles << GAME_BOARD[column-1][index-1]
+        surrounding_tiles << GAME_BOARD[column-1][index+1]
         surrounding_tiles << GAME_BOARD[column-2][index] 
       elsif index == 8
-        surrounding_tiles << GAME_BOARD[column-1][index+1]
+        surrounding_tiles << GAME_BOARD[column-1][index-1]
         surrounding_tiles << GAME_BOARD[column-2][index] 
       else
         surrounding_tiles << GAME_BOARD[column-1][index-1] 
@@ -237,13 +235,17 @@ class Game < ActiveRecord::Base
       surrounding_tiles << GAME_BOARD[column-1][index-1] 
       surrounding_tiles << GAME_BOARD[column][index]
       surrounding_tiles << GAME_BOARD[column-2][index]
+    else
+      surrounding_tiles << GAME_BOARD[column-1][index+1] 
+      surrounding_tiles << GAME_BOARD[column-1][index-1] 
+      surrounding_tiles << GAME_BOARD[column][index]
+      surrounding_tiles << GAME_BOARD[column-2][index]
     end
 
     # surrounding_tiles << GAME_BOARD[column-1][index-1] if !GAME_BOARD[column-1].nil? && !GAME_BOARD[column-1][index-1].nil?
     # surrounding_tiles << GAME_BOARD[column-1][index+1] if !GAME_BOARD[column-1].nil? && !GAME_BOARD[column-1][index+1].nil?
     # surrounding_tiles << GAME_BOARD[column-2][index] if !GAME_BOARD[column-2].nil? && !GAME_BOARD[column-1][index].nil?
     # surrounding_tiles << GAME_BOARD[column][index] if !GAME_BOARD[column].nil? && !GAME_BOARD[column][index].nil?
-    byebug
     surrounding_tiles
   end
 
@@ -259,7 +261,7 @@ class Game < ActiveRecord::Base
     placed_sur_tiles
   end
 
-  def merger
+  def merger(placed_sur_tiles)
     byebug
     other_tiles = []
     hotel_name1 = placed_sur_tiles[0].hotel
@@ -284,14 +286,5 @@ class Game < ActiveRecord::Base
     byebug
 
     [color, other_tiles]
-  end
-
-  def new_chain_color(cell, other_tile)
-    tile = self.game_tiles.where(cell: cell)
-    hotel = tile.hotel
-    other_tile.hotel = hotel
-    game_hotel = self.game_hotels.where(name: hotel)
-    game_hotel.chain_size = 2
-    color = HOTEL_COLORS.hotel
   end
 end

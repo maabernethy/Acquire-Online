@@ -68,6 +68,12 @@ App.GameBoardSquareView = Ember.View.extend({
     }).then(function(json) {
       if (json.answer.legal) {
         _this.set(json.answer.color, true);
+        if (json.answer.other_tiles != null) {
+          json.answer.other_tiles.forEach(function(number){
+            console.log(number);
+            _this.get('parentView').get('childViews')[number].set(json.answer.color, true);
+          });
+        };
         _this.set('controller.model.game', json.game);
         _this.set('controller.model.game_hotels', json.game_hotels);
         _this.set('controller.model.player', json.player);
