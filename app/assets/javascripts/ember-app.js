@@ -71,6 +71,7 @@ App.GameBoardSquareView = Ember.View.extend({
         if (json.answer.other_tiles != null) {
           json.answer.other_tiles.forEach(function(number){
             console.log(number);
+            debugger;
             _this.get('parentView').get('childViews')[number].set(json.answer.color, true);
           });
         };

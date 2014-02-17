@@ -149,9 +149,9 @@ class Game < ActiveRecord::Base
         #merger of 2 chains
         byebug
         response = merger(placed_sur_tiles)
+        other_tiles = convert_tiles_to_numbers(response[1])
         byebug
         color = response[0]
-        other_tiles = convert_tiles_to_numbers(response[1])
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none'))
         #extend chain with 2
         byebug
@@ -194,7 +194,7 @@ class Game < ActiveRecord::Base
   def convert_tiles_to_numbers(cells)
     numbers = []
     cells.each do |cell|
-      numbers = convert_tile_to_number({'row' => cell[0], 'column' => cell[1]})
+      numbers << convert_tile_to_number({'row' => cell[0], 'column' => cell[1]})
     end
     byebug
     numbers
@@ -280,7 +280,7 @@ class Game < ActiveRecord::Base
       game_tiles = self.game_tiles.where(hotel: hotel_name1)
       game_tiles.each do |tile|
         temp = [tile.tile.row, tile.tile.column]
-        other_tiles << tile.cell
+        other_tiles << temp
       end
     end
     byebug
