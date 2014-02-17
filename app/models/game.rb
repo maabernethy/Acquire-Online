@@ -202,6 +202,29 @@ class Game < ActiveRecord::Base
       if (placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel == 'none')
         #new chain with chain size 4
         byebug
+        if selected_hotel == 'none'
+          # need input from user for new chain
+          raise 'Ambiguous color'
+        else
+          byebug
+          # new chain
+          color = HOTEL_COLORS[selected_hotel]
+          orphan_tiles_info = [[placed_sur_tiles[0].tile.row, placed_sur_tiles[0].tile.column, 'grey'], [placed_sur_tiles[1].tile.row, placed_sur_tiles[1].tile.column, 'grey'], [placed_sur_tiles[2].tile.row, placed_sur_tiles[2].tile.column, 'grey']]
+          other_tiles = convert_tiles_to_numbers(orphan_tiles_info)
+          #save game hotel chain size
+          chosen_game_hotel = self.game_hotels.where(name: selected_hotel).first
+          chosen_game_hotel.chain_size = 4
+          chosen_game_hotel.save
+          #save other tiles hotels
+          placed_sur_tiles[0].hotel = selected_hotel
+          placed_sur_tiles[1].hotel = selected_hotel
+          placed_sur_tiles[2].hotel = selected_hotel
+          placed_sur_tiles[0].save
+          placed_sur_tiles[1].save
+          placed_sur_tiles[2].save
+          #save placed tile hotel
+          tile.hotel = selected_hotel
+          tile.save
       elsif (placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none')
         #merger of 3 chains
         byebug
@@ -211,6 +234,43 @@ class Game < ActiveRecord::Base
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none')) || ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel == 'none'))
         # extension of chain with 2 orphans
         byebug
+        if placed_sur_tiles[0].hotel != 'none'
+          hotel = placed_sur_tiles[0].hotel
+          color = HOTEL_COLORS[hotel]
+          hotel_chain = self.game_hotels.where(name: hotel).first
+          hotel_chain.chain_size += 3
+          hotel_chain.save
+          placed_sur_tiles[1].hotel = hotel
+          placed_sur_tiles[1].save
+          placed_sur_tiles[2].hotel = hotel
+          placed_sur_tiles[2].save
+          orphan_tiles_info = [[placed_sur_tiles[1].tile.row, placed_sur_tiles[1].tile.column, 'grey'], [placed_sur_tiles[2].tile.row, placed_sur_tiles[2].tile.column, 'grey']]
+          other_tiles = convert_tiles_to_numbers(orphan_tiles_info)
+        elsif placed_sur_tiles[1].hotel != 'none'
+          hotel = placed_sur_tiles[1].hotel
+          color = HOTEL_COLORS[hotel]
+          hotel_chain = self.game_hotels.where(name: hotel).first
+          hotel_chain.chain_size += 3
+          hotel_chain.save
+          placed_sur_tiles[0].hotel = hotel
+          placed_sur_tiles[0].save
+          placed_sur_tiles[2].hotel = hotel
+          placed_sur_tiles[2].save
+          orphan_tiles_info = [[placed_sur_tiles[0].tile.row, placed_sur_tiles[0].tile.column, 'grey'], [placed_sur_tiles[2].tile.row, placed_sur_tiles[2].tile.column, 'grey']]
+          other_tiles = convert_tiles_to_numbers(orphan_tiles_info)
+        elsif placed_sur_tiles[2].hotel != 'none'
+          hotel = placed_sur_tiles[1].hotel
+          color = HOTEL_COLORS[hotel]
+          hotel_chain = self.game_hotels.where(name: hotel).first
+          hotel_chain.chain_size += 3
+          hotel_chain.save
+          placed_sur_tiles[0].hotel = hotel
+          placed_sur_tiles[0].save
+          placed_sur_tiles[1].hotel = hotel
+          placed_sur_tiles[1].save
+          orphan_tiles_info = [[placed_sur_tiles[0].tile.row, placed_sur_tiles[0].tile.column, 'grey'], [placed_sur_tiles[1].tile.row, placed_sur_tiles[1].tile.column, 'grey']]
+          other_tiles = convert_tiles_to_numbers(orphan_tiles_info)       
+        end
       end 
     end
 
