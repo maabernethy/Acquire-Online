@@ -179,6 +179,7 @@ class Game < ActiveRecord::Base
 
   # convert to number so that can change color with javascript
   def convert_tile_to_number(cell)
+    byebug
     row = cell['row']
     column = cell['column']
     convert = {}
@@ -189,15 +190,24 @@ class Game < ActiveRecord::Base
     end
 
     cell_number = ((convert[row] - 1)* 12) + (column - 1)
+    response = cell_number
+
+    byebug
+    if !cell['current_color'].nil?
+      response = [cell_number, cell['current_color']]
+    end
+    byebug
+    response
   end
 
   def convert_tiles_to_numbers(cells)
-    numbers = []
+    byebug
+    tiles_info = []
     cells.each do |cell|
-      numbers << convert_tile_to_number({'row' => cell[0], 'column' => cell[1]})
+      tiles_info << convert_tile_to_number({'row' => cell[0], 'column' => cell[1], 'current_color' => cell[2]})
     end
     byebug
-    numbers
+    tiles_info
   end
 
   def get_surrounding_tiles(row, column, cell)
@@ -270,16 +280,18 @@ class Game < ActiveRecord::Base
     game_hotel2 = self.game_hotels.where(name: hotel_name2).first
     if game_hotel1.chain_size > game_hotel2.chain_size
       color = game_hotel1.hotel.color
+      c = game_hotel2.hotel.color
       game_tiles = self.game_tiles.where(hotel: hotel_name2)
       game_tiles.each do |tile|
-        temp = [tile.tile.row, tile.tile.column]
+        temp = [tile.tile.row, tile.tile.column, c]
         other_tiles << temp
       end
     elsif game_hotel2.chain_size > game_hotel1.chain_size
       color = game_hotel2.hotel.color
+      c = game_hotel1.hotel.color
       game_tiles = self.game_tiles.where(hotel: hotel_name1)
       game_tiles.each do |tile|
-        temp = [tile.tile.row, tile.tile.column]
+        temp = [tile.tile.row, tile.tile.column, c]
         other_tiles << temp
       end
     end
