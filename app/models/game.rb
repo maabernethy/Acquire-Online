@@ -145,16 +145,56 @@ class Game < ActiveRecord::Base
       if (placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none')
         #new chain with chain size 3
         byebug
+        if selected_hotel == 'none'
+          # need input from user for new chain
+          raise 'Ambiguous color'
+        else
+          byebug
+          # new chain
+          color = HOTEL_COLORS[selected_hotel]
+          orphan_tiles_info = [[placed_sur_tiles[0].tile.row, placed_sur_tiles[0].tile.column, 'grey'], [placed_sur_tiles[1].tile.row, placed_sur_tiles[1].tile.column, 'grey']]
+          other_tiles = convert_tiles_to_numbers(orphan_tiles_info)
+          #save game hotel chain size
+          chosen_game_hotel = self.game_hotels.where(name: selected_hotel).first
+          chosen_game_hotel.chain_size = 3
+          chosen_game_hotel.save
+          #save other tiles hotels
+          placed_sur_tiles[0].hotel = selected_hotel
+          placed_sur_tiles[1].hotel = selected_hotel
+          placed_sur_tiles[0].save
+          placed_sur_tiles[1].save
+          #save placed tile hotel
+          tile.hotel = selected_hotel
+          tile.save
+        end
       elsif (placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none')
         #merger of 2 chains
         byebug
         response = merger(placed_sur_tiles)
         other_tiles = convert_tiles_to_numbers(response[1])
-        byebug
         color = response[0]
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none'))
         #extend chain with 2
         byebug
+        if placed_sur_tiles[0].hotel != 'none'
+          hotel = placed_sur_tiles[0].hotel
+          color = HOTEL_COLORS[hotel]
+          hotel_chain = self.game_hotels.where(name: hotel).first
+          hotel_chain.chain_size += 2
+          hotel_chain.save
+          placed_sur_tiles[1].hotel = hotel
+          placed_sur_tiles[1].save
+          other_tiles = convert_tile_to_number({'row' => placed_sur_tiles[1].tile.row, 'column' => placed_sur_tiles[1].tile.column, 'current_color' => 'grey'})
+        elsif placed_sur_tiles[1].hotel != 'none'
+          hotel = placed_sur_tiles[1].hotel
+          color = HOTEL_COLORS[hotel]
+          hotel_chain = self.game_hotels.where(name: hotel).first
+          hotel_chain.chain_size += 2
+          hotel_chain.save
+          placed_sur_tiles[0].hotel = hotel
+          placed_sur_tiles[0].save
+          other_tiles = convert_tile_to_number({'row' => placed_sur_tiles[0].tile.row, 'column' => placed_sur_tiles[0].tile.column, 'current_color' => 'grey'})
+        end
       end
     elsif placed_sur_tiles.length == 3
       # same options as with 2
@@ -179,7 +219,6 @@ class Game < ActiveRecord::Base
 
   # convert to number so that can change color with javascript
   def convert_tile_to_number(cell)
-    byebug
     row = cell['row']
     column = cell['column']
     convert = {}
@@ -192,7 +231,6 @@ class Game < ActiveRecord::Base
     cell_number = ((convert[row] - 1)* 12) + (column - 1)
     response = cell_number
 
-    byebug
     if !cell['current_color'].nil?
       response = [cell_number, cell['current_color']]
     end
@@ -201,7 +239,6 @@ class Game < ActiveRecord::Base
   end
 
   def convert_tiles_to_numbers(cells)
-    byebug
     tiles_info = []
     cells.each do |cell|
       tiles_info << convert_tile_to_number({'row' => cell[0], 'column' => cell[1], 'current_color' => cell[2]})
@@ -272,7 +309,6 @@ class Game < ActiveRecord::Base
   end
 
   def merger(placed_sur_tiles)
-    byebug
     other_tiles = []
     hotel_name1 = placed_sur_tiles[0].hotel
     hotel_name2 = placed_sur_tiles[1].hotel
