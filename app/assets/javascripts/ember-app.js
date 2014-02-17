@@ -29,6 +29,7 @@ App.GameBoardComponent = Ember.Component.extend({
         }
       }).then(function(json) {
         if (json.answer.legal) {
+          debugger;
           if (json.answer.other_tiles.length > 1) {
             json.answer.other_tiles.forEach(function(tile_info){
             _this.get('parentView').get('childViews')[tile_info[0]].set(tile_info[1], false);
@@ -76,10 +77,19 @@ App.GameBoardSquareView = Ember.View.extend({
       if (json.answer.legal) {
         _this.set(json.answer.color, true);
         if (json.answer.other_tiles != null) {
-          json.answer.other_tiles.forEach(function(tile_info){
+          if (json.answer.other_tiles[1] != 'grey') {
+            debugger;
+            json.answer.other_tiles.forEach(function(tile_info){
+              _this.get('parentView').get('childViews')[tile_info[0]].set(tile_info[1], false);
+              _this.get('parentView').get('childViews')[tile_info[0]].set(json.answer.color, true);
+            });
+          }
+          else {
+            debugger;
+            tile_info = json.answer.other_tiles;
             _this.get('parentView').get('childViews')[tile_info[0]].set(tile_info[1], false);
             _this.get('parentView').get('childViews')[tile_info[0]].set(json.answer.color, true);
-          });
+          };
         };
         _this.set('controller.model.game', json.game);
         _this.set('controller.model.game_hotels', json.game_hotels);
@@ -88,7 +98,6 @@ App.GameBoardSquareView = Ember.View.extend({
         _this.set('controller.model.users', json.users);
         _this.set('controller.model.tiles', json.answer.new_tiles);
         _this.set('controller.model.available_hotels', json.available_hotels);
-
       }
     }, function(json) {
       debugger;
