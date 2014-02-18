@@ -170,7 +170,7 @@ class Game < ActiveRecord::Base
       elsif (placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none')
         #merger of 2 chains
         byebug
-        response = merger(placed_sur_tiles)
+        response = merger(placed_sur_tiles, false)
         other_tiles = convert_tiles_to_numbers(response[1])
         color = response[0]
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none'))
@@ -233,9 +233,15 @@ class Game < ActiveRecord::Base
       elsif (placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none')
         #merger of 3 chains
         byebug
+        response = big_merger(placed_sur_tiles)
+        other_tiles = convert_tiles_to_numbers(response[1])
+        color = response[0]
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel != 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none'))
         # merger with 2 chains and 1 orphan
         byebug
+        response = merger_and_orphan(placed_sur_tiles)
+        other_tiles = convert_tiles_to_numbers(response[1])
+        color = response[0]
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none')) || ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel == 'none'))
         # extension of chain with 2 orphans
         byebug
@@ -373,8 +379,125 @@ class Game < ActiveRecord::Base
     placed_sur_tiles
   end
 
-  def merger(placed_sur_tiles)
+  def merger_and_orphan(placed_sur_tiles)
+    if placed_sur_tiles[0].hotel == 'none'
+      response = merger([placed_sur_tiles[1], placed_sur_tiles[2]], true)
+      other_tiles = response[1]
+      other_tiles << [placed_sur_tiles[0].cell, 'grey']
+      color = response[0]
+      placed_sur_tiles[0].hotel = Hotel.where(color: color).first.name
+    elsif placed_sur_tiles[1].hotel == 'none'
+      response = merger([placed_sur_tiles[0], placed_sur_tiles[2]], true)
+      other_tiles = response[1]
+      other_tiles << [placed_sur_tiles[1].cell, 'grey']
+      color = response[0]
+      placed_sur_tiles[1].hotel = Hotel.where(color: color).first.name
+    elsif placed_sur_tiles[2].hotel == 'none'
+      response = merger([placed_sur_tiles[0], placed_sur_tiles[1]], true)
+      other_tiles = response[1]
+      other_tiles << [placed_sur_tiles[2].cell, 'grey']
+      color = response[0]
+      placed_sur_tiles[2].hotel = Hotel.where(color: color).first.name
+    end 
+
+    [color, other_tiles]  
+  end
+
+  def  big_merger(placed_sur_tiles)
     other_tiles = []
+    hotel_name1 = placed_sur_tiles[0].hotel
+    hotel_name2 = placed_sur_tiles[1].hotel
+    hotel_name3 = placed_sur_tiles[2].hotel
+    game_hotel1 = self.game_hotels.where(name: hotel_name1).first
+    game_hotel2 = self.game_hotels.where(name: hotel_name2).first
+    game_hotel3 = self.game_hotels.where(name: hotel_name3).first
+    if (game_hotel1.chain_size > game_hotel2.chain_size) && (game_hotel1.chain_size > game_hotel3.chain_size)
+      dominant_hotel = game_hotel1.hotel
+      color = dominant_hotel.color
+      c2 = game_hotel2.hotel.color
+      c3 = game_hotel3.hotel.color
+      game_tiles2 = self.game_tiles.where(hotel: hotel_name2)
+      game_tiles.each do |tile|
+        tile.hotel = dominant_hotel.name
+        tile.save
+        temp = [tile.tile.row, tile.tile.column, c2]
+        other_tiles << temp
+      end
+      game_tiles3 = self.game_tiles.where(hotel: hotel_name3)
+      game_tiles.each do |tile|
+        tile.hotel = dominant_hotel.name
+        tile.save
+        temp = [tile.tile.row, tile.tile.column, c3]
+        other_tiles << temp
+      end
+      game_hotel1.chain_size += game_tiles2.length + game_tiles3.length
+      game_hotel1.save
+      game_hotel2.chain_size = 0
+      game_hotel2.save
+      game_hotel3.chain_size = 0
+      game_hotel3.save
+    elsif (game_hotel2.chain_size > game_hotel1.chain_size) && (game_hotel2.chain_size > game_hotel3.chain_size)
+      dominant_hotel = game_hotel2.hotel
+      color = dominant_hotel.color
+      c1 = game_hotel1.hotel.color
+      c3 = game_hotel3.hotel.color
+      game_tiles2 = self.game_tiles.where(hotel: hotel_name1)
+      game_tiles.each do |tile|
+        tile.hotel = dominant_hotel.name
+        tile.save
+        temp = [tile.tile.row, tile.tile.column, c1]
+        other_tiles << temp
+      end
+      game_tiles3 = self.game_tiles.where(hotel: hotel_name3)
+      game_tiles.each do |tile|
+        tile.hotel = dominant_hotel.name
+        tile.save
+        temp = [tile.tile.row, tile.tile.column, c3]
+        other_tiles << temp
+      end
+      game_hotel2.chain_size += game_tiles1.length + game_tiles3.length
+      game_hotel2.save
+      game_hotel1.chain_size = 0
+      game_hotel1.save
+      game_hotel3.chain_size = 0
+      game_hotel3.save
+    elsif (game_hotel3.chain_size > game_hotel1.chain_size) && (game_hotel3.chain_size > game_hotel2.chain_size)
+      dominant_hotel = game_hotel3.hotel
+      color = dominant_hotel.color
+      c1 = game_hotel1.hotel.color
+      c2 = game_hotel2.hotel.color
+      game_tiles1 = self.game_tiles.where(hotel: hotel_name1)
+      game_tiles.each do |tile|
+        tile.hotel = dominant_hotel.name
+        tile.save
+        temp = [tile.tile.row, tile.tile.column, c1]
+        other_tiles << temp
+      end
+      game_tiles2 = self.game_tiles.where(hotel: hotel_name2)
+      game_tiles.each do |tile|
+        tile.hotel = dominant_hotel.name
+        tile.save
+        temp = [tile.tile.row, tile.tile.column, c2]
+        other_tiles << temp
+      end
+      game_hotel3.chain_size += game_tiles1.length + game_tiles2.length
+      game_hotel3.save
+      game_hotel1.chain_size = 0
+      game_hotel1.save
+      game_hotel2.chain_size = 0
+      game_hotel2.save
+    end 
+
+    [color, other_tiles]  
+  end
+
+  def merger(placed_sur_tiles, orphan)
+    other_tiles = []
+    if orphan?
+      num = 1
+    else
+      num = 0
+    end
     hotel_name1 = placed_sur_tiles[0].hotel
     hotel_name2 = placed_sur_tiles[1].hotel
     game_hotel1 = self.game_hotels.where(name: hotel_name1).first
@@ -390,7 +513,7 @@ class Game < ActiveRecord::Base
         temp = [tile.tile.row, tile.tile.column, c]
         other_tiles << temp
       end
-      game_hotel1.chain_size += game_tiles.length
+      game_hotel1.chain_size += game_tiles.length + num
       game_hotel1.save
       game_hotel2.chain_size = 0
       game_hotel2.save
@@ -405,7 +528,7 @@ class Game < ActiveRecord::Base
         temp = [tile.tile.row, tile.tile.column, c]
         other_tiles << temp
       end
-      game_hotel2.chain_size += game_tiles.length
+      game_hotel2.chain_size += game_tiles.length + num
       game_hotel2.save
       game_hotel1.chain_size = 0
       game_hotel1.save
