@@ -264,7 +264,7 @@ class Game < ActiveRecord::Base
           orphan_tiles_info = [[placed_sur_tiles[0].tile.row, placed_sur_tiles[0].tile.column, 'grey'], [placed_sur_tiles[2].tile.row, placed_sur_tiles[2].tile.column, 'grey']]
           other_tiles = convert_tiles_to_numbers(orphan_tiles_info)
         elsif placed_sur_tiles[2].hotel != 'none'
-          hotel = placed_sur_tiles[1].hotel
+          hotel = placed_sur_tiles[2].hotel
           color = HOTEL_COLORS[hotel]
           hotel_chain = self.game_hotels.where(name: hotel).first
           hotel_chain.chain_size += 3
@@ -380,21 +380,35 @@ class Game < ActiveRecord::Base
     game_hotel1 = self.game_hotels.where(name: hotel_name1).first
     game_hotel2 = self.game_hotels.where(name: hotel_name2).first
     if game_hotel1.chain_size > game_hotel2.chain_size
-      color = game_hotel1.hotel.color
+      dominant_hotel = game_hotel1.hotel
+      color = dominant_hotel.color
       c = game_hotel2.hotel.color
       game_tiles = self.game_tiles.where(hotel: hotel_name2)
       game_tiles.each do |tile|
+        tile.hotel = dominant_hotel.name
+        tile.save
         temp = [tile.tile.row, tile.tile.column, c]
         other_tiles << temp
       end
+      game_hotel1.chain_size += game_tiles.length
+      game_hotel1.save
+      game_hotel2.chain_size = 0
+      game_hotel2.save
     elsif game_hotel2.chain_size > game_hotel1.chain_size
-      color = game_hotel2.hotel.color
+      dominant_hotel = game_hotel2.hotel
+      color = dominant_hotel.color
       c = game_hotel1.hotel.color
       game_tiles = self.game_tiles.where(hotel: hotel_name1)
       game_tiles.each do |tile|
+        tile.hotel = dominant_hotel.name
+        tile.save
         temp = [tile.tile.row, tile.tile.column, c]
         other_tiles << temp
       end
+      game_hotel2.chain_size += game_tiles.length
+      game_hotel2.save
+      game_hotel1.chain_size = 0
+      game_hotel1.save
     end
     byebug
 
