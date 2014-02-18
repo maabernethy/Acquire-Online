@@ -185,6 +185,8 @@ class Game < ActiveRecord::Base
           placed_sur_tiles[1].hotel = hotel
           placed_sur_tiles[1].save
           other_tiles = convert_tile_to_number({'row' => placed_sur_tiles[1].tile.row, 'column' => placed_sur_tiles[1].tile.column, 'current_color' => 'grey'})
+          tile.hotel = hotel
+          tile.save
         elsif placed_sur_tiles[1].hotel != 'none'
           hotel = placed_sur_tiles[1].hotel
           color = HOTEL_COLORS[hotel]
@@ -193,6 +195,8 @@ class Game < ActiveRecord::Base
           hotel_chain.save
           placed_sur_tiles[0].hotel = hotel
           placed_sur_tiles[0].save
+          tile.hotel = hotel
+          tile.save
           other_tiles = convert_tile_to_number({'row' => placed_sur_tiles[0].tile.row, 'column' => placed_sur_tiles[0].tile.column, 'current_color' => 'grey'})
         end
       end
@@ -225,6 +229,7 @@ class Game < ActiveRecord::Base
           #save placed tile hotel
           tile.hotel = selected_hotel
           tile.save
+        end
       elsif (placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none')
         #merger of 3 chains
         byebug
