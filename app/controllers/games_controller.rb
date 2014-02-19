@@ -43,7 +43,7 @@ class GamesController < ApplicationController
     player = current_user.game_players.where(game_id: @game.id).first
     # if @game.is_current_players_turn?(current_user)
     if true
-      if @game.player_hand(current_user, @cell)
+      if @game.player_hand(current_user, @cell) 
         begin
           array = @game.choose_color(letter, num, @cell, selected_hotel)
         rescue

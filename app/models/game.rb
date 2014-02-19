@@ -235,12 +235,14 @@ class Game < ActiveRecord::Base
         byebug
         response = big_merger(placed_sur_tiles)
         other_tiles = convert_tiles_to_numbers(response[1])
+        byebug
         color = response[0]
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel != 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none'))
         # merger with 2 chains and 1 orphan
         byebug
         response = merger_and_orphan(placed_sur_tiles)
         other_tiles = convert_tiles_to_numbers(response[1])
+        byebug
         color = response[0]
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none')) || ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel == 'none'))
         # extension of chain with 2 orphans
@@ -380,30 +382,32 @@ class Game < ActiveRecord::Base
   end
 
   def merger_and_orphan(placed_sur_tiles)
+    byebug
     if placed_sur_tiles[0].hotel == 'none'
       response = merger([placed_sur_tiles[1], placed_sur_tiles[2]], true)
       other_tiles = response[1]
-      other_tiles << [placed_sur_tiles[0].cell, 'grey']
+      other_tiles << [placed_sur_tiles[0].tile.row, placed_sur_tiles[0].tile.column, 'grey']
       color = response[0]
       placed_sur_tiles[0].hotel = Hotel.where(color: color).first.name
     elsif placed_sur_tiles[1].hotel == 'none'
       response = merger([placed_sur_tiles[0], placed_sur_tiles[2]], true)
       other_tiles = response[1]
-      other_tiles << [placed_sur_tiles[1].cell, 'grey']
+      other_tiles << [placed_sur_tiles[1].tile.row, placed_sur_tiles[1].tile.column, 'grey']
       color = response[0]
       placed_sur_tiles[1].hotel = Hotel.where(color: color).first.name
     elsif placed_sur_tiles[2].hotel == 'none'
       response = merger([placed_sur_tiles[0], placed_sur_tiles[1]], true)
       other_tiles = response[1]
-      other_tiles << [placed_sur_tiles[2].cell, 'grey']
+      other_tiles << [placed_sur_tiles[2].tile.row, placed_sur_tiles[2].tile.column, 'grey']
       color = response[0]
       placed_sur_tiles[2].hotel = Hotel.where(color: color).first.name
     end 
-
+    byebug
     [color, other_tiles]  
   end
 
   def  big_merger(placed_sur_tiles)
+    byebug
     other_tiles = []
     hotel_name1 = placed_sur_tiles[0].hotel
     hotel_name2 = placed_sur_tiles[1].hotel
@@ -417,14 +421,14 @@ class Game < ActiveRecord::Base
       c2 = game_hotel2.hotel.color
       c3 = game_hotel3.hotel.color
       game_tiles2 = self.game_tiles.where(hotel: hotel_name2)
-      game_tiles.each do |tile|
+      game_tiles2.each do |tile|
         tile.hotel = dominant_hotel.name
         tile.save
         temp = [tile.tile.row, tile.tile.column, c2]
         other_tiles << temp
       end
       game_tiles3 = self.game_tiles.where(hotel: hotel_name3)
-      game_tiles.each do |tile|
+      game_tiles3.each do |tile|
         tile.hotel = dominant_hotel.name
         tile.save
         temp = [tile.tile.row, tile.tile.column, c3]
@@ -441,15 +445,15 @@ class Game < ActiveRecord::Base
       color = dominant_hotel.color
       c1 = game_hotel1.hotel.color
       c3 = game_hotel3.hotel.color
-      game_tiles2 = self.game_tiles.where(hotel: hotel_name1)
-      game_tiles.each do |tile|
+      game_tiles1 = self.game_tiles.where(hotel: hotel_name1)
+      game_tiles1.each do |tile|
         tile.hotel = dominant_hotel.name
         tile.save
         temp = [tile.tile.row, tile.tile.column, c1]
         other_tiles << temp
       end
       game_tiles3 = self.game_tiles.where(hotel: hotel_name3)
-      game_tiles.each do |tile|
+      game_tiles3.each do |tile|
         tile.hotel = dominant_hotel.name
         tile.save
         temp = [tile.tile.row, tile.tile.column, c3]
@@ -467,14 +471,14 @@ class Game < ActiveRecord::Base
       c1 = game_hotel1.hotel.color
       c2 = game_hotel2.hotel.color
       game_tiles1 = self.game_tiles.where(hotel: hotel_name1)
-      game_tiles.each do |tile|
+      game_tiles1.each do |tile|
         tile.hotel = dominant_hotel.name
         tile.save
         temp = [tile.tile.row, tile.tile.column, c1]
         other_tiles << temp
       end
       game_tiles2 = self.game_tiles.where(hotel: hotel_name2)
-      game_tiles.each do |tile|
+      game_tiles2.each do |tile|
         tile.hotel = dominant_hotel.name
         tile.save
         temp = [tile.tile.row, tile.tile.column, c2]
@@ -487,13 +491,13 @@ class Game < ActiveRecord::Base
       game_hotel2.chain_size = 0
       game_hotel2.save
     end 
-
+    byebug
     [color, other_tiles]  
   end
 
   def merger(placed_sur_tiles, orphan)
     other_tiles = []
-    if orphan?
+    if orphan
       num = 1
     else
       num = 0
