@@ -62,6 +62,13 @@ App.GameBoardSquareView = Ember.View.extend({
   mouseLeave: function() {
     this.set('isHover', false)
   },
+  actions: {
+    setColor: function(color) {
+      if (color != 'none') {
+        this.set(color, true);
+      }
+    }
+  },
   click: function() {
     window.view = this;
     var _this = this;
@@ -98,6 +105,7 @@ App.GameBoardSquareView = Ember.View.extend({
         _this.set('controller.model.users', json.users);
         _this.set('controller.model.tiles', json.answer.new_tiles);
         _this.set('controller.model.available_hotels', json.available_hotels);
+        _this.set('controller.model.available_hotels', json.board_colors);
       }
     }, function(json) {
       debugger;

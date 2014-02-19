@@ -86,7 +86,27 @@ class GamesController < ApplicationController
     stocks = player.stock_cards_by_name_payload
     game_hotels = game.game_hotels
     available_hotels = game_hotels.where(chain_size: 0)
-    @payload = { game: game, users: game.users, tiles: tiles, player: player, stocks: stocks, game_hotels: game_hotels, available_hotels: available_hotels }
+    board_colors = get_board_colors(game)
+    @payload = { game: game, users: game.users, tiles: tiles, player: player, stocks: stocks, game_hotels: game_hotels, available_hotels: available_hotels, board_colors: board_colors }
+  end
+
+  def get_board_colors(game)
+    board_colors = Hash.new{|hash, key| hash[key] = Array.new}
+    ['A','B','C','D','E','F', 'G','H','I'].each do |letter|
+        board_colors[letter] = Array.new(12)
+        [0,1,2,3,4,5,6,7,8,9,10,11].each do |num|
+          board_colors[letter][num] = 'none'
+        end
+    end
+     
+    placed_tiles = game.game_tiles.where(placed: true)
+    placed_tiles.each do |game_tile|
+      hotel = game_tile.hotel
+      color = game.HOTEL_COLORS[hotel]
+      board_colors[game_tile.tile.row][game_tile.tile.column] = color
+    end
+
+    board_colors
   end
 
   def game_params

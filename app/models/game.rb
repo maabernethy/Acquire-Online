@@ -362,10 +362,6 @@ class Game < ActiveRecord::Base
       surrounding_tiles << GAME_BOARD[column-2][index]
     end
 
-    # surrounding_tiles << GAME_BOARD[column-1][index-1] if !GAME_BOARD[column-1].nil? && !GAME_BOARD[column-1][index-1].nil?
-    # surrounding_tiles << GAME_BOARD[column-1][index+1] if !GAME_BOARD[column-1].nil? && !GAME_BOARD[column-1][index+1].nil?
-    # surrounding_tiles << GAME_BOARD[column-2][index] if !GAME_BOARD[column-2].nil? && !GAME_BOARD[column-1][index].nil?
-    # surrounding_tiles << GAME_BOARD[column][index] if !GAME_BOARD[column].nil? && !GAME_BOARD[column][index].nil?
     surrounding_tiles
   end
 
