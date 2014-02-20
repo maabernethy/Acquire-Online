@@ -92,25 +92,29 @@ class GamesController < ApplicationController
   end
 
   def get_board_colors(game)
-    board_colors = Hash.new{|hash, key| hash[key] = Array.new}
-    ['A','B','C','D','E','F', 'G','H','I'].each do |letter|
-        board_colors[letter] = Array.new(12)
-        [0,1,2,3,4,5,6,7,8,9,10,11].each do |num|
-          board_colors[letter][num] = 'none'
-        end
-    end
+    # board_colors = Hash.new{|hash, key| hash[key] = Array.new}
+    # ['A','B','C','D','E','F', 'G','H','I'].each do |letter|
+    #     board_colors[letter] = Array.new(12)
+    #     [0,1,2,3,4,5,6,7,8,9,10,11].each do |num|
+    #       board_colors[letter][num] = 'none'
+    #     end
+    # end
+    board_colors = {}
+    [1,2,3,4,5,6,7,8,9,10,11,12].each do |num|
+      ['A','B','C','D','E','F', 'G','H','I'].each do |letter|
+        cell = (num.to_s + letter)
+        board_colors[cell] = 'none'
+      end
+    end 
      
     placed_tiles = game.game_tiles.where(placed: true)
     placed_tiles.each do |game_tile|
       hotel = game_tile.hotel
       color = game.get_hotel_color(hotel)
-      board_colors[game_tile.tile.row][game_tile.tile.column] = color
+      board_colors[game_tile.cell] = color
     end
 
-    board_colors['A'][1] = 'blue'
     board_colors
-    colors = { '1A' => 'blue', '3B' => 'pink'}
-    colors
   end
 
   def game_params
