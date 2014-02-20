@@ -5,7 +5,6 @@ window.payload = <%= @payload.to_json.html_safe %>;
 </script>
 
 <script type="text/x-handlebars">
-{{board_colors.A.[1]}}
 <h2>{{game.name}}</h2>
 
 <ul>
@@ -32,7 +31,7 @@ window.payload = <%= @payload.to_json.html_safe %>;
 <h3>Cash:</h3>
 {{player.cash_to_english}}
 
-{{game-board model=model available_hotels=available_hotels}}
+{{game-board model=model available_hotels=available_hotels board_colors=board_colors}}
 
 <div>
   <table border="1">
@@ -60,9 +59,11 @@ window.payload = <%= @payload.to_json.html_safe %>;
     {{#each column in columns}}
       <tr>
       {{#each row in rows}}
-        {{#view App.GameBoardSquareView row=row column=column}}
+        <td>
+        {{#view App.GameBoardSquareView row=row column=column board_colors=board_colors}}
           {{row}}{{column}}
         {{/view}}
+        </td>
       {{/each}}
       </tr>
     {{/each}}

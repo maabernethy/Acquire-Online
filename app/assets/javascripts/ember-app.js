@@ -54,21 +54,24 @@ App.GameBoardComponent = Ember.Component.extend({
 });
 
 App.GameBoardSquareView = Ember.View.extend({
-  tagName: 'td',
   classNameBindings: ['isHover', 'color', 'grey', 'blue', 'yellow', 'red', 'green', 'orange', 'purple', 'pink'],
   mouseEnter: function() {
     this.set('isHover', true);
   },
   mouseLeave: function() {
-    this.set('isHover', false)
+    this.set('isHover', false);
   },
-  actions: {
-    setColor: function(color) {
-      if (color != 'none') {
-        this.set(color, true);
-      }
+  init: function() {
+    this._super();
+    board_colors = this.get('board_colors');
+    r = this.get('row');
+    c = this.get('column');
+    cell = r.toString() + c;
+    color = board_colors[cell];
+    if (typeof color != "undefined") {
+      this.set(color, true);
     }
-  },
+  }, 
   click: function() {
     window.view = this;
     var _this = this;
@@ -82,6 +85,7 @@ App.GameBoardSquareView = Ember.View.extend({
       }
     }).then(function(json) {
       if (json.answer.legal) {
+        debugger;
         _this.set(json.answer.color, true);
         if (json.answer.other_tiles != null) {
           if (json.answer.other_tiles[1] != 'grey') {

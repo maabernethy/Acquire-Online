@@ -27,8 +27,13 @@ class Game < ActiveRecord::Base
     "Imperial" => "green",
     "Sackson" => "orange",
     "Tower" => "pink",
-    "Worldwide" => "purple"
+    "Worldwide" => "purple",
+    "none" => "grey"
   }   
+
+  def get_hotel_color(hotel)
+    HOTEL_COLORS[hotel]
+  end
   
   def start_game
     self.deal_tiles

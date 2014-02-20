@@ -87,6 +87,7 @@ class GamesController < ApplicationController
     game_hotels = game.game_hotels
     available_hotels = game_hotels.where(chain_size: 0)
     board_colors = get_board_colors(game)
+
     @payload = { game: game, users: game.users, tiles: tiles, player: player, stocks: stocks, game_hotels: game_hotels, available_hotels: available_hotels, board_colors: board_colors }
   end
 
@@ -102,11 +103,14 @@ class GamesController < ApplicationController
     placed_tiles = game.game_tiles.where(placed: true)
     placed_tiles.each do |game_tile|
       hotel = game_tile.hotel
-      color = game.HOTEL_COLORS[hotel]
+      color = game.get_hotel_color(hotel)
       board_colors[game_tile.tile.row][game_tile.tile.column] = color
     end
 
+    board_colors['A'][1] = 'blue'
     board_colors
+    colors = { '1A' => 'blue', '3B' => 'pink'}
+    colors
   end
 
   def game_params
