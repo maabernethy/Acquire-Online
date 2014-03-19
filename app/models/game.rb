@@ -125,6 +125,7 @@ class Game < ActiveRecord::Base
           chosen_game_hotel = self.game_hotels.where(name: selected_hotel).first
           chosen_game_hotel.chain_size = 2
           chosen_game_hotel.save
+          chosen_game_hotel.update_share_price
           #save other tile hotel
           placed_sur_tiles[0].hotel = selected_hotel
           placed_sur_tiles[0].save
@@ -141,6 +142,7 @@ class Game < ActiveRecord::Base
         hotel_chain = self.game_hotels.where(name: hotel).first
         hotel_chain.chain_size += 1
         hotel_chain.save
+        hotel_chain.update_share_price
         #save placed tile hotel
         tile.hotel = hotel
         tile.save
@@ -163,6 +165,7 @@ class Game < ActiveRecord::Base
           chosen_game_hotel = self.game_hotels.where(name: selected_hotel).first
           chosen_game_hotel.chain_size = 3
           chosen_game_hotel.save
+          chosen_game_hotel.update_share_price
           #save other tiles hotels
           placed_sur_tiles[0].hotel = selected_hotel
           placed_sur_tiles[1].hotel = selected_hotel
@@ -187,6 +190,7 @@ class Game < ActiveRecord::Base
           hotel_chain = self.game_hotels.where(name: hotel).first
           hotel_chain.chain_size += 2
           hotel_chain.save
+          hotel_chain.update_share_price
           placed_sur_tiles[1].hotel = hotel
           placed_sur_tiles[1].save
           other_tiles = convert_tile_to_number({'row' => placed_sur_tiles[1].tile.row, 'column' => placed_sur_tiles[1].tile.column, 'current_color' => 'grey'})
@@ -198,6 +202,7 @@ class Game < ActiveRecord::Base
           hotel_chain = self.game_hotels.where(name: hotel).first
           hotel_chain.chain_size += 2
           hotel_chain.save
+          hotel_chain.update_share_price
           placed_sur_tiles[0].hotel = hotel
           placed_sur_tiles[0].save
           tile.hotel = hotel
@@ -224,6 +229,7 @@ class Game < ActiveRecord::Base
           chosen_game_hotel = self.game_hotels.where(name: selected_hotel).first
           chosen_game_hotel.chain_size = 4
           chosen_game_hotel.save
+          chosen_game_hotel.update_share_price
           #save other tiles hotels
           placed_sur_tiles[0].hotel = selected_hotel
           placed_sur_tiles[1].hotel = selected_hotel
@@ -258,6 +264,7 @@ class Game < ActiveRecord::Base
           hotel_chain = self.game_hotels.where(name: hotel).first
           hotel_chain.chain_size += 3
           hotel_chain.save
+          hotel_chain.update_share_price
           placed_sur_tiles[1].hotel = hotel
           placed_sur_tiles[1].save
           placed_sur_tiles[2].hotel = hotel
@@ -270,6 +277,7 @@ class Game < ActiveRecord::Base
           hotel_chain = self.game_hotels.where(name: hotel).first
           hotel_chain.chain_size += 3
           hotel_chain.save
+          hotel_chain.update_share_price
           placed_sur_tiles[0].hotel = hotel
           placed_sur_tiles[0].save
           placed_sur_tiles[2].hotel = hotel
@@ -282,6 +290,7 @@ class Game < ActiveRecord::Base
           hotel_chain = self.game_hotels.where(name: hotel).first
           hotel_chain.chain_size += 3
           hotel_chain.save
+          hotel_chain.update_share_price
           placed_sur_tiles[0].hotel = hotel
           placed_sur_tiles[0].save
           placed_sur_tiles[1].hotel = hotel
@@ -437,10 +446,13 @@ class Game < ActiveRecord::Base
       end
       game_hotel1.chain_size += game_tiles2.length + game_tiles3.length
       game_hotel1.save
+      game_hotel1.update_share_price
       game_hotel2.chain_size = 0
       game_hotel2.save
+      game_hotel2.update_share_price
       game_hotel3.chain_size = 0
       game_hotel3.save
+      game_hotel3.update_share_price
     elsif (game_hotel2.chain_size > game_hotel1.chain_size) && (game_hotel2.chain_size > game_hotel3.chain_size)
       dominant_hotel = game_hotel2.hotel
       color = dominant_hotel.color
@@ -462,10 +474,13 @@ class Game < ActiveRecord::Base
       end
       game_hotel2.chain_size += game_tiles1.length + game_tiles3.length
       game_hotel2.save
+      game_hotel2.update_share_price
       game_hotel1.chain_size = 0
       game_hotel1.save
+      game_hotel1.update_share_price
       game_hotel3.chain_size = 0
       game_hotel3.save
+      game_hotel3.update_share_price
     elsif (game_hotel3.chain_size > game_hotel1.chain_size) && (game_hotel3.chain_size > game_hotel2.chain_size)
       dominant_hotel = game_hotel3.hotel
       color = dominant_hotel.color
@@ -487,10 +502,13 @@ class Game < ActiveRecord::Base
       end
       game_hotel3.chain_size += game_tiles1.length + game_tiles2.length
       game_hotel3.save
+      game_hotel3.update_share_price
       game_hotel1.chain_size = 0
       game_hotel1.save
+      game_hotel1.update_share_price
       game_hotel2.chain_size = 0
       game_hotel2.save
+      game_hotel2.update_share_price
     end 
     byebug
     [color, other_tiles]  
@@ -520,8 +538,10 @@ class Game < ActiveRecord::Base
       end
       game_hotel1.chain_size += game_tiles.length + num
       game_hotel1.save
+      game_hotel1.update_share_price
       game_hotel2.chain_size = 0
       game_hotel2.save
+      game_hotel2.update_share_price
     elsif game_hotel2.chain_size > game_hotel1.chain_size
       dominant_hotel = game_hotel2.hotel
       color = dominant_hotel.color
@@ -535,8 +555,10 @@ class Game < ActiveRecord::Base
       end
       game_hotel2.chain_size += game_tiles.length + num
       game_hotel2.save
+      game_hotel2.update_share_price
       game_hotel1.chain_size = 0
       game_hotel1.save
+      game_hotel1.update_share_price
     end
     byebug
 
