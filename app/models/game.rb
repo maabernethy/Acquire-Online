@@ -38,12 +38,23 @@ class Game < ActiveRecord::Base
   def start_game
     self.deal_tiles
     self.make_stock_card_deck
-    up_first = self.users.first.username
-    self.up_next = up_first
+    self.assign_order
     self.bank = 100000 - (self.game_players.length*6000)
     self.deal_cash
     self.initialize_hotels
     self.save
+  end
+
+  def assign_order
+    num = 1
+    self.game_players.each do |player|
+      player.turn_order = num
+      if num == 1
+        self.up_next = player.user.username
+      end
+      num = num + 1
+      player.save
+    end
   end
 
   def deal_cash
@@ -101,6 +112,24 @@ class Game < ActiveRecord::Base
     end
   end
 
+  def end_turn
+    current_username = self.up_next
+    current_num = 0
+    self.game_players.each do |player|
+      if player.user.username == current_username
+        current_num = player.turn_order
+      end
+    end
+    if current_num == self.game_players.length
+      next_num = 1
+    else
+      next_num = current_num + 1
+    end
+    next_player = self.game_players.where(turn_order: next_num).first
+    self.up_next = next_player.user.username
+    self.save
+  end
+
   def choose_color(row, column, cell, selected_hotel)
     tile = self.game_tiles.where(cell: cell).first
     placed_tiles = []
@@ -111,6 +140,7 @@ class Game < ActiveRecord::Base
     placed_sur_tiles = get_placed_surrounding_tiles(sur_tiles, placed_tiles)
     if placed_sur_tiles.length == 0
       color = "grey"
+      self.end_turn
     elsif placed_sur_tiles.length == 1
       if placed_sur_tiles[0].hotel == 'none'
         if selected_hotel == 'none'

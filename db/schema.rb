@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140117192014) do
+ActiveRecord::Schema.define(version: 20140319152104) do
 
   create_table "game_hotels", force: true do |t|
     t.integer  "share_price"
@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(version: 20140117192014) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "cash",       default: 0
+    t.integer  "turn_order"
   end
 
   add_index "game_players", ["game_id"], name: "index_game_players_on_game_id"
