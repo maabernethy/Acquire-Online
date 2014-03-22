@@ -2,6 +2,13 @@
 
 <script type="text/javascript">
 window.payload = <%= @payload.to_json.html_safe %>;
+console.log('reload');
+setTimeout(function () {
+  current_user = <%= current_user.username.to_json.html_safe %>
+  if(current_user != payload.game.up_next) {
+    location.reload();
+  }
+}, 5000);
 </script>
 
 <script type="text/x-handlebars">

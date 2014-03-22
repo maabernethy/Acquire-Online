@@ -3,7 +3,7 @@ window.App = Ember.Application.create();
 App.ApplicationRoute = Ember.Route.extend({
   model: function() {
     return window.payload;
-  }
+  },
 });
 
 App.GameBoardComponent = Ember.Component.extend({
@@ -12,6 +12,10 @@ App.GameBoardComponent = Ember.Component.extend({
   columns: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
   selectedHotel: {
     name: null
+  },
+  save: function() {
+    debugger;
+    console.log('hello')
   },
   actions: {
     resolveIssue: function() {

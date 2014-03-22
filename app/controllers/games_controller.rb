@@ -77,6 +77,11 @@ class GamesController < ApplicationController
     render :json => @payload
   end
 
+  def get_game_state
+    game_state
+    render :json => @payload
+  end
+
   private
 
   def game_state
