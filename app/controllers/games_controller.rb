@@ -77,9 +77,14 @@ class GamesController < ApplicationController
     render :json => @payload
   end
 
-  def get_game_state
-    game_state
-    render :json => @payload
+  def buy_stocks
+    byebug
+    hotel1 = params[:hotel1]
+    hotel2 = params[:hotel2]
+    hotel2 = params[:hotel3]
+    @game = Game.find(params[:id])
+    player = current_user.game_players.where(game_id: @game.id).first
+
   end
 
   private

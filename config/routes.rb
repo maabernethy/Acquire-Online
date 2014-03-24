@@ -7,7 +7,7 @@ Acquire::Application.routes.draw do
   resources :games do
     member do
       get :place_piece
-      get :get_game_state
+      get :buy_stocks
     end
   end
 

@@ -71,6 +71,18 @@ App.GameBoardComponent = Ember.Component.extend({
     closeStockOptions: function() {
       this.set('controller.open', false);
       this.set('controller.buybutton', false);
+      console.log(this.get('selectedHotelStock1').name);
+      console.log(this.get('selectedHotelStock2').name);
+      console.log(this.get('selectedHotelStock3').name);
+      var _this = window.view;
+      Ember.$.ajax({
+        url: '/games/'+window.payload.game.id+'/buy_stocks',
+        data: {
+          hotel1: this.get('selectedHotelStock1').name,
+          hotel2: this.get('selectedHotelStock2').name,
+          hotel3: this.get('selectedHotelStock3').name
+        }
+      });
     }
   }
 });
