@@ -38,7 +38,7 @@ console.log('reload');
 <h3>Cash:</h3>
 {{player.cash_to_english}}
 
-{{game-board model=model available_hotels=available_hotels board_colors=board_colors}}
+{{game-board model=model available_hotels=available_hotels board_colors=board_colors founded_hotels=founded_hotels}}
 
 <div>
   <table border="1">
@@ -95,7 +95,22 @@ console.log('reload');
 {{#if open}}
   <div class="overlay" >
     <div class="modal" >
-      <h1 class="flush--top">Hello!</h1>    
+      <h1 class="flush--top">What stock would you like to buy?</h1> 
+      {{view Ember.Select
+       content=founded_hotels
+       optionValuePath="content.name"
+       optionLabelPath="content.name"
+       value=selectedHotelStock1.name}} 
+       {{view Ember.Select
+       content=founded_hotels
+       optionValuePath="content.name"
+       optionLabelPath="content.name"
+       value=selectedHotelStock2.name}} 
+       {{view Ember.Select
+       content=founded_hotels
+       optionValuePath="content.name"
+       optionLabelPath="content.name"
+       value=selectedHotelStock3.name}}   
       <button {{action "closeStockOptions"}}>Done</button>
     </div>
   </div>

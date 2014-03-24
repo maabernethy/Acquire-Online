@@ -13,6 +13,15 @@ App.GameBoardComponent = Ember.Component.extend({
   selectedHotel: {
     name: null
   },
+  selectedHotelStock1: {
+    name: null
+  },
+  selectedHotelStock2: {
+    name: null
+  },
+  selectedHotelStock3: {
+    name: null
+  },
   save: function() {
     debugger;
     console.log('hello')
@@ -52,6 +61,7 @@ App.GameBoardComponent = Ember.Component.extend({
           _this.set('controller.model.tiles', json.answer.new_tiles);
           _this.set('controller.model.available_hotels', json.available_hotels);
           _this.set('controller.model.board_colors', json.board_colors);
+          _this.set('controller.model.founded_hotels', json.founded_hotels);
         }
       });
     },
@@ -121,12 +131,11 @@ App.GameBoardSquareView = Ember.View.extend({
         _this.set('controller.model.tiles', json.answer.new_tiles);
         _this.set('controller.model.available_hotels', json.available_hotels);
         _this.set('controller.model.board_colors', json.board_colors);
+        _this.set('controller.model.founded_hotels', json.founded_hotels);
         _this.set('controller.buybutton', true);
       }
     }, function(json) {
-      debugger;
       _this.set('controller.errored', true);
-      debugger;
     });
   },
 });
