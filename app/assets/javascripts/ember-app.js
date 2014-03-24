@@ -54,6 +54,13 @@ App.GameBoardComponent = Ember.Component.extend({
           _this.set('controller.model.board_colors', json.board_colors);
         }
       });
+    },
+    openStockOptions: function() {
+      this.set('controller.open', true);
+    },
+    closeStockOptions: function() {
+      this.set('controller.open', false);
+      this.set('controller.buybutton', false);
     }
   }
 });
@@ -114,6 +121,7 @@ App.GameBoardSquareView = Ember.View.extend({
         _this.set('controller.model.tiles', json.answer.new_tiles);
         _this.set('controller.model.available_hotels', json.available_hotels);
         _this.set('controller.model.board_colors', json.board_colors);
+        _this.set('controller.buybutton', true);
       }
     }, function(json) {
       debugger;

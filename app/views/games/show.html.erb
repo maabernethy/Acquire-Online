@@ -3,12 +3,12 @@
 <script type="text/javascript">
 window.payload = <%= @payload.to_json.html_safe %>;
 console.log('reload');
-setTimeout(function () {
-  current_user = <%= current_user.username.to_json.html_safe %>
-  if(current_user != payload.game.up_next) {
-    location.reload();
-  }
-}, 5000);
+// setTimeout(function () {
+//   current_user = <%= current_user.username.to_json.html_safe %>
+//   if(current_user != payload.game.up_next) {
+//     location.reload();
+//   }
+// }, 5000);
 </script>
 
 <script type="text/x-handlebars">
@@ -86,6 +86,17 @@ setTimeout(function () {
        optionLabelPath="content.name"
        value=selectedHotel.name}}
       <button {{action "resolveIssue"}}>Done</button>
+    </div>
+  </div>
+{{/if}}
+{{#if buybutton}}
+  <button {{action "openStockOptions"}}>Buy Stocks</button>
+{{/if}}
+{{#if open}}
+  <div class="overlay" >
+    <div class="modal" >
+      <h1 class="flush--top">Hello!</h1>    
+      <button {{action "closeStockOptions"}}>Done</button>
     </div>
   </div>
 {{/if}}
