@@ -131,8 +131,14 @@ App.GameBoardSquareView = Ember.View.extend({
         _this.set('controller.model.tiles', json.answer.new_tiles);
         _this.set('controller.model.available_hotels', json.available_hotels);
         _this.set('controller.model.board_colors', json.board_colors);
+        none = new Object();
+        none.name = 'none';
+        json.founded_hotels.push(none);
         _this.set('controller.model.founded_hotels', json.founded_hotels);
-        _this.set('controller.buybutton', true);
+        debugger;
+        if(json.founded_hotels.length != 0) {
+          _this.set('controller.buybutton', true);
+        }
       }
     }, function(json) {
       _this.set('controller.errored', true);
