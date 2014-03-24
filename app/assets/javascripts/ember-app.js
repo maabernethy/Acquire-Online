@@ -141,7 +141,13 @@ App.GameBoardSquareView = Ember.View.extend({
         }
       }
     }, function(json) {
-      _this.set('controller.errored', true);
+      debugger;
+      if (_this.get('controller.model.available_hotels').length != 0) {
+        _this.set('controller.errored', true);
+      }
+      else {
+        alert("All hotel chains are already founded! Place new piece.");
+      }
     });
   },
 });

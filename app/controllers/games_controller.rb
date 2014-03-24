@@ -98,13 +98,6 @@ class GamesController < ApplicationController
   end
 
   def get_board_colors(game)
-    # board_colors = Hash.new{|hash, key| hash[key] = Array.new}
-    # ['A','B','C','D','E','F', 'G','H','I'].each do |letter|
-    #     board_colors[letter] = Array.new(12)
-    #     [0,1,2,3,4,5,6,7,8,9,10,11].each do |num|
-    #       board_colors[letter][num] = 'none'
-    #     end
-    # end
     board_colors = {}
     [1,2,3,4,5,6,7,8,9,10,11,12].each do |num|
       ['A','B','C','D','E','F', 'G','H','I'].each do |letter|
