@@ -11,9 +11,11 @@ class GamePlayer < ActiveRecord::Base
   end
 
   def stock_cards_by_name_payload
+    stocks = []
     stock_cards.map(&:hotel).uniq.each do |hotel|
-      { name: name, amount: stock_cards.where(hotel: hotel).count }
+      stocks << { name: hotel, amount: stock_cards.where(hotel: hotel).count }
     end
+    stocks
   end
 
   def as_json(*)

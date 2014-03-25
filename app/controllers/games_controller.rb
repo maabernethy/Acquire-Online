@@ -78,13 +78,49 @@ class GamesController < ApplicationController
   end
 
   def buy_stocks
-    byebug
     hotel1 = params[:hotel1]
     hotel2 = params[:hotel2]
-    hotel2 = params[:hotel3]
+    hotel3 = params[:hotel3]
     @game = Game.find(params[:id])
     player = current_user.game_players.where(game_id: @game.id).first
-
+    byebug
+    if hotel1 != 'none'
+      game_hotel1 = @game.game_hotels.where(name: hotel1).first
+      price1 = game_hotel1.share_price
+      if player.cash >= price1
+        card1 = @game.stock_cards.where(hotel: hotel1).first
+        @game.stock_cards.delete(card1)
+        @game.save
+        player.stock_cards << card1
+        player.cash = player.cash - price1
+        player.save
+      end
+    end
+    if hotel2 != 'none'
+      game_hotel2 = @game.game_hotels.where(name: hotel2).first
+      price2 = game_hotel2.share_price
+      if player.cash >= price2
+        card2 = @game.stock_cards.where(hotel: hotel2).first
+        @game.stock_cards.delete(card2)
+        @game.save
+        player.stock_cards << card2
+        player.cash = player.cash - price2
+        player.save
+      end
+    end
+    if hotel3 != 'none'
+      game_hotel3 = @game.game_hotels.where(name: hotel3).first
+      price3 = game_hotel3.share_price
+      if player.cash >= price3
+        card3 = @game.stock_cards.where(hotel: hotel3).first
+        @game.stock_cards.delete(card3)
+        @game.save
+        player.stock_cards << card3
+        player.cash = player.cash - price3
+        player.save
+      end
+    end
+    byebug
   end
 
   private
