@@ -65,6 +65,10 @@ class GamesController < ApplicationController
 
         color = array[0]
         other_tiles = array[1]
+        founded_hotels = @game.game_hotels.where('chain_size > 0')
+        if founded_hotels.length == 0
+          @game.end_turn
+        end
         answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: player.tiles}
       else
         answer = {legal: false}
@@ -120,7 +124,9 @@ class GamesController < ApplicationController
         player.save
       end
     end
-    byebug
+    @game.end_turn
+    game_state
+    render :json => @payload
   end
 
   private

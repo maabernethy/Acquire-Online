@@ -82,6 +82,22 @@ App.GameBoardComponent = Ember.Component.extend({
           hotel2: this.get('selectedHotelStock2').name,
           hotel3: this.get('selectedHotelStock3').name
         }
+      }).then(function(json) {
+          _this.set('controller.model.game', json.game);
+          _this.set('controller.model.game_hotels', json.game_hotels);
+          _this.set('controller.model.player', json.player);
+          _this.set('controller.model.stocks', json.stocks);
+          _this.set('controller.model.users', json.users);
+          _this.set('controller.model.available_hotels', json.available_hotels);
+          _this.set('controller.model.board_colors', json.board_colors);
+          _this.set('controller.model.founded_hotels', json.founded_hotels);
+          none = new Object();
+          none.name = 'none';
+          json.founded_hotels.push(none);
+          _this.set('controller.model.founded_hotels', json.founded_hotels);
+          if(json.founded_hotels.length > 1) {
+            _this.set('controller.buybutton', true);
+          }
       });
     }
   }
@@ -147,13 +163,11 @@ App.GameBoardSquareView = Ember.View.extend({
         none.name = 'none';
         json.founded_hotels.push(none);
         _this.set('controller.model.founded_hotels', json.founded_hotels);
-        debugger;
-        if(json.founded_hotels.length != 0) {
+        if(json.founded_hotels.length > 1) {
           _this.set('controller.buybutton', true);
         }
       }
     }, function(json) {
-      debugger;
       if (_this.get('controller.model.available_hotels').length != 0) {
         _this.set('controller.errored', true);
       }

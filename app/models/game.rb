@@ -113,6 +113,7 @@ class Game < ActiveRecord::Base
   end
 
   def end_turn
+    byebug
     current_username = self.up_next
     current_num = 0
     self.game_players.each do |player|
@@ -140,7 +141,6 @@ class Game < ActiveRecord::Base
     placed_sur_tiles = get_placed_surrounding_tiles(sur_tiles, placed_tiles)
     if placed_sur_tiles.length == 0
       color = "grey"
-      self.end_turn
     elsif placed_sur_tiles.length == 1
       if placed_sur_tiles[0].hotel == 'none'
         if selected_hotel == 'none'
