@@ -138,10 +138,18 @@ class GamesController < ApplicationController
     stocks = player.stock_cards_by_name_payload
     game_hotels = game.game_hotels
     founded_hotels = game_hotels.where('chain_size > 0')
+    hotels_w_enough_stock_cards = []
+    if founded_hotels.length != 0
+      founded_hotels.each do |hotel|
+        if game.stock_cards.where(hotel: hotel.name).count > 0
+          hotels_w_enough_stock_cards << hotel
+        end
+      end
+    end
     available_hotels = game_hotels.where(chain_size: 0)
     board_colors = get_board_colors(game)
 
-    @payload = { game: game, users: game.users, tiles: tiles, player: player, stocks: stocks, game_hotels: game_hotels, available_hotels: available_hotels, board_colors: board_colors, founded_hotels: founded_hotels }
+    @payload = { game: game, users: game.users, tiles: tiles, player: player, stocks: stocks, game_hotels: game_hotels, available_hotels: available_hotels, board_colors: board_colors, founded_hotels: founded_hotels, hotels_w_enough_stock_cards: hotels_w_enough_stock_cards }
   end
 
   def get_board_colors(game)

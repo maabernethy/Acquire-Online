@@ -93,9 +93,9 @@ App.GameBoardComponent = Ember.Component.extend({
           _this.set('controller.model.founded_hotels', json.founded_hotels);
           none = new Object();
           none.name = 'none';
-          json.founded_hotels.push(none);
-          _this.set('controller.model.founded_hotels', json.founded_hotels);
-          if(json.founded_hotels.length > 1) {
+          json.hotels_w_enough_stock_cards.push(none);
+          _this.set('controller.model.hotels_w_enough_stock_cards', json.hotels_w_enough_stock_cards);
+          if(json.hotels_w_enough_stock_cards.length > 1) {
             _this.set('controller.buybutton', true);
           }
       });
@@ -159,11 +159,12 @@ App.GameBoardSquareView = Ember.View.extend({
         _this.set('controller.model.tiles', json.answer.new_tiles);
         _this.set('controller.model.available_hotels', json.available_hotels);
         _this.set('controller.model.board_colors', json.board_colors);
+        _this.set('controller.model.founded_hotels', json.founded_hotels);
         none = new Object();
         none.name = 'none';
-        json.founded_hotels.push(none);
-        _this.set('controller.model.founded_hotels', json.founded_hotels);
-        if(json.founded_hotels.length > 1) {
+        json.hotels_w_enough_stock_cards.push(none);
+        _this.set('controller.model.hotels_w_enough_stock_cards', json.hotels_w_enough_stock_cards);
+        if(json.hotels_w_enough_stock_cards.length > 1) {
           _this.set('controller.buybutton', true);
         }
       }
