@@ -31,16 +31,24 @@ class GamesController < ApplicationController
   end
 
   def place_piece
+    @game = Game.find(params[:id])
+    player = current_user.game_players.where(game_id: @game.id).first
     if !params[:hotel].nil?
       selected_hotel = params[:hotel]
+      hotel_stock_cards = @game.stock_cards.where(hotel: selected_hotel)
+      if hotel_stock_cards.count > 0
+        chosen_card = hotel_stock_cards.first
+        @game.stock_cards.delete(chosen_card)
+        @game.save
+        player.stock_cards << chosen_card
+        player.save
+      end
     else
       selected_hotel = 'none'
     end
     @cell = params[:cell]
     num, letter = params[:num].to_i, params[:letter]
-    @game = Game.find(params[:id])
     @game_tile = @game.game_tiles.where(cell: @cell)
-    player = current_user.game_players.where(game_id: @game.id).first
     # if @game.is_current_players_turn?(current_user)
     if true
       if @game.player_hand(current_user, @cell) 
