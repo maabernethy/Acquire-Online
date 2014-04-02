@@ -114,4 +114,20 @@ window.payload = <%= @payload.to_json.html_safe %>;
     </div>
   </div>
 {{/if}}
+{{#if merger_buy_sell_button}}
+  <button {{action "openMergerOptions"}}>Hold, Sell, Or Trade?</button>
+{{/if}}
+{{#if open_merger}}
+  <div class="overlay" >
+    <div class="modal" >
+      <h1 class="flush--top">Would you like to hold, sell, or trade shares?</h1> 
+      {{view Ember.Select
+       content=options
+       optionValuePath="content.name"
+       optionLabelPath="content.name"
+       value=selectedOption.name}} 
+      <button {{action "closeMergerOptions"}}>Done</button>
+    </div>
+  </div>
+{{/if}}
 </script>

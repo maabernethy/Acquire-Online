@@ -131,6 +131,43 @@ class Game < ActiveRecord::Base
     self.save
   end
 
+  def merger_stock(dominant_hotel, acquired_hotel)
+    byebug
+    # get primary and secondary share holder of losing merger
+    shareholders(acquired_hotel)
+  end
+
+  def find_shareholders(acquired_hotel)
+    byebug
+    # determine share holders
+    hotel_name = acquired_hotel.hotel
+    most_shares = 0
+    second_most_shares = 0
+    majority_player = 'none'
+    minority_player = 'none'
+    self.game_players.each do |player|
+      count = player.stock_cards.where(hotel: hotel_name).count
+      if count > most_shares
+        majority_player = player
+        most_shares = count
+      elsif count > second_most_shares
+        minority_player = player
+        second_most_shares = count
+      end
+    end
+
+    give_bonuses(acquired_hotel, majority_player, minority_player)
+  end
+
+  def give_bonuses(acquired_hotel, primary, secondary)
+    byebug
+    response = acquired_hotel.get_bonus_amounts
+    majority_bonus = response[0]
+    minority_bonus = response[1]
+    primary.cash << majority_bonus
+    secondary.cash << minority_bonus
+  end
+
   def choose_color(row, column, cell, selected_hotel)
     tile = self.game_tiles.where(cell: cell).first
     placed_tiles = []
@@ -139,6 +176,7 @@ class Game < ActiveRecord::Base
     end
     sur_tiles = get_surrounding_tiles(row, column, cell)
     placed_sur_tiles = get_placed_surrounding_tiles(sur_tiles, placed_tiles)
+    merger = false
     if placed_sur_tiles.length == 0
       color = "grey"
     elsif placed_sur_tiles.length == 1
@@ -211,6 +249,10 @@ class Game < ActiveRecord::Base
         response = merger(placed_sur_tiles, false)
         other_tiles = convert_tiles_to_numbers(response[1])
         color = response[0]
+        dominant_hotel = response[2]
+        acquired_hotel = response[3]
+        merger_stock(dominant_hotel,acquired_hotel)
+        merger = true
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none'))
         #extend chain with 2
         byebug
@@ -331,7 +373,7 @@ class Game < ActiveRecord::Base
       end 
     end
 
-    [color, other_tiles]
+    [color, other_tiles, merger]
   end
 
   # convert to number so that can change color with javascript
@@ -557,6 +599,7 @@ class Game < ActiveRecord::Base
     game_hotel2 = self.game_hotels.where(name: hotel_name2).first
     if game_hotel1.chain_size > game_hotel2.chain_size
       dominant_hotel = game_hotel1.hotel
+      acquired_hotel = game_hotel2
       color = dominant_hotel.color
       c = game_hotel2.hotel.color
       game_tiles = self.game_tiles.where(hotel: hotel_name2)
@@ -574,6 +617,7 @@ class Game < ActiveRecord::Base
       game_hotel2.update_share_price
     elsif game_hotel2.chain_size > game_hotel1.chain_size
       dominant_hotel = game_hotel2.hotel
+      acquired_hotel = game_hotel1
       color = dominant_hotel.color
       c = game_hotel1.hotel.color
       game_tiles = self.game_tiles.where(hotel: hotel_name1)
@@ -592,6 +636,6 @@ class Game < ActiveRecord::Base
     end
     byebug
 
-    [color, other_tiles]
+    [color, other_tiles, dominant_hotel, acquired_hotel]
   end
 end

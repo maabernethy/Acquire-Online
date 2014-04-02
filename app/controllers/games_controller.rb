@@ -73,11 +73,12 @@ class GamesController < ApplicationController
 
         color = array[0]
         other_tiles = array[1]
+        merger = array[2]
         founded_hotels = @game.game_hotels.where('chain_size > 0')
         if founded_hotels.length == 0
           @game.end_turn
         end
-        answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: player.tiles}
+        answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: player.tiles, merger: merger}
       else
         answer = {legal: false}
       end

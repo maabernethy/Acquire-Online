@@ -10,6 +10,7 @@ App.GameBoardComponent = Ember.Component.extend({
   needs: ['application'],
   rows: [1,2,3,4,5,6,7,8,9,10,11,12],
   columns: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
+  options: ['Hold', 'Sell', 'Trade'],
   selectedHotel: {
     name: null
   },
@@ -20,6 +21,9 @@ App.GameBoardComponent = Ember.Component.extend({
     name: null
   },
   selectedHotelStock3: {
+    name: null
+  },
+  selectedOption: {
     name: null
   },
   save: function() {
@@ -64,6 +68,12 @@ App.GameBoardComponent = Ember.Component.extend({
           _this.set('controller.model.founded_hotels', json.founded_hotels);
         }
       });
+    },
+    openMergerOptions: function() {
+      this.set('controller.open_merger', true);
+    },
+    closeMergerOptions: function() {
+
     },
     openStockOptions: function() {
       this.set('controller.open', true);
@@ -160,13 +170,18 @@ App.GameBoardSquareView = Ember.View.extend({
         _this.set('controller.model.available_hotels', json.available_hotels);
         _this.set('controller.model.board_colors', json.board_colors);
         _this.set('controller.model.founded_hotels', json.founded_hotels);
-        none = new Object();
-        none.name = 'none';
-        json.hotels_w_enough_stock_cards.push(none);
-        _this.set('controller.model.hotels_w_enough_stock_cards', json.hotels_w_enough_stock_cards);
-        if(json.hotels_w_enough_stock_cards.length > 1) {
-          _this.set('controller.buybutton', true);
+        if (json.answer.merger) {
+            _this.set('controller.merger_buy_sell_button', true);
         }
+        else {
+          none = new Object();
+          none.name = 'none';
+          json.hotels_w_enough_stock_cards.push(none);
+          _this.set('controller.model.hotels_w_enough_stock_cards', json.hotels_w_enough_stock_cards);
+          if(json.hotels_w_enough_stock_cards.length > 1) {
+            _this.set('controller.buybutton', true);
+          }
+        };
       }
     }, function(json) {
       if (_this.get('controller.model.available_hotels').length != 0) {
