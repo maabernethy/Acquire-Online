@@ -73,7 +73,7 @@ App.GameBoardComponent = Ember.Component.extend({
       this.set('controller.open_merger', true);
     },
     closeMergerOptions: function() {
-
+      this.set('controller.open_merger', false);
     },
     openStockOptions: function() {
       this.set('controller.open', true);
@@ -103,7 +103,6 @@ App.GameBoardComponent = Ember.Component.extend({
           _this.set('controller.model.board_colors', json.board_colors);
           _this.set('controller.model.founded_hotels', json.founded_hotels);
           _this.set('controller.buybutton', false);
-          debugger;
           none = new Object();
           none.name = 'none';
           json.hotels_w_enough_stock_cards.push(none);
@@ -174,15 +173,14 @@ App.GameBoardSquareView = Ember.View.extend({
         _this.set('controller.model.board_colors', json.board_colors);
         _this.set('controller.model.founded_hotels', json.founded_hotels);
         if (json.answer.merger) {
+            console.log('mereger!');
             _this.set('controller.merger_buy_sell_button', true);
         }
         else {
-          debugger;
           none = new Object();
           none.name = 'none';
           json.hotels_w_enough_stock_cards.push(none);
           _this.set('controller.model.hotels_w_enough_stock_cards', json.hotels_w_enough_stock_cards);
-          debugger;
           if(json.hotels_w_enough_stock_cards.length > 1) {
             _this.set('controller.buybutton', true);
           }

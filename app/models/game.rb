@@ -131,41 +131,49 @@ class Game < ActiveRecord::Base
     self.save
   end
 
-  def merger_stock(dominant_hotel, acquired_hotel)
+  def merger_stock(dominant_hotel, acquired_hotel, acquired_hotel_size)
     byebug
     # get primary and secondary share holder of losing merger
-    shareholders(acquired_hotel)
+    find_shareholders(acquired_hotel, acquired_hotel_size)
   end
 
-  def find_shareholders(acquired_hotel)
+  def find_shareholders(acquired_hotel, acquired_hotel_size)
     byebug
     # determine share holders
-    hotel_name = acquired_hotel.hotel
+    hotel_name = acquired_hotel.name
     most_shares = 0
     second_most_shares = 0
     majority_player = 'none'
     minority_player = 'none'
     self.game_players.each do |player|
+      byebug
       count = player.stock_cards.where(hotel: hotel_name).count
       if count > most_shares
+        byebug
         majority_player = player
         most_shares = count
       elsif count > second_most_shares
+        byebug
         minority_player = player
         second_most_shares = count
       end
     end
-
-    give_bonuses(acquired_hotel, majority_player, minority_player)
+    byebug
+    give_bonuses(acquired_hotel, majority_player, minority_player, acquired_hotel_size)
   end
 
-  def give_bonuses(acquired_hotel, primary, secondary)
+  def give_bonuses(acquired_hotel, primary, secondary, acquired_hotel_size)
     byebug
-    response = acquired_hotel.get_bonus_amounts
+    response = acquired_hotel.get_bonus_amounts(acquired_hotel_size)
     majority_bonus = response[0]
     minority_bonus = response[1]
-    primary.cash << majority_bonus
-    secondary.cash << minority_bonus
+    byebug
+    if primary != 'none'
+      primary.cash << majority_bonus
+    end
+    if secondary != 'none'
+      secondary.cash << minority_bonus
+    end
   end
 
   def choose_color(row, column, cell, selected_hotel)
@@ -246,12 +254,13 @@ class Game < ActiveRecord::Base
       elsif (placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none')
         #merger of 2 chains
         byebug
-        response = merger(placed_sur_tiles, false)
+        response = merger(placed_sur_tiles, false, tile)
         other_tiles = convert_tiles_to_numbers(response[1])
         color = response[0]
         dominant_hotel = response[2]
         acquired_hotel = response[3]
-        merger_stock(dominant_hotel,acquired_hotel)
+        acquired_hotel_size = response[4]
+        merger_stock(dominant_hotel,acquired_hotel, acquired_hotel_size)
         merger = true
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none'))
         #extend chain with 2
@@ -372,7 +381,7 @@ class Game < ActiveRecord::Base
         end
       end 
     end
-
+    byebug
     [color, other_tiles, merger]
   end
 
@@ -586,7 +595,7 @@ class Game < ActiveRecord::Base
     [color, other_tiles]  
   end
 
-  def merger(placed_sur_tiles, orphan)
+  def merger(placed_sur_tiles, orphan, placed_tile)
     other_tiles = []
     if orphan
       num = 1
@@ -609,6 +618,9 @@ class Game < ActiveRecord::Base
         temp = [tile.tile.row, tile.tile.column, c]
         other_tiles << temp
       end
+      placed_tile.hotel = dominant_hotel.name
+      placed_tile.save
+      acquired_hotel_size = game_hotel2.chain_size
       game_hotel1.chain_size += game_tiles.length + num
       game_hotel1.save
       game_hotel1.update_share_price
@@ -627,6 +639,9 @@ class Game < ActiveRecord::Base
         temp = [tile.tile.row, tile.tile.column, c]
         other_tiles << temp
       end
+      placed_tile.hotel = dominant_hotel.name
+      placed_tile.save
+      acquired_hotel_size = game_hotel1.chain_size
       game_hotel2.chain_size += game_tiles.length + num
       game_hotel2.save
       game_hotel2.update_share_price
@@ -636,6 +651,6 @@ class Game < ActiveRecord::Base
     end
     byebug
 
-    [color, other_tiles, dominant_hotel, acquired_hotel]
+    [color, other_tiles, dominant_hotel, acquired_hotel, acquired_hotel_size]
   end
 end

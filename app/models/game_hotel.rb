@@ -93,72 +93,75 @@ class GameHotel < ActiveRecord::Base
 		self.save
 	end
 
-	def get_bonus_amounts
+	def get_bonus_amounts(chain_size)
 		if self.name == 'Worldwide' || self.name == 'Sackson'
 			byebug
-			if self.chain_size >= 0 && self.chain_size <= 6
-				majority = WS[self.chain_size][1]
-				minority = WS[self.chain_size][2]
-			elsif self.chain_size < 11
+			if chain_size >= 0 && chain_size <= 6
+				majority = WS[chain_size][1]
+				minority = WS[chain_size][2]
+			elsif chain_size < 11
 				majority = WS[6][1]
 				minority = WS[6][2]
-			elsif self.chain_size < 21
+			elsif chain_size < 21
 				majority = WS[21][1]
 				minority = WS[21][2]
-			elsif self.chain_size < 31
+			elsif chain_size < 31
 				majority = WS[11][1]
 				minority = WS[11][2]
-			elsif self.chain_size < 41
+			elsif chain_size < 41
 				majority = WS[31][1]
 				minority = WS[31][2]
-			elsif self.chain_size >= 41
+			elsif chain_size >= 41
 				majority = WS[41][1]
 				minority = WS[41][2]
 			end
+			byebug
 		elsif self.name == 'Continental' || self.name == 'Tower'
 			byebug
-			if self.chain_size >= 0 && self.chain_size <= 6
-				majority = FIA[self.chain_size][1]
-				minority = FIA[self.chain_size][2]
-			elsif self.chain_size < 11
+			if chain_size >= 0 && chain_size <= 6
+				majority = FIA[chain_size][1]
+				minority = FIA[chain_size][2]
+			elsif chain_size < 11
 				majority = FIA[6][1]
 				minority = FIA[6][2]
-			elsif self.chain_size < 21
+			elsif chain_size < 21
 				majority = FIA[11][1]
 				minority = FIA[11][2]
-			elsif self.chain_size < 31
+			elsif chain_size < 31
 				majority = FIA[21][1]
 				minority = FIA[21][2]
-			elsif self.chain_size < 41
+			elsif chain_size < 41
 				majority = FIA[31][1]
 				minority = FIA[31][2]
-			elsif self.chain_size >= 41
+			elsif chain_size >= 41
 				majority = FIA[41][1]
 				minority = FIA[41][2]
 			end
+			byebug
 		elsif self.name == 'Festival' || self.name == 'Imperial' || self.name == 'American'
 			byebug
-			if self.chain_size >= 0 && self.chain_size <= 6
-				majority = CT[self.chain_size][1]
-				minority = CT[self.chain_size][2]
-			elsif self.chain_size < 11
+			if chain_size >= 0 && chain_size <= 6
+				majority = CT[chain_size][1]
+				minority = CT[chain_size][2]
+			elsif chain_size < 11
 				majority = CT[6][1]
 				minority = CT[6][2]
-			elsif self.chain_size < 21
+			elsif chain_size < 21
 				majority = CT[11][1]
 				minority = CT[11][2]
-			elsif self.chain_size < 31
+			elsif chain_size < 31
 				majority = CT[21][1]
 				minority = CT[21][2]
-			elsif self.chain_size < 41
+			elsif chain_size < 41
 				majority = CT[31][1]
 				minority = CT[31][2]
-			elsif self.chain_size >= 41
+			elsif chain_size >= 41
 				majority = CT[41][1]
 				minority = CT[41][2]
 			end
+			byebug
 		end
-
+		byebug
 		[majority, minority]
 	end
 end
