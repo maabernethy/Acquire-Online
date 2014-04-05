@@ -73,7 +73,14 @@ App.GameBoardComponent = Ember.Component.extend({
       this.set('controller.open_merger', true);
     },
     closeMergerOptions: function() {
+      console.log(selectedOption)
       this.set('controller.open_merger', false);
+      Ember.$.ajax({
+        url: '/games/'+window.payload.game.id+'/merger_turn',
+        data: {
+          option: this.get('selectedOption').name,
+        }
+      })
     },
     openStockOptions: function() {
       this.set('controller.open', true);

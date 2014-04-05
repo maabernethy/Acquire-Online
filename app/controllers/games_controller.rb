@@ -138,6 +138,26 @@ class GamesController < ApplicationController
     render :json => @payload
   end
 
+  def merger_turn
+    byebug
+    selected_option = params[:option]
+    game = Game.find(params[:id])
+    player = current_user.game_players.where(game_id: @game.id).first
+    hold_sell_trade(selected_option, player, game)
+    game.start_merger_turn(player)
+  end
+
+  def hold_sell_trade(selected_option, player, game)
+    byebug
+    if selected_option == 'Hold'
+      # do nothing
+    elsif selected_option == 'Sell'
+      # give player money according to share price 
+    elsif selected_option == 'Trade'
+      # don't know yet
+    end
+  end
+
   private
 
   def game_state

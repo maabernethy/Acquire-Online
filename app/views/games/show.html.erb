@@ -121,10 +121,9 @@ window.payload = <%= @payload.to_json.html_safe %>;
   <div class="overlay" >
     <div class="modal" >
       <h1 class="flush--top">Would you like to hold, sell, or trade shares?</h1> 
+      {{options}}
       {{view Ember.Select
        content=options
-       optionValuePath="content.name"
-       optionLabelPath="content.name"
        value=selectedOption.name}} 
       <button {{action "closeMergerOptions"}}>Done</button>
     </div>

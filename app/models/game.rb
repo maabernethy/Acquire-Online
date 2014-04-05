@@ -131,6 +131,10 @@ class Game < ActiveRecord::Base
     self.save
   end
 
+  def start_merger_turn
+    byebug
+  end
+
   def merger_stock(dominant_hotel, acquired_hotel, acquired_hotel_size)
     byebug
     # get primary and secondary share holder of losing merger
@@ -621,7 +625,7 @@ class Game < ActiveRecord::Base
       placed_tile.hotel = dominant_hotel.name
       placed_tile.save
       acquired_hotel_size = game_hotel2.chain_size
-      game_hotel1.chain_size += game_tiles.length + num
+      game_hotel1.chain_size += game_tiles.length + num + 1
       game_hotel1.save
       game_hotel1.update_share_price
       game_hotel2.chain_size = 0
@@ -642,7 +646,7 @@ class Game < ActiveRecord::Base
       placed_tile.hotel = dominant_hotel.name
       placed_tile.save
       acquired_hotel_size = game_hotel1.chain_size
-      game_hotel2.chain_size += game_tiles.length + num
+      game_hotel2.chain_size += game_tiles.length + num + 1
       game_hotel2.save
       game_hotel2.update_share_price
       game_hotel1.chain_size = 0

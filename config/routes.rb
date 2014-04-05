@@ -8,6 +8,7 @@ Acquire::Application.routes.draw do
     member do
       get :place_piece
       get :buy_stocks
+      get :merger_turn
     end
   end
 
