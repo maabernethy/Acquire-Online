@@ -21,4 +21,8 @@ class GamePlayer < ActiveRecord::Base
   def as_json(*)
     super(methods: :cash_to_english)
   end
+
+  def get_username
+    self.user.username
+  end
 end

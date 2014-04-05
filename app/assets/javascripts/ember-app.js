@@ -66,21 +66,43 @@ App.GameBoardComponent = Ember.Component.extend({
           _this.set('controller.model.available_hotels', json.available_hotels);
           _this.set('controller.model.board_colors', json.board_colors);
           _this.set('controller.model.founded_hotels', json.founded_hotels);
+          _this.set('controller.model.acquired_hotel', json.answer.acquired_hotel);
         }
       });
     },
     openMergerOptions: function() {
+      if this.get('controller.model.has_shares') == 'no'
       this.set('controller.open_merger', true);
     },
     closeMergerOptions: function() {
       console.log(selectedOption)
       this.set('controller.open_merger', false);
+      acquired_hotel = this.get('controller.model.acquired_hotel')
+      var _this = window.view;
       Ember.$.ajax({
         url: '/games/'+window.payload.game.id+'/merger_turn',
         data: {
           option: this.get('selectedOption').name,
+          acquired_hotel: acquired_hotel
         }
-      })
+      }).then(function(json) {
+        _this.set('controller.model.game', json.game);
+        _this.set('controller.model.game_hotels', json.game_hotels);
+        _this.set('controller.model.player', json.player);
+        _this.set('controller.model.stocks', json.stocks);
+        _this.set('controller.model.users', json.users);
+        _this.set('controller.model.available_hotels', json.available_hotels);
+        _this.set('controller.model.board_colors', json.board_colors);
+        _this.set('controller.model.founded_hotels', json.founded_hotels);
+        if(json.merger) {
+          if (!json.has_shares) {
+            _this.set('controller.model.has_shares', false);
+          }
+          if (json.has_shares) {
+            _this.set('controller.model.has_shares', true);
+          }
+        }
+      });
     },
     openStockOptions: function() {
       this.set('controller.open', true);
@@ -179,9 +201,10 @@ App.GameBoardSquareView = Ember.View.extend({
         _this.set('controller.model.available_hotels', json.available_hotels);
         _this.set('controller.model.board_colors', json.board_colors);
         _this.set('controller.model.founded_hotels', json.founded_hotels);
+        _this.set('controller.model.acquired_hotel', json.answer.acquired_hotel);
         if (json.answer.merger) {
-            console.log('mereger!');
-            _this.set('controller.merger_buy_sell_button', true);
+            console.log('merger!');
+            _this.set('controller.merger_hold_sell_button', true);
         }
         else {
           none = new Object();

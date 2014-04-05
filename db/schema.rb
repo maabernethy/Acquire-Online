@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140319152104) do
+ActiveRecord::Schema.define(version: 20140405021621) do
 
   create_table "game_hotels", force: true do |t|
     t.integer  "share_price"
@@ -75,6 +75,8 @@ ActiveRecord::Schema.define(version: 20140319152104) do
     t.datetime "updated_at"
     t.string   "up_next"
     t.integer  "bank"
+    t.integer  "merger"
+    t.string   "merger_up_next"
   end
 
   create_table "hotels", force: true do |t|

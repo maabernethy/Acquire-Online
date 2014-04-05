@@ -131,8 +131,26 @@ class Game < ActiveRecord::Base
     self.save
   end
 
-  def start_merger_turn
+  def start_merger_turn(current_player, acquired_hotel)
     byebug
+    players_w_shares = []
+    self.game_players.each do |player|
+      if player.stock_cards.where(hotel: acquired_hotel).count != 0
+        players_w_shares << player
+      end
+    end
+    players_w_shares.sort_by { |player| player.turn_order }
+    i = players_w_shares.find_index(current_player)
+    byebug
+    if i == players_w_shares.length && i != null
+      next_index = 0 
+    elsif i != players_w_shares.length && i != null
+      next_index = i + 1
+    end
+    self.merger_up_next = players_w_shares[next_index].user.username
+    self.save
+    # if merger up next equals up_next then have gone full circle and call end merger turn
+    #return true or false
   end
 
   def merger_stock(dominant_hotel, acquired_hotel, acquired_hotel_size)
@@ -386,7 +404,11 @@ class Game < ActiveRecord::Base
       end 
     end
     byebug
-    [color, other_tiles, merger]
+    if !merger
+      return [color, other_tiles, merger]
+    else
+      return [color, other_tiles, merger, acquired_hotel.name]
+    end
   end
 
   # convert to number so that can change color with javascript

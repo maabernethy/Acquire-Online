@@ -74,11 +74,16 @@ class GamesController < ApplicationController
         color = array[0]
         other_tiles = array[1]
         merger = array[2]
+        if merger
+          acquired_hotel = array[3]
+        else
+          acquired_hotel = 'none'
+        end
         founded_hotels = @game.game_hotels.where('chain_size > 0')
         if founded_hotels.length == 0 
           @game.end_turn
         end
-        answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: player.tiles, merger: merger}
+        answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: player.tiles, merger: merger, acquired_hotel: acquired_hotel}
       else
         answer = {legal: false}
       end
@@ -141,13 +146,34 @@ class GamesController < ApplicationController
   def merger_turn
     byebug
     selected_option = params[:option]
+    acquired_hotel = params[:acquired_hotel]
     game = Game.find(params[:id])
     player = current_user.game_players.where(game_id: @game.id).first
-    hold_sell_trade(selected_option, player, game)
-    game.start_merger_turn(player)
+    hold_sell_trade(selected_option, player, game, acquired_hotel)
+    response = game.start_merger_turn(player)
+    if response[0] == true
+      game.merger = 2
+      game.save
+    elsif response[0] == false
+      game.merger = 0
+      game.merger_up_next = 'none'
+      game.end_turn
+      game.save
+    end
+
+    game_state
+    if response[0] == true && response[1] = false
+      @payload[:has_shares] = false
+    elsif response[0] == true && response[1] = true
+       @payload[:has_shares] = true
+    elsif response[0] == false
+      @payload[:merger] = false
+    end
+
+    render :json => @payload
   end
 
-  def hold_sell_trade(selected_option, player, game)
+  def hold_sell_trade(selected_option, player, game, acquired_hotel)
     byebug
     if selected_option == 'Hold'
       # do nothing
