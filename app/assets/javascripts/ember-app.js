@@ -71,12 +71,12 @@ App.GameBoardComponent = Ember.Component.extend({
       });
     },
     openMergerOptions: function() {
-      if this.get('controller.model.has_shares') == 'no'
       this.set('controller.open_merger', true);
     },
     closeMergerOptions: function() {
       console.log(selectedOption)
       this.set('controller.open_merger', false);
+      this.set('controller.model.has_shares', false);
       acquired_hotel = this.get('controller.model.acquired_hotel')
       var _this = window.view;
       Ember.$.ajax({

@@ -151,6 +151,7 @@ class GamesController < ApplicationController
     player = current_user.game_players.where(game_id: @game.id).first
     hold_sell_trade(selected_option, player, game, acquired_hotel)
     response = game.start_merger_turn(player)
+    byebug
     if response[0] == true
       game.merger = 2
       game.save
@@ -162,6 +163,7 @@ class GamesController < ApplicationController
     end
 
     game_state
+    byebug
     if response[0] == true && response[1] = false
       @payload[:has_shares] = false
     elsif response[0] == true && response[1] = true

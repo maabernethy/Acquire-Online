@@ -139,18 +139,38 @@ class Game < ActiveRecord::Base
         players_w_shares << player
       end
     end
-    players_w_shares.sort_by { |player| player.turn_order }
-    i = players_w_shares.find_index(current_player)
-    byebug
-    if i == players_w_shares.length && i != null
-      next_index = 0 
-    elsif i != players_w_shares.length && i != null
-      next_index = i + 1
+    current_username = current_player.user.username
+    current_num = 0
+    self.game_players.each do |player|
+      if player.user.username == current_username
+        current_num = player.turn_order
+      end
     end
-    self.merger_up_next = players_w_shares[next_index].user.username
+    if current_num == self.game_players.length
+      next_num = 1
+    else
+      next_num = current_num + 1
+    end
+    next_player = self.game_players.where(turn_order: next_num).first
+    self.merger_up_next = next_player.user.username
     self.save
+
+    # next player has no shares in acquired chain
+    if next_player in players_w_shares
+      has_shares = false
+    else
+      has_shares = true
+    end
+
     # if merger up next equals up_next then have gone full circle and call end merger turn
-    #return true or false
+    up_next = self.game_players.where(turn_order: next_num).first
+    if next_player.user.username == up_next.user.username
+      m_turn = false
+    else
+      m_turn = true
+    end
+
+    [m_turn, has_shares]
   end
 
   def merger_stock(dominant_hotel, acquired_hotel, acquired_hotel_size)
