@@ -149,7 +149,9 @@ class GamesController < ApplicationController
     acquired_hotel = params[:acquired_hotel]
     game = Game.find(params[:id])
     player = current_user.game_players.where(game_id: @game.id).first
-    hold_sell_trade(selected_option, player, game, acquired_hotel)
+    if selected_option != 'none'
+      hold_sell_trade(selected_option, player, game, acquired_hotel)
+    end
     response = game.start_merger_turn(player)
     byebug
     if response[0] == true

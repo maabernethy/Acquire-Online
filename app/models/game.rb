@@ -139,6 +139,7 @@ class Game < ActiveRecord::Base
         players_w_shares << player
       end
     end
+
     current_username = current_player.user.username
     current_num = 0
     self.game_players.each do |player|
@@ -146,6 +147,7 @@ class Game < ActiveRecord::Base
         current_num = player.turn_order
       end
     end
+
     if current_num == self.game_players.length
       next_num = 1
     else
@@ -156,7 +158,7 @@ class Game < ActiveRecord::Base
     self.save
 
     # next player has no shares in acquired chain
-    if next_player in players_w_shares
+    if players_w_shares.include?(next_player)
       has_shares = false
     else
       has_shares = true
@@ -170,6 +172,7 @@ class Game < ActiveRecord::Base
       m_turn = true
     end
 
+    byebug
     [m_turn, has_shares]
   end
 
@@ -296,7 +299,7 @@ class Game < ActiveRecord::Base
       elsif (placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none')
         #merger of 2 chains
         byebug
-        response = merger(placed_sur_tiles, false, tile)
+        response = execute_merger(placed_sur_tiles, false, tile)
         other_tiles = convert_tiles_to_numbers(response[1])
         color = response[0]
         dominant_hotel = response[2]
@@ -367,14 +370,14 @@ class Game < ActiveRecord::Base
       elsif (placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none')
         #merger of 3 chains
         byebug
-        response = big_merger(placed_sur_tiles)
+        response = big_merger(placed_sur_tiles, tile)
         other_tiles = convert_tiles_to_numbers(response[1])
         byebug
         color = response[0]
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel != 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none'))
         # merger with 2 chains and 1 orphan
         byebug
-        response = merger_and_orphan(placed_sur_tiles)
+        response = merger_and_orphan(placed_sur_tiles, tile)
         other_tiles = convert_tiles_to_numbers(response[1])
         byebug
         color = response[0]
@@ -518,22 +521,22 @@ class Game < ActiveRecord::Base
     placed_sur_tiles
   end
 
-  def merger_and_orphan(placed_sur_tiles)
+  def merger_and_orphan(placed_sur_tiles, placed_tile)
     byebug
     if placed_sur_tiles[0].hotel == 'none'
-      response = merger([placed_sur_tiles[1], placed_sur_tiles[2]], true)
+      response = execute_merger([placed_sur_tiles[1], placed_sur_tiles[2]], true, placed_tile)
       other_tiles = response[1]
       other_tiles << [placed_sur_tiles[0].tile.row, placed_sur_tiles[0].tile.column, 'grey']
       color = response[0]
       placed_sur_tiles[0].hotel = Hotel.where(color: color).first.name
     elsif placed_sur_tiles[1].hotel == 'none'
-      response = merger([placed_sur_tiles[0], placed_sur_tiles[2]], true)
+      response = execute_merger([placed_sur_tiles[0], placed_sur_tiles[2]], true, placed_tile)
       other_tiles = response[1]
       other_tiles << [placed_sur_tiles[1].tile.row, placed_sur_tiles[1].tile.column, 'grey']
       color = response[0]
       placed_sur_tiles[1].hotel = Hotel.where(color: color).first.name
     elsif placed_sur_tiles[2].hotel == 'none'
-      response = merger([placed_sur_tiles[0], placed_sur_tiles[1]], true)
+      response = execute_merger([placed_sur_tiles[0], placed_sur_tiles[1]], true, placed_tile)
       other_tiles = response[1]
       other_tiles << [placed_sur_tiles[2].tile.row, placed_sur_tiles[2].tile.column, 'grey']
       color = response[0]
@@ -543,7 +546,7 @@ class Game < ActiveRecord::Base
     [color, other_tiles]  
   end
 
-  def  big_merger(placed_sur_tiles)
+  def  big_merger(placed_sur_tiles, placed_tile)
     byebug
     other_tiles = []
     hotel_name1 = placed_sur_tiles[0].hotel
@@ -641,7 +644,7 @@ class Game < ActiveRecord::Base
     [color, other_tiles]  
   end
 
-  def merger(placed_sur_tiles, orphan, placed_tile)
+  def execute_merger(placed_sur_tiles, orphan, placed_tile)
     other_tiles = []
     if orphan
       num = 1

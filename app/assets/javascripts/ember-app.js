@@ -11,6 +11,9 @@ App.GameBoardComponent = Ember.Component.extend({
   rows: [1,2,3,4,5,6,7,8,9,10,11,12],
   columns: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
   options: ['Hold', 'Sell', 'Trade'],
+  test: function() {
+    return true;
+  },
   selectedHotel: {
     name: null
   },
@@ -24,7 +27,7 @@ App.GameBoardComponent = Ember.Component.extend({
     name: null
   },
   selectedOption: {
-    name: null
+    name: 'none'
   },
   save: function() {
     debugger;
@@ -78,11 +81,17 @@ App.GameBoardComponent = Ember.Component.extend({
       this.set('controller.open_merger', false);
       this.set('controller.model.has_shares', false);
       acquired_hotel = this.get('controller.model.acquired_hotel')
+      if (this.get('selectedOption').name == 'none') {
+        selected_option = 'none'
+      }
+      else {
+        selected_option = this.get('selectedOption').name
+      }
       var _this = window.view;
       Ember.$.ajax({
         url: '/games/'+window.payload.game.id+'/merger_turn',
         data: {
-          option: this.get('selectedOption').name,
+          option: selected_option,
           acquired_hotel: acquired_hotel
         }
       }).then(function(json) {
@@ -176,6 +185,7 @@ App.GameBoardSquareView = Ember.View.extend({
       }
     }).then(function(json) {
       if (json.answer.legal) {
+        debugger;
         _this.set(json.answer.color, true);
         if (json.answer.other_tiles != null) {
           if (json.answer.other_tiles[1] != 'grey') {
