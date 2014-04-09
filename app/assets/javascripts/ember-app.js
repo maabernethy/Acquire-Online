@@ -15,6 +15,14 @@ Handlebars.registerHelper('ifCond', function(v1, v2, options) {
   return options.inverse(this);
 });
 
+Handlebars.registerHelper('ifShares', function(v1, options) {
+  var v = this.get('controller.model.game.has_shares')
+  if(v > 0) {
+    return options.fn(this);
+  }
+  return options.inverse(this);
+});
+
 App.GameBoardComponent = Ember.Component.extend({
   needs: ['application'],
   rows: [1,2,3,4,5,6,7,8,9,10,11,12],
@@ -86,18 +94,17 @@ App.GameBoardComponent = Ember.Component.extend({
       this.set('controller.open_merger', true);
     },
     closeMergerOptions: function() {
-      console.log(this.get('selectedOption').name)
       this.set('controller.merger_hold_sell_button', false);
       this.set('controller.open_merger', false);
       this.set('controller.model.has_shares', false);
-      acquired_hotel = this.get('controller.model.acquired_hotel')
+      acquired_hotel = this.get('controller.model.game.acquired_hotel')
       if (this.get('selectedOption').name == 'none') {
         selected_option = 'none'
       }
       else {
         selected_option = this.get('selectedOption').name
       }
-      var _this = window.view;
+      var _this = this;
       Ember.$.ajax({
         url: '/games/'+window.payload.game.id+'/merger_turn',
         data: {
@@ -105,6 +112,7 @@ App.GameBoardComponent = Ember.Component.extend({
           acquired_hotel: acquired_hotel
         }
       }).then(function(json) {
+        debugger;
         _this.set('controller.model.game', json.game);
         _this.set('controller.model.game_hotels', json.game_hotels);
         _this.set('controller.model.player', json.player);
@@ -113,14 +121,8 @@ App.GameBoardComponent = Ember.Component.extend({
         _this.set('controller.model.available_hotels', json.available_hotels);
         _this.set('controller.model.board_colors', json.board_colors);
         _this.set('controller.model.founded_hotels', json.founded_hotels);
-        if(json.merger) {
-          if (!json.has_shares) {
-            _this.set('controller.model.has_shares', false);
-          }
-          if (json.has_shares) {
-            _this.set('controller.model.has_shares', true);
-          }
-        }
+        _this.set('controller.merger_hold_sell_button', false);
+        debugger;
       });
     },
     openStockOptions: function() {
@@ -133,7 +135,7 @@ App.GameBoardComponent = Ember.Component.extend({
       console.log(this.get('selectedHotelStock1').name);
       console.log(this.get('selectedHotelStock2').name);
       console.log(this.get('selectedHotelStock3').name);
-      var _this = window.view;
+      var _this = this;
       Ember.$.ajax({
         url: '/games/'+window.payload.game.id+'/buy_stocks',
         data: {
@@ -156,7 +158,7 @@ App.GameBoardComponent = Ember.Component.extend({
           json.hotels_w_enough_stock_cards.push(none);
           _this.set('controller.model.hotels_w_enough_stock_cards', json.hotels_w_enough_stock_cards);
           if(json.hotels_w_enough_stock_cards.length > 1) {
-            _this.set('controller.buybutton', true);
+            _this.set('controller.buybutton', false);
           }
       });
     }

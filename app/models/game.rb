@@ -160,9 +160,9 @@ class Game < ActiveRecord::Base
     byebug
     # next player has no shares in acquired chain
     if players_w_shares.include?(next_player)
-      has_shares = true
+      self.has_shares = next_player.stock_cards.where(hotel: acquired_hotel).count 
     else
-      has_shares = false
+      self.has_shares = 0
     end
     byebug
     # if merger up next equals up_next then have gone full circle and call end merger turn
@@ -173,7 +173,7 @@ class Game < ActiveRecord::Base
     end
 
     byebug
-    [m_turn, has_shares]
+    [m_turn, self.has_shares]
   end
 
   def merger_stock(dominant_hotel, acquired_hotel, acquired_hotel_size)
@@ -305,7 +305,7 @@ class Game < ActiveRecord::Base
         dominant_hotel = response[2]
         acquired_hotel = response[3]
         acquired_hotel_size = response[4]
-        merger_stock(dominant_hotel,acquired_hotel, acquired_hotel_size)
+        merger_stock(dominant_hotel, acquired_hotel, acquired_hotel_size)
         merger = true
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none'))
         #extend chain with 2
@@ -658,6 +658,8 @@ class Game < ActiveRecord::Base
     if game_hotel1.chain_size > game_hotel2.chain_size
       dominant_hotel = game_hotel1.hotel
       acquired_hotel = game_hotel2
+      self.acquired_hotel = game_hotel2.name
+      self.save
       color = dominant_hotel.color
       c = game_hotel2.hotel.color
       game_tiles = self.game_tiles.where(hotel: hotel_name2)
@@ -679,6 +681,8 @@ class Game < ActiveRecord::Base
     elsif game_hotel2.chain_size > game_hotel1.chain_size
       dominant_hotel = game_hotel2.hotel
       acquired_hotel = game_hotel1
+      self.acquired_hotel = game_hotel1.name
+      self.save
       color = dominant_hotel.color
       c = game_hotel1.hotel.color
       game_tiles = self.game_tiles.where(hotel: hotel_name1)

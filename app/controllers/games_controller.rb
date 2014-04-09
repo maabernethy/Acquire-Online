@@ -75,20 +75,19 @@ class GamesController < ApplicationController
         other_tiles = array[1]
         merger = array[2]
         if merger
-          acquired_hotel = array[3]
-          if player.stock_cards.where(hotel: acquired_hotel).count != 0
-            has_shares = true
-          else
-            has_shares = false
-          end
+          @game.acquired_hotel = array[3]
+          num_shares = player.stock_cards.where(hotel: @game.acquired_hotel).count
+          @game.has_shares = num_shares
         else
-          acquired_hotel = 'none'
+          @game.acquired_hotel = 'none'
         end
         founded_hotels = @game.game_hotels.where('chain_size > 0')
         if founded_hotels.length == 0 
           @game.end_turn
         end
-        answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: player.tiles, merger: merger, has_shares: has_shares, acquired_hotel: acquired_hotel}
+        byebug
+        @game.save
+        answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: player.tiles, merger: merger, has_shares: @game.has_shares, acquired_hotel: @game.acquired_hotel}
       else
         answer = {legal: false}
       end
@@ -153,6 +152,8 @@ class GamesController < ApplicationController
     selected_option = params[:option]
     acquired_hotel = params[:acquired_hotel]
     game = Game.find(params[:id])
+    game.acquired_hotel = acquired_hotel
+    game.save
     player = current_user.game_players.where(game_id: game.id).first
     if selected_option != 'none'
       hold_sell_trade(selected_option, player, game, acquired_hotel)
@@ -171,11 +172,7 @@ class GamesController < ApplicationController
 
     game_state
     byebug
-    if response[0] == true && response[1] = false
-      @payload[:has_shares] = false
-    elsif response[0] == true && response[1] = true
-       @payload[:has_shares] = true
-    elsif response[0] == false
+    if response[0] == false
       @payload[:merger] = false
     end
 

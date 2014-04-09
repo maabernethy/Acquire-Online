@@ -120,14 +120,14 @@ window.payload = <%= @payload.to_json.html_safe %>;
 {{#if open_merger}}
   <div class="overlay" >
     <div class="modal" >
-      {{#if has_shares}}
+      {{#ifShares game.has_shares}}
         <h1 class="flush--top">Would you like to hold, sell, or trade shares?</h1> 
         {{view Ember.Select
          content=options
          value=selectedOption.name}} 
       {{else}}
         <h1 class="flush--top">You have no shares to hold, sell or trade</h1> 
-      {{/if}}
+      {{/ifShares}}
       <button {{action "closeMergerOptions"}}>Done</button>
     </div>
   </div>
