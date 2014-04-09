@@ -7,4 +7,8 @@ class Tile < ActiveRecord::Base
   def to_english
     column.to_s + row
   end
+
+  def as_json(*)
+    super(methods: :to_english)
+  end
 end

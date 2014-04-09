@@ -1,0 +1,11 @@
+%table{border: 1}
+	%tr Stock Chart
+	%tr
+		%td Hotel Name
+		%td Chain Size
+		%td Share Price
+	- game_hotels.each do |game_hotel|
+		%tr
+			%td= game_hotel.hotel.name
+			%td= game_hotel.chain_size 
+			%td= '$' + game_hotel.share_price.to_s

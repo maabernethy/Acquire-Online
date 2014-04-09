@@ -1,3 +1,5 @@
+= javascript_include_tag 'handlebars-1.1.2', 'ember-1.3.0', 'ember-app'
+
 %h2= @game.name
 %ul Players in Game:
 - if !@game.users.empty?
@@ -8,9 +10,10 @@
 %li= @game.up_next
 
 %ul Your Hand:
-- player = current_user.game_players.where(game_id: @game.id).first
-- player.tiles.each do |tile|
-  %li= tile.to_english
+.hand
+  - player = current_user.game_players.where(game_id: @game.id).first
+  - player.tiles.each do |tile|
+    %li= tile.to_english
 
 %ul Your Stocks:
 %li= 'American: ' + pluralize(player.stock_cards.where(hotel: 'American').length.to_s , 'share')
@@ -25,6 +28,6 @@
 - if !player.cash.nil?
   %li= player.cash_to_english
 
-= @cell
 = render partial: 'game_board', locals: {game: @game }
-
+= render partial: 'stock_chart', locals: { game_hotels: @game_hotels }
+= render partial: 'choose_chain', locals: {game_tile: @game_tile, available_hotels: @available_hotels}

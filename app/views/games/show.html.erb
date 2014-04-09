@@ -1,0 +1,140 @@
+<%= javascript_include_tag 'handlebars-1.1.2', 'ember-1.3.0', 'ember-app' %>
+
+<script type="text/javascript">
+window.payload = <%= @payload.to_json.html_safe %>;
+// setTimeout(function () {
+//   current_user = <%= current_user.username.to_json.html_safe %>
+//   if(current_user != payload.game.up_next) {
+//     location.reload();
+//   }
+// }, 5000);
+</script>
+
+<script type="text/x-handlebars">
+<h2>{{game.name}}</h2>
+
+<ul>
+  {{#each player in users}}
+    <li>{{player.username}}</li>
+  {{/each}}
+</ul>
+<h3> Whose Turn? </h3>
+{{game.up_next}}
+<h2> Your Hand: </h2>
+<ul>
+  {{#each tile in tiles}}
+    <li>{{tile.to_english}}</li>
+  {{/each}}
+</ul>
+<h3> Your Stocks: </h3>
+<ul>
+  {{#each stock in stocks}}
+    <li>{{stock.name}} {{stock.amount}}</li>
+  {{else}}
+    No stocks
+  {{/each}}
+</ul>
+<h3>Cash:</h3>
+{{player.cash_to_english}}
+
+{{game-board player=player game=game model=model available_hotels=available_hotels board_colors=board_colors founded_hotels=founded_hotels hotels_w_enough_stock_cards = hotels_w_enough_stock_cards}}
+
+<div>
+  <table border="1">
+    <tr>Hotel Chains</tr>
+    <tr>
+      <td>Hotel Name</td>
+      <td>Chain Size</td>
+      <td>Share Price</td>
+    </tr>
+    {{#each game_hotel in game_hotels}}
+      <tr>
+        <td>{{game_hotel.name}}</td>
+        <td>{{game_hotel.chain_size}}</td>
+        <td>{{game_hotel.share_price}}</td>
+      </tr>
+    {{/each}}
+  </table>
+</div>
+
+</script>
+
+<script type="text/x-handlebars" id="components/game-board">
+<div class="board">
+  <table border="1">
+    {{#each column in columns}}
+      <tr>
+      {{#each row in rows}}
+        <td>
+        {{#view App.GameBoardSquareView row=row column=column board_colors=board_colors}}
+          {{row}}{{column}}
+        {{/view}}
+        </td>
+      {{/each}}
+      </tr>
+    {{/each}}
+  </table>
+</div>
+{{#if errored}}
+  <div class="overlay" >
+    <div class="modal" >
+      <h1 class="flush--top">Which Hotel chain would you like to found?</h1>
+      {{view Ember.Select
+       content=available_hotels
+       optionValuePath="content.name"
+       optionLabelPath="content.name"
+       value=selectedHotel.name}}
+      <button {{action "resolveIssue"}}>Done</button>
+    </div>
+  </div>
+{{/if}}
+{{#if buybutton}}
+  <button {{action "openStockOptions"}}>Buy Stocks</button>
+{{/if}}
+{{#if open}}
+  <div class="overlay" >
+    <div class="modal" >
+      <h1 class="flush--top">What stock would you like to buy?</h1> 
+      {{view Ember.Select
+       content=hotels_w_enough_stock_cards
+       optionValuePath="content.name"
+       optionLabelPath="content.name"
+       value=selectedHotelStock1.name}} 
+       {{view Ember.Select
+       content=hotels_w_enough_stock_cards
+       optionValuePath="content.name"
+       optionLabelPath="content.name"
+       value=selectedHotelStock2.name}} 
+       {{view Ember.Select
+       content=hotels_w_enough_stock_cards
+       optionValuePath="content.name"
+       optionLabelPath="content.name"
+       value=selectedHotelStock3.name}}   
+      <button {{action "closeStockOptions"}}>Done</button>
+    </div>
+  </div>
+{{/if}}
+{{#if merger_hold_sell_button}}
+  <button {{action "openMergerOptions"}}>Hold, Sell, Or Trade?</button>
+{{/if}}
+{{#if open_merger}}
+  <div class="overlay" >
+    <div class="modal" >
+      {{#if has_shares}}
+        <h1 class="flush--top">Would you like to hold, sell, or trade shares?</h1> 
+        {{view Ember.Select
+         content=options
+         value=selectedOption.name}} 
+      {{else}}
+        <h1 class="flush--top">You have no shares to hold, sell or trade</h1> 
+      {{/if}}
+      <button {{action "closeMergerOptions"}}>Done</button>
+    </div>
+  </div>
+{{/if}}
+{{#ifCond player.username game.merger_up_next}}
+  {{#ifCond game.merger 2}}
+    <button {{action "openMergerOptions"}}>Hold, Sell, Or Trade?</button>
+  {{/ifCond}}
+{{/ifCond}}
+</script>
