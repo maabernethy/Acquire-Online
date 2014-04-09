@@ -6,13 +6,20 @@ App.ApplicationRoute = Ember.Route.extend({
   },
 });
 
+Handlebars.registerHelper('ifCond', function(v1, v2, options) {
+  if(v1 === v2) {
+    return options.fn(this);
+  }
+  return options.inverse(this);
+});
+
 App.GameBoardComponent = Ember.Component.extend({
   needs: ['application'],
   rows: [1,2,3,4,5,6,7,8,9,10,11,12],
   columns: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
   options: ['Hold', 'Sell', 'Trade'],
   test: function() {
-    return true;
+    return null
   },
   selectedHotel: {
     name: null
@@ -77,7 +84,7 @@ App.GameBoardComponent = Ember.Component.extend({
       this.set('controller.open_merger', true);
     },
     closeMergerOptions: function() {
-      console.log(selectedOption)
+      console.log(this.get('selectedOption').name)
       this.set('controller.open_merger', false);
       this.set('controller.model.has_shares', false);
       acquired_hotel = this.get('controller.model.acquired_hotel')
@@ -185,7 +192,6 @@ App.GameBoardSquareView = Ember.View.extend({
       }
     }).then(function(json) {
       if (json.answer.legal) {
-        debugger;
         _this.set(json.answer.color, true);
         if (json.answer.other_tiles != null) {
           if (json.answer.other_tiles[1] != 'grey') {
@@ -213,8 +219,14 @@ App.GameBoardSquareView = Ember.View.extend({
         _this.set('controller.model.founded_hotels', json.founded_hotels);
         _this.set('controller.model.acquired_hotel', json.answer.acquired_hotel);
         if (json.answer.merger) {
-            console.log('merger!');
-            _this.set('controller.merger_hold_sell_button', true);
+          console.log('merger!');
+          _this.set('controller.merger_hold_sell_button', true);
+          if (!json.answer.has_shares) {
+            _this.set('controller.model.has_shares', false);
+          }
+          if (json.answer.has_shares) {
+            _this.set('controller.model.has_shares', true);
+          }
         }
         else {
           none = new Object();

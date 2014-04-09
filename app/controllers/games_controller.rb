@@ -76,6 +76,11 @@ class GamesController < ApplicationController
         merger = array[2]
         if merger
           acquired_hotel = array[3]
+          if player.stock_cards.where(hotel: acquired_hotel).count != 0
+            has_shares = true
+          else
+            has_shares = false
+          end
         else
           acquired_hotel = 'none'
         end
@@ -83,7 +88,7 @@ class GamesController < ApplicationController
         if founded_hotels.length == 0 
           @game.end_turn
         end
-        answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: player.tiles, merger: merger, acquired_hotel: acquired_hotel}
+        answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: player.tiles, merger: merger, has_shares: has_shares, acquired_hotel: acquired_hotel}
       else
         answer = {legal: false}
       end
@@ -148,11 +153,11 @@ class GamesController < ApplicationController
     selected_option = params[:option]
     acquired_hotel = params[:acquired_hotel]
     game = Game.find(params[:id])
-    player = current_user.game_players.where(game_id: @game.id).first
+    player = current_user.game_players.where(game_id: game.id).first
     if selected_option != 'none'
       hold_sell_trade(selected_option, player, game, acquired_hotel)
     end
-    response = game.start_merger_turn(player)
+    response = game.start_merger_turn(player, acquired_hotel)
     byebug
     if response[0] == true
       game.merger = 2

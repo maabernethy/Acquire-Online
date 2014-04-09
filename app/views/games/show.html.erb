@@ -132,7 +132,9 @@ window.payload = <%= @payload.to_json.html_safe %>;
     </div>
   </div>
 {{/if}}
-{{#if test}}
-  <h1>TESTING</h1>
-{{/if}}
+{{#ifCond player.username game.merger_up_next}}
+  {{#ifCond game.merger 2}}
+    <button {{action "openMergerOptions"}}>Hold, Sell, Or Trade?</button>
+  {{/ifCond}}
+{{/ifCond}}
 </script>

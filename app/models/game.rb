@@ -48,6 +48,7 @@ class Game < ActiveRecord::Base
   def assign_order
     num = 1
     self.game_players.each do |player|
+      player.username = player.user.username
       player.turn_order = num
       if num == 1
         self.up_next = player.user.username
