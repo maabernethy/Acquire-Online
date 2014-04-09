@@ -157,17 +157,16 @@ class Game < ActiveRecord::Base
     next_player = self.game_players.where(turn_order: next_num).first
     self.merger_up_next = next_player.user.username
     self.save
-
+    byebug
     # next player has no shares in acquired chain
     if players_w_shares.include?(next_player)
-      has_shares = false
-    else
       has_shares = true
+    else
+      has_shares = false
     end
-
+    byebug
     # if merger up next equals up_next then have gone full circle and call end merger turn
-    up_next = self.game_players.where(turn_order: next_num).first
-    if next_player.user.username == up_next.user.username
+    if next_player.user.username == self.up_next
       m_turn = false
     else
       m_turn = true

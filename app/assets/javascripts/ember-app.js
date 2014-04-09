@@ -7,7 +7,9 @@ App.ApplicationRoute = Ember.Route.extend({
 });
 
 Handlebars.registerHelper('ifCond', function(v1, v2, options) {
-  if(v1 === v2) {
+  var p1 = this.get('controller.model.player.username')
+  var p2 = this.get('controller.model.game.merger_up_next')
+  if(p1 === p2) {
     return options.fn(this);
   }
   return options.inverse(this);
@@ -85,6 +87,7 @@ App.GameBoardComponent = Ember.Component.extend({
     },
     closeMergerOptions: function() {
       console.log(this.get('selectedOption').name)
+      this.set('controller.merger_hold_sell_button', false);
       this.set('controller.open_merger', false);
       this.set('controller.model.has_shares', false);
       acquired_hotel = this.get('controller.model.acquired_hotel')
