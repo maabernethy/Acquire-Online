@@ -93,63 +93,59 @@ window.payload = <%= @payload.to_json.html_safe %>;
   </table>
 </div>
 {{#if errored}}
-  <div>
+  <div border="1">
     <h1 class="flush--top">Which Hotel chain would you like to found?</h1>
       {{view Ember.Select
        content=available_hotels
        optionValuePath="content.name"
        optionLabelPath="content.name"
        value=selectedHotel.name}}
-    <button {{action "resolveIssue"}}>Done</button>
+    <button {{action "resolveIssue"}} class="btn btn-large btn-success">Done</button>
   </div>
 {{/if}}
 {{#if buybutton}}
-  <button {{action "openStockOptions"}}>Buy Stocks</button>
+  <button {{action "openStockOptions"}} class="btn btn-large btn-success">Buy Stocks</button>
 {{/if}}
 {{#if open}}
-  <div class="overlay" >
-    <div class="modal" >
-      <h1 class="flush--top">What stock would you like to buy?</h1> 
-      {{view Ember.Select
-       content=hotels_w_enough_stock_cards
-       optionValuePath="content.name"
-       optionLabelPath="content.name"
-       value=selectedHotelStock1.name}} 
-       {{view Ember.Select
-       content=hotels_w_enough_stock_cards
-       optionValuePath="content.name"
-       optionLabelPath="content.name"
-       value=selectedHotelStock2.name}} 
-       {{view Ember.Select
-       content=hotels_w_enough_stock_cards
-       optionValuePath="content.name"
-       optionLabelPath="content.name"
-       value=selectedHotelStock3.name}}   
-      <button {{action "closeStockOptions"}}>Done</button>
-    </div>
+  <div border="1">
+    <h1 class="flush--top">What stock would you like to buy?</h1> 
+    {{view Ember.Select
+     content=hotels_w_enough_stock_cards
+     optionValuePath="content.name"
+     optionLabelPath="content.name"
+     value=selectedHotelStock1.name}} 
+     {{view Ember.Select
+     content=hotels_w_enough_stock_cards
+     optionValuePath="content.name"
+     optionLabelPath="content.name"
+     value=selectedHotelStock2.name}} 
+     {{view Ember.Select
+     content=hotels_w_enough_stock_cards
+     optionValuePath="content.name"
+     optionLabelPath="content.name"
+     value=selectedHotelStock3.name}}   
+    <button {{action "closeStockOptions"}} class="btn btn-large btn-success">Done</button>
   </div>
 {{/if}}
 {{#if merger_hold_sell_button}}
-  <button {{action "openMergerOptions"}}>Hold, Sell, Or Trade?</button>
+  <button {{action "openMergerOptions"}} class="btn btn-large btn-success" >Hold, Sell, Or Trade?</button>
 {{/if}}
 {{#if open_merger}}
-  <div class="overlay" >
-    <div class="modal-dialog">
-      {{#ifShares game.has_shares}}
-        <h1 class="flush--top">Would you like to hold, sell, or trade shares?</h1> 
-        {{view Ember.Select
-         content=options
-         value=selectedOption.name}} 
-      {{else}}
-        <h1 class="flush--top">You have no shares to hold, sell or trade</h1> 
-      {{/ifShares}}
-      <button {{action "closeMergerOptions"}}>Done</button>
-    </div>
+  <div border="1">
+    {{#ifShares game.has_shares}}
+      <h1 class="flush--top">Would you like to hold, sell, or trade shares?</h1> 
+      {{view Ember.Select
+       content=options
+       value=selectedOption.name}} 
+    {{else}}
+      <h1 class="flush--top">You have no shares to hold, sell or trade</h1> 
+    {{/ifShares}}
+    <button {{action "closeMergerOptions"}} class="btn btn-large btn-success">Done</button>
   </div>
 {{/if}}
 {{#ifCond player.username game.merger_up_next}}
   {{#ifCond game.merger 2}}
-    <button {{action "openMergerOptions"}}>Hold, Sell, Or Trade?</button>
+    <button {{action "openMergerOptions"}} class="btn btn-large btn-success">Hold, Sell, Or Trade?</button>
   {{/ifCond}}
 {{/ifCond}}
 </script>

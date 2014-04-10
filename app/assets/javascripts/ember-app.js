@@ -68,6 +68,7 @@ App.GameBoardComponent = Ember.Component.extend({
         if (json.answer.legal) {
           debugger;
           if (json.answer.other_tiles.length > 1) {
+            debugger;
             json.answer.other_tiles.forEach(function(tile_info){
             _this.get('parentView').get('childViews')[tile_info[0]].set(tile_info[1], false);
             _this.get('parentView').get('childViews')[tile_info[0]].set(json.answer.color, true);
