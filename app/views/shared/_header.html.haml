@@ -20,12 +20,14 @@
       %a.navbar-brand{:href => "#"} ACQUIRE ONLINE
     .navbar-collapse.collapse
       %ul.nav.navbar-nav
-        %li.active= link_to 'Home', root_path
+        %li= link_to 'Home', root_path
         %li= link_to 'About', page_path('about')
         %li= link_to 'Rules', page_path('rules')
         - if user_signed_in?
           %li= link_to 'Game Center', game_center_path
       %ul.nav.navbar-nav.navbar-right
+        %li
+          %a{:href => "#"} Welcome back, #{current_user.username}!
         - if user_signed_in?
           %li= link_to 'Sign out', destroy_user_session_path, :method => :delete
         - else

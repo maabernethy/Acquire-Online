@@ -1,12 +1,17 @@
 %body
-  .actions
-    - if user_signed_in?
-      = "Welcome back, #{current_user.username}!"
-      = link_to 'Sign out', destroy_user_session_path, :method => :delete
-    - else
-      = simple_form_for(resource, :as => resource_name,  :url => session_path(resource_name)) do |f|
-        = f.input :username
-        = f.input :password
-        = f.submit 'Sign in'
-        = link_to "Forgot your password?", new_password_path('user')
+  .container
+    .jumbotron
+      %h1 ACQUIRE ONLINE
+      %p Acquire the board game was designed by Sid Sackson and first published by 3M in 1962. The basic premise of the game is to earn the most money by developing and merging corporations. When a larger corporation acquires a corporation in which a player owns stock, players earn money based on the size of the acquired corporation. At the end of the game, all players liquidate their stock in order to determine which player has the most money. 
+
+      %p Acquire Online gives players a chance to compete in a web based multiplayer version of the the classic board game! 
+      %p
+      = button_to('Learn More', page_path('about'), :class => 'btn btn-large btn-primary')
+
+  - if !user_signed_in?
+    = simple_form_for(resource, :as => resource_name,  :url => session_path(resource_name)) do |f|
+      = f.input :username
+      = f.input :password
+      = f.submit 'Sign in'
+      = link_to "Forgot your password?", new_password_path('user')
       = link_to 'Sign up', new_user_registration_path

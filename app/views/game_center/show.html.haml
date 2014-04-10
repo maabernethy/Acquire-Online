@@ -1,12 +1,22 @@
-= button_to 'Start New Game', new_game_path, method: :get
-- if @users.count > 1
-  %ul
-    %h4 Users Online:
-    = render partial: 'user', collection: @users
-- else
-  No users online at this time.
+%body
+.container.text-center
+  / Example row of columns
+  .row
+    .col-md-6
+      %h1 Users Online:
+      %table.table.table-striped.text-center
+        = render partial: 'user', collection: @users
 
-- if @games.any?
-  %ul
-    %h4 Current Games:
-    = render partial: 'game', collection: @games
+    .col-md-6
+      %h1 Current Games:
+      %table.table.table-striped.text-center
+        = render partial: 'game', collection: @games
+      
+
+.jumbotron
+  .container
+    .col-md-6.col-md-offset-3.centerfy.text-center
+      %h1.text-center Want to start a new game?
+      %p.lead.text-center Get ready to choose a name and some friends to play with!
+      %p
+      = button_to('Start New Game', new_game_path, method: :get, :class => 'btn btn-large btn-success')     
