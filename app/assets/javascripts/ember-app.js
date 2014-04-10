@@ -46,10 +46,6 @@ App.GameBoardComponent = Ember.Component.extend({
   selectedOption: {
     name: 'none'
   },
-  save: function() {
-    debugger;
-    console.log('hello')
-  },
   actions: {
     resolveIssue: function() {
       this.set('errored', false);
@@ -66,9 +62,7 @@ App.GameBoardComponent = Ember.Component.extend({
         }
       }).then(function(json) {
         if (json.answer.legal) {
-          debugger;
           if (json.answer.other_tiles.length > 1) {
-            debugger;
             json.answer.other_tiles.forEach(function(tile_info){
             _this.get('parentView').get('childViews')[tile_info[0]].set(tile_info[1], false);
             _this.get('parentView').get('childViews')[tile_info[0]].set(json.answer.color, true);
@@ -113,7 +107,6 @@ App.GameBoardComponent = Ember.Component.extend({
           acquired_hotel: acquired_hotel
         }
       }).then(function(json) {
-        debugger;
         _this.set('controller.model.game', json.game);
         _this.set('controller.model.game_hotels', json.game_hotels);
         _this.set('controller.model.player', json.player);
@@ -123,7 +116,6 @@ App.GameBoardComponent = Ember.Component.extend({
         _this.set('controller.model.board_colors', json.board_colors);
         _this.set('controller.model.founded_hotels', json.founded_hotels);
         _this.set('controller.merger_hold_sell_button', false);
-        debugger;
       });
     },
     openStockOptions: function() {
@@ -132,7 +124,6 @@ App.GameBoardComponent = Ember.Component.extend({
     closeStockOptions: function() {
       this.set('controller.open', false);
       this.set('controller.buybutton', false);
-      debugger;
       console.log(this.get('selectedHotelStock1').name);
       console.log(this.get('selectedHotelStock2').name);
       console.log(this.get('selectedHotelStock3').name);
@@ -201,14 +192,12 @@ App.GameBoardSquareView = Ember.View.extend({
         _this.set(json.answer.color, true);
         if (json.answer.other_tiles != null) {
           if (json.answer.other_tiles[1] != 'grey') {
-            debugger;
             json.answer.other_tiles.forEach(function(tile_info){
               _this.get('parentView').get('childViews')[tile_info[0]].set(tile_info[1], false);
               _this.get('parentView').get('childViews')[tile_info[0]].set(json.answer.color, true);
             });
           }
           else {
-            debugger;
             tile_info = json.answer.other_tiles;
             _this.get('parentView').get('childViews')[tile_info[0]].set(tile_info[1], false);
             _this.get('parentView').get('childViews')[tile_info[0]].set(json.answer.color, true);

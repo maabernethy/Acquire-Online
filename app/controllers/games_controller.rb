@@ -85,7 +85,7 @@ class GamesController < ApplicationController
         if founded_hotels.length == 0 
           @game.end_turn
         end
-        byebug
+
         @game.save
         answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: player.tiles, merger: merger, has_shares: @game.has_shares, acquired_hotel: @game.acquired_hotel}
       else
@@ -105,7 +105,6 @@ class GamesController < ApplicationController
     hotel3 = params[:hotel3]
     @game = Game.find(params[:id])
     player = current_user.game_players.where(game_id: @game.id).first
-    byebug
     if hotel1 != 'none'
       game_hotel1 = @game.game_hotels.where(name: hotel1).first
       price1 = game_hotel1.share_price
@@ -148,7 +147,6 @@ class GamesController < ApplicationController
   end
 
   def merger_turn
-    byebug
     selected_option = params[:option]
     acquired_hotel = params[:acquired_hotel]
     game = Game.find(params[:id])
@@ -159,7 +157,7 @@ class GamesController < ApplicationController
       hold_sell_trade(selected_option, player, game, acquired_hotel)
     end
     response = game.start_merger_turn(player, acquired_hotel)
-    byebug
+
     if response[0] == true
       game.merger = 2
       game.save
@@ -171,7 +169,7 @@ class GamesController < ApplicationController
     end
 
     game_state
-    byebug
+
     if response[0] == false
       @payload[:merger] = false
     end
@@ -180,7 +178,6 @@ class GamesController < ApplicationController
   end
 
   def hold_sell_trade(selected_option, player, game, acquired_hotel)
-    byebug
     if selected_option == 'Hold'
       # do nothing
     elsif selected_option == 'Sell'

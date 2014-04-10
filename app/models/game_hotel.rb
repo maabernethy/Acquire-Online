@@ -41,9 +41,7 @@ class GameHotel < ActiveRecord::Base
 		41 => [1200,12000,6000]	
 	}
 	def update_share_price
-		byebug
 		if self.name == 'Worldwide' || self.name == 'Sackson'
-			byebug
 			if self.chain_size >= 0 && self.chain_size <= 6
 				share_price = WS[self.chain_size][0]
 			elsif self.chain_size < 11
@@ -58,7 +56,6 @@ class GameHotel < ActiveRecord::Base
 				share_price = WS[41][0]
 			end
 		elsif self.name == 'Continental' || self.name == 'Tower'
-			byebug
 			if self.chain_size >= 0 && self.chain_size <= 6
 				share_price = FIA[self.chain_size][0]
 			elsif self.chain_size < 11
@@ -73,7 +70,6 @@ class GameHotel < ActiveRecord::Base
 				share_price = FIA[41][0]
 			end
 		elsif self.name == 'Festival' || self.name == 'Imperial' || self.name == 'American'
-			byebug
 			if self.chain_size >= 0 && self.chain_size <= 6
 				share_price = CT[self.chain_size][0]
 			elsif self.chain_size < 11
@@ -88,14 +84,14 @@ class GameHotel < ActiveRecord::Base
 				share_price = CT[41][0]
 			end
 		end
-		byebug
+
 		self.share_price = share_price
 		self.save
 	end
 
 	def get_bonus_amounts(chain_size)
 		if self.name == 'Worldwide' || self.name == 'Sackson'
-			byebug
+
 			if chain_size >= 0 && chain_size <= 6
 				majority = WS[chain_size][1]
 				minority = WS[chain_size][2]
@@ -115,9 +111,8 @@ class GameHotel < ActiveRecord::Base
 				majority = WS[41][1]
 				minority = WS[41][2]
 			end
-			byebug
+
 		elsif self.name == 'Continental' || self.name == 'Tower'
-			byebug
 			if chain_size >= 0 && chain_size <= 6
 				majority = FIA[chain_size][1]
 				minority = FIA[chain_size][2]
@@ -137,9 +132,8 @@ class GameHotel < ActiveRecord::Base
 				majority = FIA[41][1]
 				minority = FIA[41][2]
 			end
-			byebug
+
 		elsif self.name == 'Festival' || self.name == 'Imperial' || self.name == 'American'
-			byebug
 			if chain_size >= 0 && chain_size <= 6
 				majority = CT[chain_size][1]
 				minority = CT[chain_size][2]
@@ -159,9 +153,9 @@ class GameHotel < ActiveRecord::Base
 				majority = CT[41][1]
 				minority = CT[41][2]
 			end
-			byebug
+
 		end
-		byebug
+
 		[majority, minority]
 	end
 end
