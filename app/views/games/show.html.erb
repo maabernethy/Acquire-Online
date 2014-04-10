@@ -11,57 +11,74 @@ window.payload = <%= @payload.to_json.html_safe %>;
 </script>
 
 <script type="text/x-handlebars">
-<h2>{{game.name}}</h2>
+<div class="container text-center">
+  <h2>{{game.name}}</h2>
 
-<ul>
-  {{#each player in users}}
-    <li>{{player.username}}</li>
-  {{/each}}
-</ul>
-<h3> Whose Turn? </h3>
-{{game.up_next}}
-<h2> Your Hand: </h2>
-<ul>
-  {{#each tile in tiles}}
-    <li>{{tile.to_english}}</li>
-  {{/each}}
-</ul>
-<h3> Your Stocks: </h3>
-<ul>
-  {{#each stock in stocks}}
-    <li>{{stock.name}} {{stock.amount}}</li>
-  {{else}}
-    No stocks
-  {{/each}}
-</ul>
-<h3>Cash:</h3>
-{{player.cash_to_english}}
+  <div class="row">
+    <div class="col-md-3">
+      <h3> Players: </h3>
+      <table class="table">
+        {{#each player in users}}
+          <tr>
+            <td>{{player.username}}</td>
+          </tr>
+        {{/each}}
+      </table>
+      </ul>
+      <h3> Turn: {{game.up_next}} </h3>
+      <h3>Money: {{player.cash_to_english}}</h3>
+      <h3> Your Stocks: </h3>
+      <table class="table table-bordered">
+        {{#each stock in stocks}}
+          <tr>
+            <td>{{stock.name}}</td>
+            <td>{{stock.amount}}</td>
+          </tr>
+        {{else}}
+          No stocks
+        {{/each}}
+      </table>
+      </ul>
+    </div>
+    <div class="col-md-6">
+      {{game-board player=player game=game model=model available_hotels=available_hotels board_colors=board_colors founded_hotels=founded_hotels hotels_w_enough_stock_cards = hotels_w_enough_stock_cards}}
 
-{{game-board player=player game=game model=model available_hotels=available_hotels board_colors=board_colors founded_hotels=founded_hotels hotels_w_enough_stock_cards = hotels_w_enough_stock_cards}}
-
-<div>
-  <table border="1">
-    <tr>Hotel Chains</tr>
-    <tr>
-      <td>Hotel Name</td>
-      <td>Chain Size</td>
-      <td>Share Price</td>
-    </tr>
-    {{#each game_hotel in game_hotels}}
-      <tr>
-        <td>{{game_hotel.name}}</td>
-        <td>{{game_hotel.chain_size}}</td>
-        <td>{{game_hotel.share_price}}</td>
-      </tr>
-    {{/each}}
-  </table>
+      <h3>Tiles:</h3>
+      <table class="table">
+        <tr>
+          {{#each tile in tiles}}
+            <td>{{tile.to_english}}</td>
+          {{/each}}
+        </tr>
+      </table>
+    </div>
+    <div class="col-md-3">
+      <div>
+        <table class="table table-bordered" border="1">
+          <h3>Hotel Chains</h3>
+          <tr>
+            <td>Hotel Name</td>
+            <td>Chain Size</td>
+            <td>Share Price</td>
+          </tr>
+          {{#each game_hotel in game_hotels}}
+            <tr>
+              <td>{{game_hotel.name}}</td>
+              <td>{{game_hotel.chain_size}}</td>
+              <td>{{game_hotel.share_price}}</td>
+            </tr>
+          {{/each}}
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 
 </script>
 
 <script type="text/x-handlebars" id="components/game-board">
 <div class="board">
-  <table border="1">
+  <table class="table table-bordered" border="1">
     {{#each column in columns}}
       <tr>
       {{#each row in rows}}
@@ -76,16 +93,14 @@ window.payload = <%= @payload.to_json.html_safe %>;
   </table>
 </div>
 {{#if errored}}
-  <div class="overlay" >
-    <div class="modal" >
-      <h1 class="flush--top">Which Hotel chain would you like to found?</h1>
+  <div>
+    <h1 class="flush--top">Which Hotel chain would you like to found?</h1>
       {{view Ember.Select
        content=available_hotels
        optionValuePath="content.name"
        optionLabelPath="content.name"
        value=selectedHotel.name}}
-      <button {{action "resolveIssue"}}>Done</button>
-    </div>
+    <button {{action "resolveIssue"}}>Done</button>
   </div>
 {{/if}}
 {{#if buybutton}}
@@ -119,7 +134,7 @@ window.payload = <%= @payload.to_json.html_safe %>;
 {{/if}}
 {{#if open_merger}}
   <div class="overlay" >
-    <div class="modal" >
+    <div class="modal-dialog">
       {{#ifShares game.has_shares}}
         <h1 class="flush--top">Would you like to hold, sell, or trade shares?</h1> 
         {{view Ember.Select
