@@ -23,13 +23,17 @@ Handlebars.registerHelper('ifShares', function(v1, options) {
   return options.inverse(this);
 });
 
+
 App.GameBoardComponent = Ember.Component.extend({
   needs: ['application'],
   rows: [1,2,3,4,5,6,7,8,9,10,11,12],
   columns: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'],
   options: ['Hold', 'Sell', 'Trade'],
-  test: function() {
-    return null
+  holdNumber: null,
+  tradeNumber: null,
+  sellNumber: null,
+  tradeHotel: {
+    name: null
   },
   selectedHotel: {
     name: null
@@ -46,7 +50,20 @@ App.GameBoardComponent = Ember.Component.extend({
   selectedOption: {
     name: 'none'
   },
+  alert: '',
   actions: {
+    test: function() {
+      debugger;
+      var hnum = this.get('holdNumber');
+      var tnum = this.get('tradeNumber');
+      var snum = this.get('sellNumber');
+      if (hnum == '' || tnum == '' || snum == '') {
+        this.set('alert', 'only use integers')
+      }
+      if (parseInt(hnum) > 3) {
+        console.log('parse works');
+      }
+    },
     resolveIssue: function() {
       this.set('errored', false);
       console.log(this.get('selectedHotel').name);

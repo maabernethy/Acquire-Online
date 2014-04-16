@@ -6,7 +6,7 @@
 
       %p Acquire Online gives players a chance to compete in a web based multiplayer version of the the classic board game! 
       %p
-      = button_to('Learn More', page_path('about'), :class => 'btn btn-large btn-primary')
+      = button_to('Learn More', page_path('about'), :method => :get, :class => 'btn btn-large btn-primary')
 
   - if !user_signed_in?
     .container.text-center

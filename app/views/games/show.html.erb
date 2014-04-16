@@ -77,6 +77,20 @@ window.payload = <%= @payload.to_json.html_safe %>;
 </script>
 
 <script type="text/x-handlebars" id="components/game-board">
+<div border="1">
+  <h1 class="flush--top">Would you like to hold, sell, or trade shares?</h1>  
+    <h4> Hold {{input type="text" placeholder="number" value=holdNumber type="number"}} shares</h4>
+    <h4> Sell {{input type="text" placeholder="number" value=sellNumber type="number"}} shares</h4>
+    <h4> Trade {{input type="text" placeholder="number" value=tradeNumber type="number"}} shares 
+      {{view Ember.Select
+       content=founded_hotels
+       optionValuePath="content.name"
+       optionLabelPath="content.name"
+       value=tradeHotel.name}} 
+    </h4>
+    {{alert}}
+    <button {{action "test"}}> Done </button>
+</div>
 <div class="board">
   <table class="table table-bordered" border="1">
     {{#each column in columns}}
