@@ -147,14 +147,17 @@ class GamesController < ApplicationController
   end
 
   def merger_turn
-    selected_option = params[:option]
+    byebug
+    hnum = params[:hold]
+    tnum = params[:trade]
+    snum = params[:sell]
     acquired_hotel = params[:acquired_hotel]
     game = Game.find(params[:id])
     game.acquired_hotel = acquired_hotel
     game.save
     player = current_user.game_players.where(game_id: game.id).first
     if selected_option != 'none'
-      hold_sell_trade(selected_option, player, game, acquired_hotel)
+      hold_sell_trade(hnum, snum, tnum, trade_hotel, player, game, acquired_hotel)
     end
     response = game.start_merger_turn(player, acquired_hotel)
 
@@ -177,14 +180,8 @@ class GamesController < ApplicationController
     render :json => @payload
   end
 
-  def hold_sell_trade(selected_option, player, game, acquired_hotel)
-    if selected_option == 'Hold'
-      # do nothing
-    elsif selected_option == 'Sell'
-      # give player money according to share price 
-    elsif selected_option == 'Trade'
-      # don't know yet
-    end
+  def hold_sell_trade(hnum, snum, tnum, trade_hotel, player, game, acquired_hotel)
+   byebug
   end
 
   private

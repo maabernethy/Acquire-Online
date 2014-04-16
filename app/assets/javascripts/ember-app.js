@@ -52,18 +52,6 @@ App.GameBoardComponent = Ember.Component.extend({
   },
   alert: '',
   actions: {
-    test: function() {
-      debugger;
-      var hnum = this.get('holdNumber');
-      var tnum = this.get('tradeNumber');
-      var snum = this.get('sellNumber');
-      if (hnum == '' || tnum == '' || snum == '') {
-        this.set('alert', 'only use integers')
-      }
-      if (parseInt(hnum) > 3) {
-        console.log('parse works');
-      }
-    },
     resolveIssue: function() {
       this.set('errored', false);
       console.log(this.get('selectedHotel').name);
@@ -105,35 +93,57 @@ App.GameBoardComponent = Ember.Component.extend({
     openMergerOptions: function() {
       this.set('controller.open_merger', true);
     },
-    closeMergerOptions: function() {
-      this.set('controller.merger_hold_sell_button', false);
-      this.set('controller.open_merger', false);
-      this.set('controller.model.has_shares', false);
-      acquired_hotel = this.get('controller.model.game.acquired_hotel')
-      if (this.get('selectedOption').name == 'none') {
-        selected_option = 'none'
+    closeMergerOptions: function(shares) {
+      var hnum = this.get('holdNumber');
+      var tnum = this.get('tradeNumber');
+      var snum = this.get('sellNumber');
+      var num_shares = this.get('controller.model.game.has_shares')
+      var total = parseInt(hnum) + parseInt(snum) + parseInt(tnum)
+      if (shares == null) {
+        this.set('alert', '')
+      }
+      else if (hnum == '' || tnum == '' || snum == '') {
+        this.set('alert', 'only use integers')
+      }
+      else if (total != num_shares) {
+        this.set('alert', 'numbers do not add up correctly')
       }
       else {
-        selected_option = this.get('selectedOption').name
+        this.set('alert', '')
       }
-      var _this = this;
-      Ember.$.ajax({
-        url: '/games/'+window.payload.game.id+'/merger_turn',
-        data: {
-          option: selected_option,
-          acquired_hotel: acquired_hotel
+      if (this.get('alert') == '') {
+        this.set('controller.merger_hold_sell_button', false);
+        this.set('controller.open_merger', false);
+        this.set('controller.model.has_shares', false);
+        acquired_hotel = this.get('controller.model.game.acquired_hotel')
+        if (parseInt(tnum) > 0) {
+          trade_hotel = this.get('tradeHotel')
         }
-      }).then(function(json) {
-        _this.set('controller.model.game', json.game);
-        _this.set('controller.model.game_hotels', json.game_hotels);
-        _this.set('controller.model.player', json.player);
-        _this.set('controller.model.stocks', json.stocks);
-        _this.set('controller.model.users', json.users);
-        _this.set('controller.model.available_hotels', json.available_hotels);
-        _this.set('controller.model.board_colors', json.board_colors);
-        _this.set('controller.model.founded_hotels', json.founded_hotels);
-        _this.set('controller.merger_hold_sell_button', false);
-      });
+        else {
+          trade_hotel = 'none'
+        }
+        var _this = this;
+        Ember.$.ajax({
+          url: '/games/'+window.payload.game.id+'/merger_turn',
+          data: {
+            acquired_hotel: acquired_hotel,
+            hold: hnum,
+            sell: snum,
+            trade: tnum,
+            trade_hotel: trade_hotel
+          }
+        }).then(function(json) {
+          _this.set('controller.model.game', json.game);
+          _this.set('controller.model.game_hotels', json.game_hotels);
+          _this.set('controller.model.player', json.player);
+          _this.set('controller.model.stocks', json.stocks);
+          _this.set('controller.model.users', json.users);
+          _this.set('controller.model.available_hotels', json.available_hotels);
+          _this.set('controller.model.board_colors', json.board_colors);
+          _this.set('controller.model.founded_hotels', json.founded_hotels);
+          _this.set('controller.merger_hold_sell_button', false);
+        });
+      }
     },
     openStockOptions: function() {
       this.set('controller.open', true);

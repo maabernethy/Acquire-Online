@@ -78,7 +78,7 @@ window.payload = <%= @payload.to_json.html_safe %>;
 
 <script type="text/x-handlebars" id="components/game-board">
 <div border="1">
-  <h1 class="flush--top">Would you like to hold, sell, or trade shares?</h1>  
+  <h1 class="flush--top">You have {{game.has_shares}} shares to hold, sell or trade. </h1>  
     <h4> Hold {{input type="text" placeholder="number" value=holdNumber type="number"}} shares</h4>
     <h4> Sell {{input type="text" placeholder="number" value=sellNumber type="number"}} shares</h4>
     <h4> Trade {{input type="text" placeholder="number" value=tradeNumber type="number"}} shares 
@@ -147,14 +147,22 @@ window.payload = <%= @payload.to_json.html_safe %>;
 {{#if open_merger}}
   <div border="1">
     {{#ifShares game.has_shares}}
-      <h1 class="flush--top">Would you like to hold, sell, or trade shares?</h1> 
+      <h1 class="flush--top">You have {{game.has_shares}} shares to hold, sell or trade. </h1>  
+      <h4> Hold {{input type="text" placeholder="number" value=holdNumber type="number"}} shares</h4>
+      <h4> Sell {{input type="text" placeholder="number" value=sellNumber type="number"}} shares</h4>
+      <h4> Trade {{input type="text" placeholder="number" value=tradeNumber type="number"}} shares 
       {{view Ember.Select
-       content=options
-       value=selectedOption.name}} 
+       content=founded_hotels
+       optionValuePath="content.name"
+       optionLabelPath="content.name"
+       value=tradeHotel.name}} 
+      </h4>
+      {{alert}}
+      <button {{action "closeMergerOptions" true}} class="btn btn-large btn-success">Done</button>
     {{else}}
       <h1 class="flush--top">You have no shares to hold, sell or trade</h1> 
+      <button {{action "closeMergerOptions" false}} class="btn btn-large btn-success">Done</button>
     {{/ifShares}}
-    <button {{action "closeMergerOptions"}} class="btn btn-large btn-success">Done</button>
   </div>
 {{/if}}
 {{#ifCond player.username game.merger_up_next}}
