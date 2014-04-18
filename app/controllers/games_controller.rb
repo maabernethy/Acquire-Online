@@ -196,14 +196,27 @@ class GamesController < ApplicationController
         card = player.stock_cards.where(hotel: acquired_hotel).first
         player.stock_cards.delete(card)
         game.stock_cards << card
-        player.save
-        game.save
       end
+      player.save
+      game.save
     end
 
     # deal with trading of shares
     if (tnum != null) && (tnum > 0)
-      # need to dominant hotel attribute to game
+      dominant_hotel = game.dominant_hotel
+      num_of_trades = tnum/2
+      num_of_trades.times do
+        2.times do
+          a_card = player.stock_cards.where(hotel: acquired_hotel).first
+          player.stock_cards.delete(a_card)
+          game.stock_cards << a_card
+        end
+        d_card = game.stock_cards.where(hotel: dominant_hotel).first
+        game.stock_cards.delete(d_card)
+        player.stock_cards << d_card
+      end
+      player.save
+      game.save
     end
   end
 

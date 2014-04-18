@@ -635,6 +635,7 @@ class Game < ActiveRecord::Base
       dominant_hotel = game_hotel1.hotel
       acquired_hotel = game_hotel2
       self.acquired_hotel = game_hotel2.name
+      self.dominant_hotel = game_hotel1.name
       self.save
       color = dominant_hotel.color
       c = game_hotel2.hotel.color
@@ -658,6 +659,7 @@ class Game < ActiveRecord::Base
       dominant_hotel = game_hotel2.hotel
       acquired_hotel = game_hotel1
       self.acquired_hotel = game_hotel1.name
+      self.dominant_hotel = game_hotel2.name
       self.save
       color = dominant_hotel.color
       c = game_hotel1.hotel.color

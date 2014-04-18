@@ -102,6 +102,9 @@ App.GameBoardComponent = Ember.Component.extend({
       if (shares == false) {
         this.set('alert', '')
       }
+      else if (tnum % 2 != 0) {
+        this.set('alert', 'trade shares must be even number')
+      }
       else if (hnum == '' || tnum == '' || snum == '') {
         this.set('alert', 'only use integers')
       }
