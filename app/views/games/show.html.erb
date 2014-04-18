@@ -14,63 +14,58 @@ window.payload = <%= @payload.to_json.html_safe %>;
 <div class="container text-center">
   <h2>{{game.name}}</h2>
 
-  <div class="row">
-    <div class="col-md-3">
-      <h3> Players: </h3>
-      <table class="table">
-        {{#each player in users}}
-          <tr>
-            <td>{{player.username}}</td>
-          </tr>
-        {{/each}}
-      </table>
-      </ul>
-      <h3> Turn: {{game.up_next}} </h3>
-      <h3>Money: {{player.cash_to_english}}</h3>
-      <h3> Your Stocks: </h3>
-      <table class="table table-bordered">
+  <div class="col-md-3">
+    <h3> Players: </h3>
+    <table class="table">
+      {{#each player in users}}
+        <tr>
+          <td>{{player.username}}</td>
+        </tr>
+      {{/each}}
+    </table>
+
+    <h3> Turn: {{game.up_next}} </h3>
+    <h3>Money: {{player.cash_to_english}}</h3>
+    <h3> Your Stocks: </h3>
+    {{#if stocks}}
+      <table class="table table-bordered" border="1">
         {{#each stock in stocks}}
           <tr>
             <td>{{stock.name}}</td>
             <td>{{stock.amount}}</td>
           </tr>
-        {{else}}
-          No stocks
         {{/each}}
       </table>
-      </ul>
-    </div>
-    <div class="col-md-6">
-      {{game-board player=player game=game model=model available_hotels=available_hotels board_colors=board_colors founded_hotels=founded_hotels hotels_w_enough_stock_cards = hotels_w_enough_stock_cards}}
+    {{/if}}
+  </div>
+  <div class="col-md-6">
+    {{game-board player=player game=game model=model available_hotels=available_hotels board_colors=board_colors founded_hotels=founded_hotels hotels_w_enough_stock_cards = hotels_w_enough_stock_cards}}
 
-      <h3>Tiles:</h3>
-      <table class="table">
+    <h3>Tiles:</h3>
+    <table class="table">
+      <tr>
+        {{#each tile in tiles}}
+          <td>{{tile.to_english}}</td>
+        {{/each}}
+      </tr>
+    </table>
+  </div>
+  <div class="col-md-3">
+    <h3>Hotel Chains</h3>
+    <table class="table table-bordered" border="1">
+      <tr>
+        <td>Hotel Name</td>
+        <td>Chain Size</td>
+        <td>Share Price</td>
+      </tr>
+      {{#each game_hotel in game_hotels}}
         <tr>
-          {{#each tile in tiles}}
-            <td>{{tile.to_english}}</td>
-          {{/each}}
+          <td>{{game_hotel.name}}</td>
+          <td>{{game_hotel.chain_size}}</td>
+          <td>{{game_hotel.share_price}}</td>
         </tr>
-      </table>
-    </div>
-    <div class="col-md-3">
-      <div>
-        <table class="table table-bordered" border="1">
-          <h3>Hotel Chains</h3>
-          <tr>
-            <td>Hotel Name</td>
-            <td>Chain Size</td>
-            <td>Share Price</td>
-          </tr>
-          {{#each game_hotel in game_hotels}}
-            <tr>
-              <td>{{game_hotel.name}}</td>
-              <td>{{game_hotel.chain_size}}</td>
-              <td>{{game_hotel.share_price}}</td>
-            </tr>
-          {{/each}}
-        </table>
-      </div>
-    </div>
+      {{/each}}
+    </table>
   </div>
 </div>
 
@@ -92,63 +87,66 @@ window.payload = <%= @payload.to_json.html_safe %>;
     {{/each}}
   </table>
 </div>
-{{#if errored}}
-  <div border="1">
-    <h1 class="flush--top">Which Hotel chain would you like to found?</h1>
+<div>
+  {{#if errored}}
+    <div border="1">
+      <h1 class="flush--top">Which Hotel chain would you like to found?</h1>
+        {{view Ember.Select
+         content=available_hotels
+         optionValuePath="content.name"
+         optionLabelPath="content.name"
+         value=selectedHotel.name}}
+      <button {{action "resolveIssue"}} class="btn btn-large btn-success">Done</button>
+    </div>
+  {{/if}}
+  {{#if buybutton}}
+    <div>
+      <button {{action "openStockOptions"}} class="btn btn-large btn-success">Buy Stocks</button>
+    </div>
+  {{/if}}
+  {{#if open}}
+    <div border="1">
+      <h1 class="flush--top">What stock would you like to buy?</h1> 
       {{view Ember.Select
-       content=available_hotels
+       content=hotels_w_enough_stock_cards
        optionValuePath="content.name"
        optionLabelPath="content.name"
-       value=selectedHotel.name}}
-    <button {{action "resolveIssue"}} class="btn btn-large btn-success">Done</button>
-  </div>
-{{/if}}
-{{#if buybutton}}
-  <button {{action "openStockOptions"}} class="btn btn-large btn-success">Buy Stocks</button>
-{{/if}}
-{{#if open}}
-  <div border="1">
-    <h1 class="flush--top">What stock would you like to buy?</h1> 
-    {{view Ember.Select
-     content=hotels_w_enough_stock_cards
-     optionValuePath="content.name"
-     optionLabelPath="content.name"
-     value=selectedHotelStock1.name}} 
-     {{view Ember.Select
-     content=hotels_w_enough_stock_cards
-     optionValuePath="content.name"
-     optionLabelPath="content.name"
-     value=selectedHotelStock2.name}} 
-     {{view Ember.Select
-     content=hotels_w_enough_stock_cards
-     optionValuePath="content.name"
-     optionLabelPath="content.name"
-     value=selectedHotelStock3.name}}   
-    <button {{action "closeStockOptions"}} class="btn btn-large btn-success">Done</button>
-  </div>
-{{/if}}
-{{#if merger_hold_sell_button}}
-  <button {{action "openMergerOptions"}} class="btn btn-large btn-success" >Hold, Sell, Or Trade?</button>
-{{/if}}
-{{#if open_merger}}
-  <div border="1">
-    {{#ifShares game.has_shares}}
-      <h1 class="flush--top">You have {{game.has_shares}} shares to hold, sell or trade. </h1>  
-      <h4> Hold {{input type="text" placeholder="number" value=holdNumber type="number"}} shares</h4>
-      <h4> Sell {{input type="text" placeholder="number" value=sellNumber type="number"}} shares</h4>
-      <h4> Trade two for one {{input type="text" placeholder="number" value=tradeNumber type="number"}} shares 
-      </h4>
-      {{alert}}
-      <button {{action "closeMergerOptions" true}} class="btn btn-large btn-success">Done</button>
-    {{else}}
-      <h1 class="flush--top">You have no shares to hold, sell or trade</h1> 
-      <button {{action "closeMergerOptions" false}} class="btn btn-large btn-success">Done</button>
-    {{/ifShares}}
-  </div>
-{{/if}}
-{{#ifCond player.username game.merger_up_next}}
-  {{#ifCond game.merger 2}}
-    <button {{action "openMergerOptions"}} class="btn btn-large btn-success">Hold, Sell, Or Trade?</button>
+       value=selectedHotelStock1.name}} 
+       {{view Ember.Select
+       content=hotels_w_enough_stock_cards
+       optionValuePath="content.name"
+       optionLabelPath="content.name"
+       value=selectedHotelStock2.name}} 
+       {{view Ember.Select
+       content=hotels_w_enough_stock_cards
+       optionValuePath="content.name"
+       optionLabelPath="content.name"
+       value=selectedHotelStock3.name}}   
+      <button {{action "closeStockOptions"}} class="btn btn-large btn-success">Done</button>
+    </div>
+  {{/if}}
+  {{#if merger_hold_sell_button}}
+    <button {{action "openMergerOptions"}} class="btn btn-large btn-success" >Hold, Sell, Or Trade?</button>
+  {{/if}}
+  {{#if open_merger}}
+    <div border="1">
+      {{#ifShares game.has_shares}}
+        <h1 class="flush--top">You have {{game.has_shares}} shares to hold, sell or trade. </h1>  
+        <h4> Hold {{input type="text" placeholder="number" value=holdNumber type="number"}} shares</h4>
+        <h4> Sell {{input type="text" placeholder="number" value=sellNumber type="number"}} shares</h4>
+        <h4> Trade two for one {{input type="text" placeholder="number" value=tradeNumber type="number"}} shares </h4>
+        {{alert}}
+        <button {{action "closeMergerOptions" true}} class="btn btn-large btn-success">Done</button>
+      {{else}}
+        <h1 class="flush--top">You have no shares to hold, sell or trade</h1> 
+        <button {{action "closeMergerOptions" false}} class="btn btn-large btn-success">Done</button>
+      {{/ifShares}}
+    </div>
+  {{/if}}
+  {{#ifCond player.username game.merger_up_next}}
+    {{#ifCond game.merger 2}}
+      <button {{action "openMergerOptions"}} class="btn btn-large btn-success">Hold, Sell, Or Trade?</button>
+    {{/ifCond}}
   {{/ifCond}}
-{{/ifCond}}
+</div>
 </script>

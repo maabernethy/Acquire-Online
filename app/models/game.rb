@@ -179,6 +179,7 @@ class Game < ActiveRecord::Base
   end
 
   def find_shareholders(acquired_hotel, acquired_hotel_size)
+    byebug
     # determine share holders
     hotel_name = acquired_hotel.name
     most_shares = 0
@@ -204,32 +205,49 @@ class Game < ActiveRecord::Base
       end      
     end
 
-    if minority_player == 'none'
+    byebug
+
+    if minority_player == 'none' && tie_for_first == 'none'
       minority_player = majority_player
     end
+
+    byebug
 
     give_bonuses(acquired_hotel, majority_player, minority_player, acquired_hotel_size, tie_for_first, tie_for_second)
   end
 
   def give_bonuses(acquired_hotel, primary, secondary, acquired_hotel_size, tie_for_first, tie_for_second)
+    byebug
     response = acquired_hotel.get_bonus_amounts(acquired_hotel_size)
     majority_bonus = response[0]
     minority_bonus = response[1]
+
+    byebug
 
     if tie_for_first != 'none'
       split = (majority_bonus + minority_bonus)/2
       primary.cash = primary.cash + split
       tie_for_first.cash = tie_for_first.cash + split
+      primary.save
+      tie_for_first.save
       if tie_for_second != 'none'
         split = minority_bonus/2
+        secondary.cash = secondary.cash + split
+        tie_for_second.cash = tie_for_second.cash + split
+        secondary.save
+        tie_for_second.save
       end
     elsif tie_for_second != 'none'
       split = minority_bonus/2
       secondary.cash = secondary.cash + split
       tie_for_second.cash = tie_for_second.cash + split
+      secondary.save
+      tie_for_second.save
     else
       primary.cash = primary.cash + majority_bonus
       secondary.cash = secondary.cash + minority_bonus
+      primary.save
+      secondary.save
     end
   end
 
