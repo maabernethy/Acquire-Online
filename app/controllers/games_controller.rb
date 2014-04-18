@@ -148,6 +148,7 @@ class GamesController < ApplicationController
 
   def merger_turn
     byebug
+    no_shares = params[:shares]
     hnum = params[:hold]
     tnum = params[:trade]
     snum = params[:sell]
@@ -156,7 +157,7 @@ class GamesController < ApplicationController
     game.acquired_hotel = acquired_hotel
     game.save
     player = current_user.game_players.where(game_id: game.id).first
-    if selected_option != 'none'
+    if !no_shares
       hold_sell_trade(hnum, snum, tnum, trade_hotel, player, game, acquired_hotel)
     end
     response = game.start_merger_turn(player, acquired_hotel)
@@ -181,7 +182,29 @@ class GamesController < ApplicationController
   end
 
   def hold_sell_trade(hnum, snum, tnum, trade_hotel, player, game, acquired_hotel)
-   byebug
+    byebug
+    # do nothing when holding shares
+    # deal with selling of shares
+    if (snum != null) && (snum > 0)
+      byebug
+      # give player money
+      acquired_game_hotel = game.game_hotels.where(name: acquired_hotel).first
+      acquired_hotel_share_price = acquired_game_hotel.share_price
+      player.cash = player.cash + (acquired_hotel_share_price * snum)
+      # remove shares from stock cards and return to game pool
+      snum.times do
+        card = player.stock_cards.where(hotel: acquired_hotel).first
+        player.stock_cards.delete(card)
+        game.stock_cards << card
+        player.save
+        game.save
+      end
+    end
+
+    # deal with trading of shares
+    if (tnum != null) && (tnum > 0)
+      # need to dominant hotel attribute to game
+    end
   end
 
   private

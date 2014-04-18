@@ -99,7 +99,7 @@ App.GameBoardComponent = Ember.Component.extend({
       var snum = this.get('sellNumber');
       var num_shares = this.get('controller.model.game.has_shares')
       var total = parseInt(hnum) + parseInt(snum) + parseInt(tnum)
-      if (shares == null) {
+      if (shares == false) {
         this.set('alert', '')
       }
       else if (hnum == '' || tnum == '' || snum == '') {
@@ -116,9 +116,10 @@ App.GameBoardComponent = Ember.Component.extend({
         this.set('controller.open_merger', false);
         this.set('controller.model.has_shares', false);
         acquired_hotel = this.get('controller.model.game.acquired_hotel')
-        if (parseInt(tnum) > 0) {
-          trade_hotel = this.get('tradeHotel')
-        }
+        if (shares) {
+          if (parseInt(tnum) > 0) {
+            trade_hotel = this.get('tradeHotel')
+          }
         else {
           trade_hotel = 'none'
         }
@@ -127,6 +128,7 @@ App.GameBoardComponent = Ember.Component.extend({
           url: '/games/'+window.payload.game.id+'/merger_turn',
           data: {
             acquired_hotel: acquired_hotel,
+            shares: shares,
             hold: hnum,
             sell: snum,
             trade: tnum,
@@ -216,6 +218,7 @@ App.GameBoardSquareView = Ember.View.extend({
       }
     }).then(function(json) {
       if (json.answer.legal) {
+        debugger;
         _this.set(json.answer.color, true);
         if (json.answer.other_tiles != null) {
           if (json.answer.other_tiles[1] != 'grey') {
@@ -261,6 +264,7 @@ App.GameBoardSquareView = Ember.View.extend({
         };
       }
     }, function(json) {
+      debugger;
       if (_this.get('controller.model.available_hotels').length != 0) {
         _this.set('controller.errored', true);
       }
