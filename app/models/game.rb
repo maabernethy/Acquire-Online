@@ -185,30 +185,51 @@ class Game < ActiveRecord::Base
     second_most_shares = 0
     majority_player = 'none'
     minority_player = 'none'
+    tie_for_first = 'none'
+    tie_for_second = 'none'
     self.game_players.each do |player|
       count = player.stock_cards.where(hotel: hotel_name).count
       if count > most_shares
         majority_player = player
         most_shares = count
+        tie_for_first = 'none'
+      elsif count = most_shares
+        tie_for_first = player
       elsif count > second_most_shares
         minority_player = player
         second_most_shares = count
-      end
+        tie_for_second = 'none'
+      elsif count = second_most_shares
+        tie_for_second = player
+      end      
     end
 
-    give_bonuses(acquired_hotel, majority_player, minority_player, acquired_hotel_size)
+    if minority_player == 'none'
+      minority_player = majority_player
+    end
+
+    give_bonuses(acquired_hotel, majority_player, minority_player, acquired_hotel_size, tie_for_first, tie_for_second)
   end
 
-  def give_bonuses(acquired_hotel, primary, secondary, acquired_hotel_size)
+  def give_bonuses(acquired_hotel, primary, secondary, acquired_hotel_size, tie_for_first, tie_for_second)
     response = acquired_hotel.get_bonus_amounts(acquired_hotel_size)
     majority_bonus = response[0]
     minority_bonus = response[1]
 
-    if primary != 'none'
-      primary.cash << majority_bonus
-    end
-    if secondary != 'none'
-      secondary.cash << minority_bonus
+    if tie_for_first != 'none'
+      split = (majority_bonus + minority_bonus)/2
+      primary.cash = primary.cash + split
+      tie_for_first.cash = tie_for_first.cash + split
+      if tie_for_second != 'none'
+        split = minority_bonus/2
+      end
+    elsif tie_for_second != 'none'
+      split = minority_bonus/2
+      secondary.cash = secondary.cash + split
+      tie_for_second.cash = tie_for_second.cash + split
+    else
+      primary.cash = primary.cash + majority_bonus
+      secondary.cash = secondary.cash + minority_bonus
     end
   end
 
