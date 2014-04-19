@@ -81,7 +81,7 @@ App.GameBoardComponent = Ember.Component.extend({
           _this.set('controller.model.game_hotels', json.game_hotels);
           _this.set('controller.model.player', json.player);
           _this.set('controller.model.stocks', json.stocks);
-          _this.set('controller.model.users', json.users);
+          _this.set('controller.model.players', json.players);
           _this.set('controller.model.tiles', json.answer.new_tiles);
           _this.set('controller.model.available_hotels', json.available_hotels);
           _this.set('controller.model.board_colors', json.board_colors);
@@ -134,7 +134,7 @@ App.GameBoardComponent = Ember.Component.extend({
           _this.set('controller.model.game_hotels', json.game_hotels);
           _this.set('controller.model.player', json.player);
           _this.set('controller.model.stocks', json.stocks);
-          _this.set('controller.model.users', json.users);
+          _this.set('controller.model.players', json.players);
           _this.set('controller.model.available_hotels', json.available_hotels);
           _this.set('controller.model.board_colors', json.board_colors);
           _this.set('controller.model.founded_hotels', json.founded_hotels);
@@ -164,7 +164,7 @@ App.GameBoardComponent = Ember.Component.extend({
           _this.set('controller.model.game_hotels', json.game_hotels);
           _this.set('controller.model.player', json.player);
           _this.set('controller.model.stocks', json.stocks);
-          _this.set('controller.model.users', json.users);
+          _this.set('controller.model.players', json.players);
           _this.set('controller.model.available_hotels', json.available_hotels);
           _this.set('controller.model.board_colors', json.board_colors);
           _this.set('controller.model.founded_hotels', json.founded_hotels);
@@ -231,7 +231,7 @@ App.GameBoardSquareView = Ember.View.extend({
         _this.set('controller.model.game_hotels', json.game_hotels);
         _this.set('controller.model.player', json.player);
         _this.set('controller.model.stocks', json.stocks);
-        _this.set('controller.model.users', json.users);
+        _this.set('controller.model.players', json.players);
         _this.set('controller.model.tiles', json.answer.new_tiles);
         _this.set('controller.model.available_hotels', json.available_hotels);
         _this.set('controller.model.board_colors', json.board_colors);

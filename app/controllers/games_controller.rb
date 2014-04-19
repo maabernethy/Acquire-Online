@@ -244,7 +244,7 @@ class GamesController < ApplicationController
     available_hotels = game_hotels.where(chain_size: 0)
     board_colors = get_board_colors(game)
 
-    @payload = { game: game, users: game.users, tiles: tiles, player: player, stocks: stocks, game_hotels: game_hotels, available_hotels: available_hotels, board_colors: board_colors, founded_hotels: founded_hotels, hotels_w_enough_stock_cards: hotels_w_enough_stock_cards }
+    @payload = { game: game, players: game.game_players, tiles: tiles, player: player, stocks: stocks, game_hotels: game_hotels, available_hotels: available_hotels, board_colors: board_colors, founded_hotels: founded_hotels, hotels_w_enough_stock_cards: hotels_w_enough_stock_cards }
   end
 
   def get_board_colors(game)
