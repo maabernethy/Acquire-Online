@@ -397,6 +397,11 @@ class Game < ActiveRecord::Base
         response = merger_and_orphan(placed_sur_tiles, tile)
         other_tiles = convert_tiles_to_numbers(response[1])
         color = response[0]
+        dominant_hotel = response[2]
+        acquired_hotel = response[3]
+        acquired_hotel_size = response[4]
+        merger_stock(dominant_hotel, acquired_hotel, acquired_hotel_size)
+        merger = true
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none')) || ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel == 'none'))
         # extension of chain with 2 orphans
         if placed_sur_tiles[0].hotel != 'none'
@@ -544,21 +549,30 @@ class Game < ActiveRecord::Base
       other_tiles << [placed_sur_tiles[0].tile.row, placed_sur_tiles[0].tile.column, 'grey']
       color = response[0]
       placed_sur_tiles[0].hotel = Hotel.where(color: color).first.name
+      dominant_hotel = response[2]
+      acquired_hotel = response[3]
+      acquired_hotel_size = response[4]
     elsif placed_sur_tiles[1].hotel == 'none'
       response = execute_merger([placed_sur_tiles[0], placed_sur_tiles[2]], true, placed_tile)
       other_tiles = response[1]
       other_tiles << [placed_sur_tiles[1].tile.row, placed_sur_tiles[1].tile.column, 'grey']
       color = response[0]
       placed_sur_tiles[1].hotel = Hotel.where(color: color).first.name
+      dominant_hotel = response[2]
+      acquired_hotel = response[3]
+      acquired_hotel_size = response[4]
     elsif placed_sur_tiles[2].hotel == 'none'
       response = execute_merger([placed_sur_tiles[0], placed_sur_tiles[1]], true, placed_tile)
       other_tiles = response[1]
       other_tiles << [placed_sur_tiles[2].tile.row, placed_sur_tiles[2].tile.column, 'grey']
       color = response[0]
       placed_sur_tiles[2].hotel = Hotel.where(color: color).first.name
+      dominant_hotel = response[2]
+      acquired_hotel = response[3]
+      acquired_hotel_size = response[4]
     end 
 
-    [color, other_tiles]  
+    [color, other_tiles, dominant_hotel, acquired_hotel, acquired_hotel_size]
   end
 
   def  big_merger(placed_sur_tiles, placed_tile)

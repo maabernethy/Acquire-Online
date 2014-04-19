@@ -89,3 +89,23 @@
 
     %p.lead The game ends when the current player chooses to end the game and one of the following two conditions are met:   1) all active corporations are safe, or 2) one corporation has 41 or more tiles on the gameboard.  After choosing to end the game, the ending player can complete his/her turn.
 
+    - col1 = ['2','3','4','5','6-10','11-20','21-30','31-40','41 & over','-','-']
+    - col2 = ['-','2','3','4','5','6-10','11-20','21-30','31-40','41 & over','-']
+    - col3 = ['-','-','2','3','4','5','6-10','11-20','21-30','31-40','41 & over']
+    - col4 = ['200','300','400','500','600','700','800','900','1000','1100','1200']
+    - count = 0
+    %h3 Reference Chart
+    %table{:border => '1', :style=>'text-align: center'}
+      %th{:colspan => '4', :style=>'text-align: center'} Number of Tiles in Corporation on Board
+      %tr
+        %th Worldwide/Sackson
+        %th Festival/Imperial/American
+        %th Continental/Tower
+        %th Stock Buy/Sell price per stockcard
+      - 11.times do
+        %tr
+          %td= col1[count]
+          %td= col2[count]
+          %td= col3[count]
+          %td= col4[count]
+        - count = count + 1
