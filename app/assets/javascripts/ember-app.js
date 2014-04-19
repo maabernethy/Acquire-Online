@@ -86,6 +86,7 @@ App.GameBoardComponent = Ember.Component.extend({
           _this.set('controller.model.available_hotels', json.available_hotels);
           _this.set('controller.model.board_colors', json.board_colors);
           _this.set('controller.model.founded_hotels', json.founded_hotels);
+          _this.set('controller.model.log_entries', json.log_entries);
           _this.set('controller.model.acquired_hotel', json.answer.acquired_hotel);
         }
       });
@@ -138,6 +139,7 @@ App.GameBoardComponent = Ember.Component.extend({
           _this.set('controller.model.available_hotels', json.available_hotels);
           _this.set('controller.model.board_colors', json.board_colors);
           _this.set('controller.model.founded_hotels', json.founded_hotels);
+          _this.set('controller.model.log_entries', json.log_entries);
           _this.set('controller.merger_hold_sell_button', false);
         });
       }
@@ -168,6 +170,7 @@ App.GameBoardComponent = Ember.Component.extend({
           _this.set('controller.model.available_hotels', json.available_hotels);
           _this.set('controller.model.board_colors', json.board_colors);
           _this.set('controller.model.founded_hotels', json.founded_hotels);
+          _this.set('controller.model.log_entries', json.log_entries);
           _this.set('controller.buybutton', false);
           none = new Object();
           none.name = 'none';
@@ -237,6 +240,7 @@ App.GameBoardSquareView = Ember.View.extend({
         _this.set('controller.model.board_colors', json.board_colors);
         _this.set('controller.model.founded_hotels', json.founded_hotels);
         _this.set('controller.model.acquired_hotel', json.answer.acquired_hotel);
+        _this.set('controller.model.log_entries', json.log_entries);
         if (json.answer.merger) {
           console.log('merger!');
           _this.set('controller.merger_hold_sell_button', true);

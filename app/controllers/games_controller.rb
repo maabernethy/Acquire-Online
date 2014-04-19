@@ -228,6 +228,7 @@ class GamesController < ApplicationController
 
   def game_state
     game = Game.find(params[:id])
+    log_entries = game.log_entries
     player = current_user.game_players.where(game: game).first
     tiles = player.tiles
     stocks = player.stock_cards_by_name_payload
@@ -244,7 +245,8 @@ class GamesController < ApplicationController
     available_hotels = game_hotels.where(chain_size: 0)
     board_colors = get_board_colors(game)
 
-    @payload = { game: game, players: game.game_players, tiles: tiles, player: player, stocks: stocks, game_hotels: game_hotels, available_hotels: available_hotels, board_colors: board_colors, founded_hotels: founded_hotels, hotels_w_enough_stock_cards: hotels_w_enough_stock_cards }
+    byebug
+    @payload = { game: game, players: game.game_players, tiles: tiles, player: player, stocks: stocks, game_hotels: game_hotels, available_hotels: available_hotels, board_colors: board_colors, founded_hotels: founded_hotels, hotels_w_enough_stock_cards: hotels_w_enough_stock_cards, log_entries: log_entries }
   end
 
   def get_board_colors(game)

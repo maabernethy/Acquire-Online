@@ -51,6 +51,21 @@ window.payload = <%= @payload.to_json.html_safe %>;
       </tr>
     </table>
 
+    <h3> Game Log: </h3>
+    {{#if log_entries}}
+      <div class="span3" id="log">
+        <table class="table table-striped">
+          {{#each log in log_entries}}
+            <tr>
+              <td>{{log.message}}</td>
+            </tr>
+          {{/each}}
+        </table>
+      </div>
+    {{else}}
+      <h4>No moves yet!</h4>
+    {{/if}}
+
     <table class="table table-bordered text-center" border="1">
       <tr>
         <th> Player </th>

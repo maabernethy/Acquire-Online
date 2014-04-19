@@ -1,4 +1,5 @@
 class Game < ActiveRecord::Base
+  has_many :log_entries
   has_many :game_players
   has_many :users, through: :game_players
   has_many :game_tiles
@@ -128,6 +129,9 @@ class Game < ActiveRecord::Base
     end
     next_player = self.game_players.where(turn_order: next_num).first
     self.up_next = next_player.user.username
+    msg = current_username + ' has played their turn.'
+    LogEntry.create(message: msg, game_id: self.id)
+    byebug
     self.save
   end
 
