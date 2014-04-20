@@ -115,6 +115,8 @@ window.payload = <%= @payload.to_json.html_safe %>;
 </script>
 
 <script type="text/x-handlebars" id="components/game-board">
+<div class="overlay"></div>
+<div class="box"> Im a Modal!</div>
 <div class="board">
   <table class="table table-bordered" border="1">
     {{#each column in columns}}

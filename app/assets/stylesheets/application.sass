@@ -46,19 +46,29 @@
   height: 100px !important
   overflow: scroll
 
-.modal
-  margin: 10px auto
+.box 
   width: 300px
-  background-color: #fff
-  padding: 1em
+  height: 200px
+  line-height: 200px
+  position: fixed
+  top: 50% 
+  left: 50%
+  margin-top: -100px
+  margin-left: -150px
+  background-color: white
+  border-radius: 5px
+  text-align: center
+  z-index: 11
 
-.overlay
-  height: 100%
-  width: 100%
+.overlay 
   position: fixed
   top: 0
   left: 0
-  background-color: rgba(0, 0, 0, 0.2)
+  height: 100%
+  width: 100%
+  z-index: 10
+  background-color: rgba(0,0,0,0.5)
+
 
 .flush--top
   margin-top: 0

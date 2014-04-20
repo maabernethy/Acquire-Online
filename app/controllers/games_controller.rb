@@ -245,7 +245,6 @@ class GamesController < ApplicationController
     available_hotels = game_hotels.where(chain_size: 0)
     board_colors = get_board_colors(game)
 
-    byebug
     @payload = { game: game, players: game.game_players, tiles: tiles, player: player, stocks: stocks, game_hotels: game_hotels, available_hotels: available_hotels, board_colors: board_colors, founded_hotels: founded_hotels, hotels_w_enough_stock_cards: hotels_w_enough_stock_cards, log_entries: log_entries }
   end
 
