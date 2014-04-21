@@ -2,7 +2,12 @@
 .container.text-center
   / Example row of columns
   .row
-    .col-md-6
+    .col-md-3
+      %h1 Notifications:
+      %table.table.table-striped.text-center
+        = render partial: 'notification', collection: @notifications
+
+    .col-md-3
       %h1 Users Online:
       %table.table.table-striped.text-center
         = render partial: 'user', collection: @users
