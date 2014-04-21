@@ -115,8 +115,6 @@ window.payload = <%= @payload.to_json.html_safe %>;
 </script>
 
 <script type="text/x-handlebars" id="components/game-board">
-<div class="overlay"></div>
-<div class="box"> Im a Modal!</div>
 <div class="board">
   <table class="table table-bordered" border="1">
     {{#each column in columns}}
@@ -134,8 +132,9 @@ window.payload = <%= @payload.to_json.html_safe %>;
 </div>
 <div>
   {{#if errored}}
-    <div border="1">
-      <h1 class="flush--top">Which Hotel chain would you like to found?</h1>
+    <div class="overlay"></div>
+    <div class="box text-center">
+      <h2 class="flush--top">Which Hotel chain would you like to found?</h1>
         {{view Ember.Select
          content=available_hotels
          optionValuePath="content.name"
@@ -150,7 +149,8 @@ window.payload = <%= @payload.to_json.html_safe %>;
     </div>
   {{/if}}
   {{#if open}}
-    <div border="1">
+    <div class="overlay"></div>
+    <div class="box text-center">
       <h1 class="flush--top">What stock would you like to buy?</h1> 
       {{view Ember.Select
        content=hotels_w_enough_stock_cards
@@ -174,7 +174,8 @@ window.payload = <%= @payload.to_json.html_safe %>;
     <button {{action "openMergerOptions"}} class="btn btn-large btn-success" >Hold, Sell, Or Trade?</button>
   {{/if}}
   {{#if open_merger}}
-    <div border="1">
+    <div class="overlay"></div>
+    <div class="box text-center">
       {{#ifShares game.has_shares}}
         <h1 class="flush--top">You have {{game.has_shares}} shares to hold, sell or trade. </h1>  
         <h4> Hold {{input type="text" placeholder="number" value=holdNumber type="number"}} shares</h4>

@@ -131,7 +131,6 @@ class Game < ActiveRecord::Base
     self.up_next = next_player.user.username
     msg = current_username + ' has played their turn.'
     LogEntry.create(message: msg, game_id: self.id)
-    byebug
     self.save
   end
 
