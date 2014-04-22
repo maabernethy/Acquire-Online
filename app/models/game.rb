@@ -313,7 +313,7 @@ class Game < ActiveRecord::Base
     end
   end
 
-  def choose_color(row, column, cell, selected_hotel)
+  def choose_color(row, column, cell, selected_hotel, player)
     tile = self.game_tiles.where(cell: cell).first
     placed_tiles = []
     self.game_tiles.where(placed: true).each do |game_tile|
@@ -333,6 +333,9 @@ class Game < ActiveRecord::Base
           # new chain
           other_tiles = convert_tile_to_number({'row' => placed_sur_tiles[0].tile.row, 'column' => placed_sur_tiles[0].tile.column})
           color = HOTEL_COLORS[selected_hotel]
+          # Update Game log
+          msg = player.username + ' founded ' + selected_hotel + '.'
+          LogEntry.create(message: msg, game_id: self.id)
           #save game hotel chain size
           chosen_game_hotel = self.game_hotels.where(name: selected_hotel).first
           chosen_game_hotel.chain_size = 2
@@ -349,6 +352,9 @@ class Game < ActiveRecord::Base
         # extending chain
         hotel = placed_sur_tiles[0].hotel
         color = HOTEL_COLORS[hotel]
+        # Update Game log
+        msg = player.username + ' extended ' + hotel + '.'
+        LogEntry.create(message: msg, game_id: self.id)
         #save game hotel chain size
         hotel_chain = self.game_hotels.where(name: hotel).first
         hotel_chain.chain_size += 1
@@ -369,6 +375,9 @@ class Game < ActiveRecord::Base
           color = HOTEL_COLORS[selected_hotel]
           orphan_tiles_info = [[placed_sur_tiles[0].tile.row, placed_sur_tiles[0].tile.column, 'grey'], [placed_sur_tiles[1].tile.row, placed_sur_tiles[1].tile.column, 'grey']]
           other_tiles = convert_tiles_to_numbers(orphan_tiles_info)
+          # Update Game log
+          msg = player.username + ' founded ' + selected_hotel + '.'
+          LogEntry.create(message: msg, game_id: self.id)
           #save game hotel chain size
           chosen_game_hotel = self.game_hotels.where(name: selected_hotel).first
           chosen_game_hotel.chain_size = 3
@@ -391,6 +400,9 @@ class Game < ActiveRecord::Base
         dominant_hotel = response[2]
         acquired_hotel = response[3]
         acquired_hotel_size = response[4]
+        # Update Game log
+        msg = player.username + ' caused a merger. ' + dominant_hotel.name + ' acquired ' + acquired_hotel.name + '.'
+        LogEntry.create(message: msg, game_id: self.id)
         merger_stock(dominant_hotel, acquired_hotel, acquired_hotel_size)
         merger = true
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none'))
@@ -407,6 +419,9 @@ class Game < ActiveRecord::Base
           other_tiles = convert_tile_to_number({'row' => placed_sur_tiles[1].tile.row, 'column' => placed_sur_tiles[1].tile.column, 'current_color' => 'grey'})
           tile.hotel = hotel
           tile.save
+          # Update Game log
+          msg = player.username + ' extended ' + hotel + '.'
+          LogEntry.create(message: msg, game_id: self.id)
         elsif placed_sur_tiles[1].hotel != 'none'
           hotel = placed_sur_tiles[1].hotel
           color = HOTEL_COLORS[hotel]
@@ -419,6 +434,9 @@ class Game < ActiveRecord::Base
           tile.hotel = hotel
           tile.save
           other_tiles = convert_tile_to_number({'row' => placed_sur_tiles[0].tile.row, 'column' => placed_sur_tiles[0].tile.column, 'current_color' => 'grey'})
+          # Update Game log
+          msg = player.username + ' extended ' + selected_hotel + '.'
+          LogEntry.create(message: msg, game_id: self.id)
         end
       end
     elsif placed_sur_tiles.length == 3
@@ -448,6 +466,9 @@ class Game < ActiveRecord::Base
           #save placed tile hotel
           tile.hotel = selected_hotel
           tile.save
+          # Update Game log
+          msg = player.username + ' founded ' + selected_hotel + '.'
+          LogEntry.create(message: msg, game_id: self.id)
         end
       elsif (placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none')
         #merger of 3 chains
@@ -462,6 +483,9 @@ class Game < ActiveRecord::Base
         dominant_hotel = response[2]
         acquired_hotel = response[3]
         acquired_hotel_size = response[4]
+        # Update Game log
+        msg = player.username + ' caused a merger. ' + dominant_hotel.name + ' acquired ' + acquired_hotel.name + '.'
+        LogEntry.create(message: msg, game_id: self.id)
         merger_stock(dominant_hotel, acquired_hotel, acquired_hotel_size)
         merger = true
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none')) || ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel == 'none'))
@@ -506,6 +530,9 @@ class Game < ActiveRecord::Base
           orphan_tiles_info = [[placed_sur_tiles[0].tile.row, placed_sur_tiles[0].tile.column, 'grey'], [placed_sur_tiles[1].tile.row, placed_sur_tiles[1].tile.column, 'grey']]
           other_tiles = convert_tiles_to_numbers(orphan_tiles_info)       
         end
+        # Update Game log
+        msg = player.username + ' extended ' + hotel + '.'
+        LogEntry.create(message: msg, game_id: self.id)
       end 
     end
 

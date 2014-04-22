@@ -59,7 +59,7 @@ class GamesController < ApplicationController
     if true
       if @game.player_hand(current_user, @cell) 
         begin
-          array = @game.choose_color(letter, num, @cell, selected_hotel)
+          array = @game.choose_color(letter, num, @cell, selected_hotel, player)
         rescue
           render :json => @game, :status => :unprocessable_entity
           return
