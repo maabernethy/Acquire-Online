@@ -53,7 +53,7 @@ window.payload = <%= @payload.to_json.html_safe %>;
 
     <h3> Game Log: </h3>
     {{#if log_entries}}
-      <div class="span3" id="log">
+      <div class="log-box" id="log">
         <table class="table table-striped">
           {{#each log in log_entries}}
             <tr>

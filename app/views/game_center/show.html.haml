@@ -1,27 +1,36 @@
 %body
-.container.text-center
+.containertext-center
   / Example row of columns
   .row
     .col-md-3
-      %h1 Notifications:
-      %table.table.table-striped.text-center
-        = render partial: 'notification', collection: @notifications
+      .contaner
+        .jumbotron.text-center
+          %h2 Notifications:
+          .scroll-box
+            %table.table.table-striped.text-center
+              = render partial: 'notification', collection: @notifications
 
     .col-md-3
-      %h1 Users Online:
-      %table.table.table-striped.text-center
-        = render partial: 'user', collection: @users
+      .contaner
+        .jumbotron.text-center
+          %h2 Users Online:
+          .scroll-box
+            %table.table.table-striped.text-center
+              = render partial: 'user', collection: @users
 
     .col-md-6
-      %h1 Current Games:
-      %table.table.table-striped.text-center
-        = render partial: 'game', collection: @games
+      .contaner
+        .jumbotron.text-center
+          %h2 Current Games:
+          .scroll-box
+            %table.table.table-striped.text-center
+              = render partial: 'game', collection: @games
       
-
-.jumbotron
-  .container
-    .col-md-6.col-md-offset-3.centerfy.text-center
-      %h1.text-center Want to start a new game?
-      %p.lead.text-center Get ready to choose a name and some friends to play with!
-      %p
-      = button_to('Start New Game', new_game_path, method: :get, :class => 'btn btn-large btn-success')     
+.container
+  .jumbotron
+    .container
+      .col-md-6.col-md-offset-3.centerfy.text-center
+        %h1.text-center Want to start a new game?
+        %p.lead.text-center Get ready to choose a name and some friends to play with!
+        %p
+        = button_to('Start New Game', new_game_path, method: :get, :class => 'btn btn-large btn-success')     
