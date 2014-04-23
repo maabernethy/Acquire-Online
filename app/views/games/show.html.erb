@@ -12,37 +12,17 @@ window.payload = <%= @payload.to_json.html_safe %>;
 
 <script type="text/x-handlebars">
 <div class="container text-center">
-  <h2>{{game.name}}</h2>
+  <table class="table">
+    <tr>
+      <td><h1>{{game.name}}</h2></td>
+      <td><h4 class="text-white"> {{game.up_next}} is up!</h3></td>
+    </tr>
+  </table>
 
-  <div class="col-md-3">
-    <h3> Players: </h3>
-    <table class="table">
-      {{#each player in players}}
-        <tr>
-          <td>{{player.username}}</td>
-        </tr>
-      {{/each}}
-    </table>
-
-    <h3> Turn: {{game.up_next}} </h3>
-    <h3>Money: {{player.cash_to_english}}</h3>
-
-    <h3> Your Stocks: </h3>
-    {{#if stocks}}
-      <table class="table table-bordered" border="1">
-        {{#each stock in stocks}}
-          <tr>
-            <td>{{stock.name}}</td>
-            <td>{{stock.amount}}</td>
-          </tr>
-        {{/each}}
-      </table>
-    {{/if}}
-  </div>
   <div class="col-md-6">
     {{game-board player=player game=game model=model available_hotels=available_hotels board_colors=board_colors founded_hotels=founded_hotels hotels_w_enough_stock_cards = hotels_w_enough_stock_cards}}
 
-    <h3>Tiles:</h3>
+    <h3 class="text-white">Tiles:</h3>
     <table class="table">
       <tr>
         {{#each tile in tiles}}
@@ -50,33 +30,20 @@ window.payload = <%= @payload.to_json.html_safe %>;
         {{/each}}
       </tr>
     </table>
+  </div>
 
-    <h3> Game Log: </h3>
-    {{#if log_entries}}
-      <div class="log-box" id="log">
-        <table class="table table-striped">
-          {{#each log in log_entries}}
-            <tr>
-              <td>{{log.message}}</td>
-            </tr>
-          {{/each}}
-        </table>
-      </div>
-    {{else}}
-      <h4>No moves yet!</h4>
-    {{/if}}
-
-    <table class="table table-bordered text-center" border="1">
+  <div class="col-md-6">
+    <table class="table table-bordered text-center lb" border="1">
       <tr>
-        <th> Player </th>
-        <th> Money </th>
-        <th> American </th>
-        <th> Tower </th>
-        <th> Continental </th>
-        <th> Festival </th>
-        <th> Imperial </th>
-        <th> Worldwide </th>
-        <th> Sackson </th>
+        <th class="text-center"> Player </th>
+        <th class="text-center"> $ </th>
+        <th class="text-center"> A </th>
+        <th class="text-center"> T </th>
+        <th class="text-center"> C </th>
+        <th class="text-center"> F </th>
+        <th class="text-center"> I </th>
+        <th class="text-center"> W </th>
+        <th class="text-center"> S </th>
       </tr>
       {{#each player in players}}
         <tr>
@@ -92,23 +59,44 @@ window.payload = <%= @payload.to_json.html_safe %>;
         </tr>
       {{/each}}
     </table>
-  </div>
-  <div class="col-md-3">
-    <h3>Hotel Chains</h3>
-    <table class="table table-bordered" border="1">
-      <tr>
-        <td>Hotel Name</td>
-        <td>Chain Size</td>
-        <td>Share Price</td>
-      </tr>
-      {{#each game_hotel in game_hotels}}
+
+    <div class="col-md-6">
+      <h3 class="text-white"> Game Log</h3>
+      {{#if log_entries}}
+        <div class="log-box" id="log">
+          <table class="table table-striped lp">
+            {{#each log in log_entries}}
+              <tr>
+                <td> > {{log.message}}</td>
+              </tr>
+            {{/each}}
+          </table>
+        </div>
+      {{else}}
+        <h4>No moves yet!</h4>
+      {{/if}}
+    </div>
+
+    <div class="col-md-6">
+      <h3 class="text-white"> Hotel Chains</h3>
+      <table class="table table-bordered lg" border="1">
         <tr>
-          <td>{{game_hotel.name}}</td>
-          <td>{{game_hotel.chain_size}}</td>
-          <td>{{game_hotel.share_price}}</td>
+          <th class="text-center">Hotel</td>
+          <th class="text-center">Color</td>
+          <th class="text-center">Size</td>
+          <th class="text-center">Price</td>
         </tr>
-      {{/each}}
-    </table>
+        {{#each game_hotel in game_hotels}}
+          <tr>
+            <td>{{game_hotel.name}}</td>
+            <td {{bindAttr class=game_hotel.get_color}}></td>
+            <td>{{game_hotel.chain_size}}</td>
+            <td>{{game_hotel.share_price}}</td>
+          </tr>
+        {{/each}}
+      </table>
+    </div>
+
   </div>
 </div>
 

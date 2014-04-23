@@ -40,6 +40,15 @@ class GameHotel < ActiveRecord::Base
 		31 => [1100,11000,5500],
 		41 => [1200,12000,6000]	
 	}
+
+	def get_color
+		self.hotel.color
+	end
+
+	def as_json(*)
+    	super(methods: :get_color)
+  	end
+
 	def update_share_price
 		if self.name == 'Worldwide' || self.name == 'Sackson'
 			if self.chain_size >= 0 && self.chain_size <= 6

@@ -186,6 +186,7 @@ App.GameBoardComponent = Ember.Component.extend({
 
 App.GameBoardSquareView = Ember.View.extend({
   classNameBindings: ['isHover', 'color', 'grey', 'blue', 'yellow', 'red', 'green', 'orange', 'purple', 'pink'],
+  colors: ['blue', 'yellow', 'red', 'green', 'orange', 'pink', 'purple'],
   mouseEnter: function() {
     this.set('isHover', true);
   },
