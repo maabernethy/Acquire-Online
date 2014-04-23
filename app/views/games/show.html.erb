@@ -23,7 +23,7 @@ window.payload = <%= @payload.to_json.html_safe %>;
     {{game-board player=player game=game model=model available_hotels=available_hotels board_colors=board_colors founded_hotels=founded_hotels hotels_w_enough_stock_cards = hotels_w_enough_stock_cards}}
 
     <h3 class="text-white">Tiles:</h3>
-    <table class="table">
+    <table class="table lg">
       <tr>
         {{#each tile in tiles}}
           <td>{{tile.to_english}}</td>
@@ -33,7 +33,7 @@ window.payload = <%= @payload.to_json.html_safe %>;
   </div>
 
   <div class="col-md-6">
-    <table class="table table-bordered text-center lb" border="1">
+    <table class="table table-bordered text-center lg" border="1">
       <tr>
         <th class="text-center"> Player </th>
         <th class="text-center"> $ </th>
@@ -64,7 +64,7 @@ window.payload = <%= @payload.to_json.html_safe %>;
       <h3 class="text-white"> Game Log</h3>
       {{#if log_entries}}
         <div class="log-box" id="log">
-          <table class="table table-striped lp">
+          <table class="table table-striped lg">
             {{#each log in log_entries}}
               <tr>
                 <td> > {{log.message}}</td>
@@ -104,7 +104,7 @@ window.payload = <%= @payload.to_json.html_safe %>;
 
 <script type="text/x-handlebars" id="components/game-board">
 <div class="board">
-  <table class="table table-bordered" border="1">
+  <table class="table table-bordered lg" border="1">
     {{#each column in columns}}
       <tr>
       {{#each row in rows}}
