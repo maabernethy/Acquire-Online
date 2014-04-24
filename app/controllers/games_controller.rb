@@ -147,6 +147,7 @@ class GamesController < ApplicationController
         player.save
       end
     end
+    byebug
     @game.end_turn
     game_state
     render :json => @payload

@@ -171,7 +171,7 @@ class Game < ActiveRecord::Base
   end
 
   def end_turn
-    game_over?
+    byebug
     current_username = self.up_next
     current_num = 0
     self.game_players.each do |player|
@@ -190,6 +190,7 @@ class Game < ActiveRecord::Base
     LogEntry.create(message: msg, game_id: self.id)
     notification = 'Its your move in ' + self.name
     Notification.create(message: notification, user_id: next_player.user.id)
+    byebug
     self.save
   end
 

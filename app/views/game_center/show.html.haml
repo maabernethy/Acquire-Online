@@ -3,38 +3,33 @@
   / Example row of columns
   .row
     .col-md-3
-      .contaner
-        .jumbotron.text-center
-          %h2 Notifications
-          .scroll-box
-            %table.table.table-striped.text-center
-              - if @notifications.length != 0
-                = render partial: 'notification', collection: @notifications
-              - else
-                %h4.text-center Nothing to report!
+      %h2.text-center Notifications
+      .scroll-box-blue
+        %table.table.table-striped.text-center
+          - if @notifications.length != 0
+            = render partial: 'notification', collection: @notifications
+          - else
+            %h4.text-center Nothing to report!
 
     .col-md-3
-      .contaner
-        .jumbotron.text-center
-          %h2 Users Online
-          .scroll-box
-            %table.table.table-striped.text-center
-              - if @notifications.length != 0
-                = render partial: 'user', collection: @users
-              - else
-                %h4.text-center No friends in sight!
+      %h2.text-center Users Online
+      .scroll-box-green
+        %table.table.table-striped.text-center
+          - if @users.length > 0
+            = render partial: 'user', collection: @users
+          - else
+            %h4.text-center No friends in sight!
 
     .col-md-6
-      .contaner
-        .jumbotron.text-center
-          %h2 Current Games
-          .scroll-box
-            %table.table.table-striped.text-center
-              = render partial: 'game', collection: @games
+      %h2.text-center Current Games
+      .scroll-box
+        %table.table.table-striped.text-center
+          = render partial: 'game', collection: @games
     
 .container
-  .jumbotron.text-center
-    %h1.text-center Want to start a new game?
-    %p.lead.text-center Get ready to choose a name and some friends to play with!
-    %p.text-center
-    = button_to('Start New Game', new_game_path, method: :get, :class => 'btn btn-large btn-success')     
+  .row.top-buffer
+    .jumbotron.text-center
+      %h1.text-center Want to start a new game?
+      %p.lead.text-center Get ready to choose a name and some friends to play with!
+      %p.text-center
+      = button_to('Start New Game', new_game_path, method: :get, :class => 'btn btn-large btn-success')     
