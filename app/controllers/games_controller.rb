@@ -93,6 +93,7 @@ class GamesController < ApplicationController
         end
 
         @game.save
+        byebug
         answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: player.tiles, merger: merger, has_shares: @game.has_shares, acquired_hotel: @game.acquired_hotel}
       else
         answer = {legal: false}
@@ -191,7 +192,7 @@ class GamesController < ApplicationController
 
     # do nothing when holding shares
     # deal with selling of shares
-    if (snum != null) && (snum > 0)
+    if (snum.is_a? Integer) && (snum > 0)
 
       # give player money
       acquired_game_hotel = game.game_hotels.where(name: acquired_hotel).first
@@ -209,7 +210,7 @@ class GamesController < ApplicationController
     end
 
     # deal with trading of shares
-    if (tnum != null) && (tnum > 0)
+    if (tnum.is_a? Integer) && (tnum > 0)
       dominant_hotel = game.dominant_hotel
       num_of_trades = tnum/2
       num_of_trades.times do
