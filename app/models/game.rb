@@ -171,7 +171,6 @@ class Game < ActiveRecord::Base
   end
 
   def end_turn
-    byebug
     current_username = self.up_next
     current_num = 0
     self.game_players.each do |player|
@@ -190,7 +189,6 @@ class Game < ActiveRecord::Base
     LogEntry.create(message: msg, game_id: self.id)
     notification = 'Its your move in ' + self.name
     Notification.create(message: notification, user_id: next_player.user.id)
-    byebug
     self.save
   end
 
@@ -242,7 +240,6 @@ class Game < ActiveRecord::Base
   end
 
   def find_shareholders(acquired_hotel, acquired_hotel_size)
-    byebug
     # determine share holders
     hotel_name = acquired_hotel.name
     most_shares = 0
@@ -268,24 +265,19 @@ class Game < ActiveRecord::Base
       end      
     end
 
-    byebug
 
     if minority_player == 'none' && tie_for_first == 'none'
       minority_player = majority_player
     end
 
-    byebug
 
     give_bonuses(acquired_hotel, majority_player, minority_player, acquired_hotel_size, tie_for_first, tie_for_second)
   end
 
   def give_bonuses(acquired_hotel, primary, secondary, acquired_hotel_size, tie_for_first, tie_for_second)
-    byebug
     response = acquired_hotel.get_bonus_amounts(acquired_hotel_size)
     majority_bonus = response[0]
     minority_bonus = response[1]
-
-    byebug
 
     if tie_for_first != 'none'
       split = (majority_bonus + minority_bonus)/2
@@ -632,7 +624,6 @@ class Game < ActiveRecord::Base
   end
 
   def merger_and_orphan(placed_sur_tiles, placed_tile)
-    byebug
     if placed_sur_tiles[0].hotel == 'none'
       response = execute_merger([placed_sur_tiles[1], placed_sur_tiles[2]], true, placed_tile)
       other_tiles = response[1]
@@ -666,7 +657,6 @@ class Game < ActiveRecord::Base
   end
 
   def  big_merger(placed_sur_tiles, placed_tile)
-    byebug
     other_tiles = []
     hotel_name1 = placed_sur_tiles[0].hotel
     hotel_name2 = placed_sur_tiles[1].hotel
@@ -759,7 +749,7 @@ class Game < ActiveRecord::Base
       game_hotel2.save
       game_hotel2.update_share_price
     end 
-    byebug
+
     [color, other_tiles]  
   end
 

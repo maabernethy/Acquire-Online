@@ -15,10 +15,7 @@
       %h2.text-center Users Online
       .scroll-box-green
         %table.table.table-striped.text-center
-          - if @users.length > 0
-            = render partial: 'user', collection: @users
-          - else
-            %h4.text-center No friends in sight!
+          = render partial: 'user', collection: @users
 
     .col-md-6
       %h2.text-center Current Games

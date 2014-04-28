@@ -147,14 +147,13 @@ class GamesController < ApplicationController
         player.save
       end
     end
-    byebug
+
     @game.end_turn
     game_state
     render :json => @payload
   end
 
   def merger_turn
-    byebug
     shares = params[:shares]
     hnum = params[:hold]
     tnum = params[:trade]
@@ -164,7 +163,6 @@ class GamesController < ApplicationController
     game.acquired_hotel = acquired_hotel
     game.save
     player = current_user.game_players.where(game_id: game.id).first
-    byebug
     if shares
       hold_sell_trade(hnum, snum, tnum, player, game, acquired_hotel)
     end
@@ -190,11 +188,11 @@ class GamesController < ApplicationController
   end
 
   def hold_sell_trade(hnum, snum, tnum, player, game, acquired_hotel)
-    byebug
+
     # do nothing when holding shares
     # deal with selling of shares
     if (snum != null) && (snum > 0)
-      byebug
+
       # give player money
       acquired_game_hotel = game.game_hotels.where(name: acquired_hotel).first
       acquired_hotel_share_price = acquired_game_hotel.share_price
@@ -205,14 +203,13 @@ class GamesController < ApplicationController
         player.stock_cards.delete(card)
         game.stock_cards << card
       end
-      byebug
+
       player.save
       game.save
     end
 
     # deal with trading of shares
     if (tnum != null) && (tnum > 0)
-      byebug
       dominant_hotel = game.dominant_hotel
       num_of_trades = tnum/2
       num_of_trades.times do
@@ -225,7 +222,7 @@ class GamesController < ApplicationController
         game.stock_cards.delete(d_card)
         player.stock_cards << d_card
       end
-      byebug
+
       player.save
       game.save
     end
