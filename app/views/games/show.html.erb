@@ -172,7 +172,11 @@ window.payload = <%= @payload.to_json.html_safe %>;
         <h1 class="flush--top">You have {{game.has_shares}} shares to hold, sell or trade. </h1>  
         <h4> Hold {{input type="text" placeholder="number" value=holdNumber type="number"}} shares</h4>
         <h4> Sell {{input type="text" placeholder="number" value=sellNumber type="number"}} shares</h4>
-        <h4> Trade 2 for 1 {{input type="text" placeholder="number" value=tradeNumber type="number"}} shares </h4>
+        {{#ifEnough game}}
+          <h4> Trade 2 for 1 {{input type="text" placeholder="number" value=tradeNumber type="number"}} shares </h4>
+        {{else}}
+          <h4> There are no hotel shares you can trade for</h4>
+        {{/ifEnough}}
         {{alert}}
         <button {{action "closeMergerOptions" true}} class="btn btn-large btn-success">Done</button>
       {{else}}

@@ -160,7 +160,7 @@ class Game < ActiveRecord::Base
     self.game_players.each do |player|
       if player = winner
         msg1 = 'You won ' + self.name
-        Notification.create(message: msg, user_id: player.user.id)
+        Notification.create(message: msg1, user_id: player.user.id)
       else
         Notification.create(message: msg2, user_id: player.user.id)
       end
@@ -770,7 +770,7 @@ class Game < ActiveRecord::Base
     hotel_name2 = placed_sur_tiles[1].hotel
     game_hotel1 = self.game_hotels.where(name: hotel_name1).first
     game_hotel2 = self.game_hotels.where(name: hotel_name2).first
-    if game_hotel1.chain_size > game_hotel2.chain_size
+    if game_hotel1.chain_size > game_hotel2.chain_size || game_hotel1.chain_size == game_hotel2.chain_size
       dominant_hotel = game_hotel1.hotel
       acquired_hotel = game_hotel2
       self.acquired_hotel = game_hotel2.name

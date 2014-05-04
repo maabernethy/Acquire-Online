@@ -23,6 +23,14 @@ Handlebars.registerHelper('ifShares', function(v1, options) {
   return options.inverse(this);
 });
 
+Handlebars.registerHelper('ifEnough', function(v1, options) {
+  var v = this.get('controller.model.hotels_w_enough_stock_cards')
+  if(v > 1) {
+    return options.fn(this);
+  }
+  return options.inverse(this);
+});
+
 
 App.GameBoardComponent = Ember.Component.extend({
   needs: ['application'],
@@ -245,6 +253,10 @@ App.GameBoardSquareView = Ember.View.extend({
         _this.set('controller.model.founded_hotels', json.founded_hotels);
         _this.set('controller.model.acquired_hotel', json.answer.acquired_hotel);
         _this.set('controller.model.log_entries', json.log_entries);
+        none = new Object();
+        none.name = 'none';
+        json.hotels_w_enough_stock_cards.push(none);
+        _this.set('controller.model.hotels_w_enough_stock_cards', json.hotels_w_enough_stock_cards);
         if (json.answer.merger) {
           console.log('merger!');
           _this.set('controller.merger_hold_sell_button', true);
@@ -256,10 +268,6 @@ App.GameBoardSquareView = Ember.View.extend({
           }
         }
         else {
-          none = new Object();
-          none.name = 'none';
-          json.hotels_w_enough_stock_cards.push(none);
-          _this.set('controller.model.hotels_w_enough_stock_cards', json.hotels_w_enough_stock_cards);
           if(json.hotels_w_enough_stock_cards.length > 1) {
             _this.set('controller.buybutton', true);
           }

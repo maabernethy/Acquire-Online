@@ -28,6 +28,15 @@ class GamesController < ApplicationController
 
   def destroy
     @game = Game.find(params[:id])
+    byebug
+    if params[:user_deleted]
+      @game.game_players.each do |player|
+        unless player.user == current_user
+          msg = current_user.username + ' deleted ' + @game.name
+          Notification.create(message: msg, user_id: player.user.id)
+        end
+      end
+    end
     @game.destroy
     redirect_to game_center_path
   end
