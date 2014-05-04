@@ -1,3 +1,4 @@
 %tr
   %td= game.name
   %td= button_to('Continue Game', game_path(game), method: :get, :class => 'btn btn-large btn-info')
+  %td= link_to 'X', game_path(game), method: :delete, class: 'btn btn-xs btn-danger'

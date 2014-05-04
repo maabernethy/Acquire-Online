@@ -93,7 +93,7 @@ class GamesController < ApplicationController
         end
 
         @game.save
-        byebug
+
         answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: player.tiles, merger: merger, has_shares: @game.has_shares, acquired_hotel: @game.acquired_hotel}
       else
         answer = {legal: false}

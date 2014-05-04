@@ -27,8 +27,8 @@ class Game < ActiveRecord::Base
     "Festival" => "red",
     "Imperial" => "green",
     "Sackson" => "orange",
-    "Tower" => "pink",
-    "Worldwide" => "purple",
+    "Tower" => "purple",
+    "Worldwide" => "pink",
     "none" => "grey"
   }   
 
@@ -494,6 +494,8 @@ class Game < ActiveRecord::Base
           placed_sur_tiles[1].save
           placed_sur_tiles[2].hotel = hotel
           placed_sur_tiles[2].save
+          tile.hotel = hotel
+          tile.save
           orphan_tiles_info = [[placed_sur_tiles[1].tile.row, placed_sur_tiles[1].tile.column, 'grey'], [placed_sur_tiles[2].tile.row, placed_sur_tiles[2].tile.column, 'grey']]
           other_tiles = convert_tiles_to_numbers(orphan_tiles_info)
         elsif placed_sur_tiles[1].hotel != 'none'
@@ -507,6 +509,8 @@ class Game < ActiveRecord::Base
           placed_sur_tiles[0].save
           placed_sur_tiles[2].hotel = hotel
           placed_sur_tiles[2].save
+          tile.hotel = hotel
+          tile.save
           orphan_tiles_info = [[placed_sur_tiles[0].tile.row, placed_sur_tiles[0].tile.column, 'grey'], [placed_sur_tiles[2].tile.row, placed_sur_tiles[2].tile.column, 'grey']]
           other_tiles = convert_tiles_to_numbers(orphan_tiles_info)
         elsif placed_sur_tiles[2].hotel != 'none'
@@ -520,6 +524,8 @@ class Game < ActiveRecord::Base
           placed_sur_tiles[0].save
           placed_sur_tiles[1].hotel = hotel
           placed_sur_tiles[1].save
+          tile.hotel = hotel
+          tile.save
           orphan_tiles_info = [[placed_sur_tiles[0].tile.row, placed_sur_tiles[0].tile.column, 'grey'], [placed_sur_tiles[1].tile.row, placed_sur_tiles[1].tile.column, 'grey']]
           other_tiles = convert_tiles_to_numbers(orphan_tiles_info)       
         end
