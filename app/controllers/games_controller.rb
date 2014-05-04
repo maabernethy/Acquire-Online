@@ -93,8 +93,10 @@ class GamesController < ApplicationController
           @game.acquired_hotel = array[3]
           num_shares = player.stock_cards.where(hotel: @game.acquired_hotel).count
           @game.has_shares = num_shares
+          @game.merger_up_next = player.username
         else
           @game.acquired_hotel = 'none'
+          @game.buy_stocks = true
         end
         founded_hotels = @game.game_hotels.where('chain_size > 0')
         if founded_hotels.length == 0 
@@ -157,7 +159,7 @@ class GamesController < ApplicationController
         player.save
       end
     end
-
+    @game.buy_stocks = false
     @game.end_turn
     game_state
     render :json => @payload

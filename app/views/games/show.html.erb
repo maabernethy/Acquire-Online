@@ -185,10 +185,5 @@ window.payload = <%= @payload.to_json.html_safe %>;
       {{/ifShares}}
     </div>
   {{/if}}
-  {{#ifCond player.username game.merger_up_next}}
-    {{#ifCond game.merger 2}}
-      <button {{action "openMergerOptions"}} class="btn btn-large btn-success">Hold, Sell, Or Trade?</button>
-    {{/ifCond}}
-  {{/ifCond}}
 </div>
 </script>

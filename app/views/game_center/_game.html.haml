@@ -1,4 +1,4 @@
 %tr
   %td= game.name
   %td= button_to('Continue Game', game_path(game), method: :get, :class => 'btn btn-large btn-info')
-  %td= link_to 'X', game_path(game, :user_deleted => true), method: :delete, :confirm => 'Are you sure?', class: 'btn btn-xs btn-danger'
+  %td= link_to 'X', game_path(game, :user_deleted => true), method: :delete, confirm: 'Are you sure?', class: 'btn btn-xs btn-danger'
