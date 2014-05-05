@@ -464,23 +464,93 @@ class Game < ActiveRecord::Base
           LogEntry.create(message: msg, game_id: self.id)
         end
       elsif (placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none')
-        #merger of 3 chains
-        response = big_merger(placed_sur_tiles, tile)
-        other_tiles = convert_tiles_to_numbers(response[1])
-        color = response[0]
+        if [placed_sur_tiles[0].hotel, placed_sur_tiles[1].hotel, placed_sur_tiles[2].hotel].uniq.length == 1
+          #extension of chain by 1
+          hotel = placed_sur_tiles[0].hotel
+          color = HOTEL_COLORS[hotel]
+          tile.hotel = hotel
+          tile.save
+          msg = player.username + ' extended ' + hotel + '.'
+          LogEntry.create(message: msg, game_id: self.id)
+        elsif ([placed_sur_tiles[0].hotel, placed_sur_tiles[1].hotel].uniq.length == 1) || ([placed_sur_tiles[0].hotel, placed_sur_tiles[2].hotel].uniq.length == 1) || ([placed_sur_tiles[1].hotel, placed_sur_tiles[2].hotel].uniq.length == 1)
+          # merger of 2 chains
+          if ([placed_sur_tiles[0].hotel, placed_sur_tiles[1].hotel].uniq.length == 1)
+            merger_tiles = [placed_sur_tiles[0], placed_sur_tiles[2]]
+          else
+            merger_tiles = [placed_sur_tiles[0], placed_sur_tiles[1]]
+          end 
+          response = execute_merger(merger_tiles, false, tile)
+          other_tiles = convert_tiles_to_numbers(response[1])
+          color = response[0]
+          dominant_hotel = response[2]
+          acquired_hotel = response[3]
+          acquired_hotel_size = response[4]
+          # Update Game log
+          msg = player.username + ' caused a merger. ' + dominant_hotel.name + ' acquired ' + acquired_hotel.name + '.'
+          LogEntry.create(message: msg, game_id: self.id)
+          merger_stock(dominant_hotel, acquired_hotel, acquired_hotel_size)
+          merger = true
+        else 
+          #merger of 3 chains
+          response = big_merger(placed_sur_tiles, tile)
+          other_tiles = convert_tiles_to_numbers(response[1])
+          color = response[0]
+        end
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel != 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none'))
-        # merger with 2 chains and 1 orphan
-        response = merger_and_orphan(placed_sur_tiles, tile)
-        other_tiles = convert_tiles_to_numbers(response[1])
-        color = response[0]
-        dominant_hotel = response[2]
-        acquired_hotel = response[3]
-        acquired_hotel_size = response[4]
-        # Update Game log
-        msg = player.username + ' caused a merger. ' + dominant_hotel.name + ' acquired ' + acquired_hotel.name + '.'
-        LogEntry.create(message: msg, game_id: self.id)
-        merger_stock(dominant_hotel, acquired_hotel, acquired_hotel_size)
-        merger = true
+        # 1 orphan, 2 part of chains
+        if ((placed_sur_tiles[0].hotel == placed_sur_tiles[1].hotel) || (placed_sur_tiles[0].hotel == placed_sur_tiles[2].hotel) || (placed_sur_tiles[2].hotel == placed_sur_tiles[1].hotel))
+          # extension of chain by 2
+          if placed_sur_tiles[0].hotel != 'none'
+            hotel = placed_sur_tiles[0].hotel
+            color = HOTEL_COLORS[hotel]
+            if placed_sur_tiles[1].hotel != 'none'
+              orphan_tile = placed_sur_tiles[2]
+            else
+              orphan_tile = placed_sur_tiles[1]
+            end
+            orphan_tile.hotel = hotel
+            orphan_tile.save
+            other_tiles = convert_tile_to_number({'row' => orphan_tile.tile.row, 'column' => orphan_tile.tile.column, 'current_color' => 'grey'})
+            tile.hotel = hotel
+            tile.save
+            # Update Game log
+            msg = player.username + ' extended ' + hotel + '.'
+            LogEntry.create(message: msg, game_id: self.id)
+          elsif placed_sur_tiles[1].hotel != 'none'
+            hotel = placed_sur_tiles[0].hotel
+            color = HOTEL_COLORS[hotel]
+            if placed_sur_tiles[0].hotel != 'none'
+              orphan_tile = placed_sur_tiles[2]
+            else
+              orphan_tile = placed_sur_tiles[0]
+            end
+            orphan_tile.hotel = hotel
+            orphan_tile.save
+            other_tiles = convert_tile_to_number({'row' => orphan_tile.tile.row, 'column' => orphan_tile.tile.column, 'current_color' => 'grey'})
+            tile.hotel = hotel
+            tile.save
+            # Update Game log
+            msg = player.username + ' extended ' + hotel + '.'
+            LogEntry.create(message: msg, game_id: self.id)
+          end
+          hotel_chain = self.game_hotels.where(name: hotel).first
+          hotel_chain.chain_size += 2
+          hotel_chain.save
+          hotel_chain.update_share_price
+        else
+          # merger with 2 chains and 1 orphan
+          response = merger_and_orphan(placed_sur_tiles, tile)
+          other_tiles = convert_tiles_to_numbers(response[1])
+          color = response[0]
+          dominant_hotel = response[2]
+          acquired_hotel = response[3]
+          acquired_hotel_size = response[4]
+          # Update Game log
+          msg = player.username + ' caused a merger. ' + dominant_hotel.name + ' acquired ' + acquired_hotel.name + '.'
+          LogEntry.create(message: msg, game_id: self.id)
+          merger_stock(dominant_hotel, acquired_hotel, acquired_hotel_size)
+          merger = true
+        end
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none')) || ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel == 'none'))
         # extension of chain with 2 orphans
         if placed_sur_tiles[0].hotel != 'none'

@@ -129,7 +129,12 @@ App.GameBoardComponent = Ember.Component.extend({
       var tnum = this.get('tradeNumber');
       var snum = this.get('sellNumber');
       var num_shares = this.get('controller.model.game.has_shares')
-      var total = parseInt(hnum) + parseInt(snum) + parseInt(tnum)
+      if (tnum == null) {
+        var total = parseInt(hnum) + parseInt(snum)
+      }
+      else {
+        var total = parseInt(hnum) + parseInt(snum) + parseInt(tnum)
+      }
       if (shares == false) {
         this.set('alert', '')
       }
@@ -171,6 +176,9 @@ App.GameBoardComponent = Ember.Component.extend({
           _this.set('controller.model.founded_hotels', json.founded_hotels);
           _this.set('controller.model.log_entries', json.log_entries);
           _this.set('controller.merger_hold_sell_button', false);
+          _this.set('holdNumber', null);
+          _this.set('tradeNumber', null);
+          _this.set('sellNumber', null);
         });
       }
     },

@@ -4,7 +4,7 @@
 window.payload = <%= @payload.to_json.html_safe %>;
 // setTimeout(function () {
 //   current_user = <%= current_user.username.to_json.html_safe %>
-//   if(current_user != payload.game.up_next) {
+//   if(current_user != payload.game.up_next || current_user != payload.game.merger_up_next) {
 //     location.reload();
 //   }
 // }, 5000);
