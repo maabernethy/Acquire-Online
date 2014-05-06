@@ -66,67 +66,77 @@ class GamesController < ApplicationController
     @cell = params[:cell]
     num, letter = params[:num].to_i, params[:letter]
     @game_tile = @game.game_tiles.where(cell: @cell)
-    # if @game.merger == false && @game.buy_stock == false
+    # if @game.merger == false && player.buy_stock == false
     # if @game.is_current_players_turn?(current_user)
-    if true
-      if @game.player_hand(current_user, @cell) 
-        begin
-          array = @game.choose_color(letter, num, @cell, selected_hotel, player)
-        rescue
-          render :json => @game, :status => :unprocessable_entity
-          return
-        end
+    byebug
+    if @game.merger != true && player.buy_stocks != true
+      byebug
+      if @game.is_current_players_turn?(current_user)
+        byebug
+        if @game.player_hand(current_user, @cell) 
+          begin
+            array = @game.choose_color(letter, num, @cell, selected_hotel, player)
+          rescue
+            render :json => @game, :status => :unprocessable_entity
+            return
+          end
 
-        if array == false
-          byebug
-          answer = {legal: false}
-        else
-          available_tiles = @game.game_tiles.where(available: true)
-          new_game_tile = available_tiles[rand(available_tiles.length)]
-          new_game_tile.available = false
-          new_game_tile.save
-          new_tile = @game.tiles.where(id: new_game_tile.tile_id)
-          placed_tile = player.tiles.where(row: letter).where(column: num).first
-          placed_game_tile = @game.game_tiles.where(tile_id: placed_tile.id).first
-          placed_game_tile.placed = true
-          placed_game_tile.save
-          player.tiles.delete(placed_tile)
-          player.tiles << new_tile
-
-          color = array[0]
-          other_tiles = array[1]
-          merger = array[2]
-          merger_three = array[3]
-          if merger
-            @game.acquired_hotel = array[4]
-            num_shares = player.stock_cards.where(hotel: @game.acquired_hotel).count
+          if array == false
             byebug
-            @game.has_shares = num_shares
-            @game.merger_up_next = player.username
-            byebug
+            answer = {legal: false}
           else
-            if merger_three
-              byebug 
-              merger = true
+            available_tiles = @game.game_tiles.where(available: true)
+            new_game_tile = available_tiles[rand(available_tiles.length)]
+            new_game_tile.available = false
+            new_game_tile.save
+            new_tile = @game.tiles.where(id: new_game_tile.tile_id)
+            placed_tile = player.tiles.where(row: letter).where(column: num).first
+            placed_game_tile = @game.game_tiles.where(tile_id: placed_tile.id).first
+            placed_game_tile.placed = true
+            placed_game_tile.save
+            player.tiles.delete(placed_tile)
+            player.tiles << new_tile
+
+            color = array[0]
+            other_tiles = array[1]
+            merger = array[2]
+            merger_three = array[3]
+            if merger
               @game.acquired_hotel = array[4]
               num_shares = player.stock_cards.where(hotel: @game.acquired_hotel).count
+              byebug
               @game.has_shares = num_shares
-              @game.second_acquired_hotel = array[5]
               @game.merger_up_next = player.username
+              byebug
             else
-              @game.acquired_hotel = 'none'
-              @game.buy_stocks = true
+              if merger_three
+                byebug 
+                merger = true
+                @game.acquired_hotel = array[4]
+                num_shares = player.stock_cards.where(hotel: @game.acquired_hotel).count
+                @game.has_shares = num_shares
+                @game.second_acquired_hotel = array[5]
+                @game.merger_up_next = player.username
+              else
+                @game.acquired_hotel = 'none'
+              end
             end
-          end
-          founded_hotels = @game.game_hotels.where('chain_size > 0')
-          if founded_hotels.length == 0 
-            @game.end_turn
-          end
+            founded_hotels = @game.game_hotels.where('chain_size > 0')
+            if founded_hotels.length == 0 
+              @game.end_turn
+            else
+              byebug
+              player.buy_stocks = true
+            end
 
-          @game.save
-
-          answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: player.tiles, merger: merger, has_shares: @game.has_shares, acquired_hotel: @game.acquired_hotel}
-        end      
+            @game.save
+            player.save
+            byebug
+            answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: player.tiles, merger: merger, has_shares: @game.has_shares, acquired_hotel: @game.acquired_hotel}
+          end      
+        else
+          answer = {legal: false}
+        end
       else
         answer = {legal: false}
       end
@@ -180,7 +190,8 @@ class GamesController < ApplicationController
         player.save
       end
     end
-    @game.buy_stocks = false
+    player.buy_stocks = false
+    player.save
     game_over = @game.game_over?
     if game_over != false
       @game.destroy

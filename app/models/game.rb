@@ -93,7 +93,8 @@ class Game < ActiveRecord::Base
   end
 
   def is_current_players_turn?(current_player)
-    if self.up_next == current_player
+    byebug
+    if self.up_next == current_player.username
       true
     else
       false
@@ -165,7 +166,7 @@ class Game < ActiveRecord::Base
     byebug
 
     #notify players of results
-    msg2 = 'Player ' + winner.username + 'won ' + self.name 
+    msg2 = 'Player ' + winner.username + ' won ' + self.name 
     self.game_players.each do |player|
       if player == winner
         msg1 = 'You won ' + self.name

@@ -50,7 +50,7 @@ App.GameBoardComponent = Ember.Component.extend({
     if(p1 === p2) {
       this.set('controller.merger_hold_sell_button', true)
     }
-    var v = this.get('controller.model.game.buy_stocks')
+    var v = this.get('controller.model.player.buy_stocks')
     if(v == true) {
       this.set('controller.buybutton', true)
     }
