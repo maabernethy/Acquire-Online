@@ -16,6 +16,7 @@ Handlebars.registerHelper('ifCond', function(v1, v2, options) {
 });
 
 Handlebars.registerHelper('ifShares', function(v1, options) {
+  debugger;
   var v = this.get('controller.model.game.has_shares')
   if(v > 0) {
     return options.fn(this);
@@ -255,19 +256,15 @@ App.GameBoardSquareView = Ember.View.extend({
       }
     }).then(function(json) {
       if (json.answer.legal) {
-        debugger;
         _this.set(json.answer.color, true);
         if (json.answer.other_tiles != null) {
-          debugger;
           if (json.answer.other_tiles[1] != 'grey') {
-            debugger;
             json.answer.other_tiles.forEach(function(tile_info){
               _this.get('parentView').get('childViews')[tile_info[0]].set(tile_info[1], false);
               _this.get('parentView').get('childViews')[tile_info[0]].set(json.answer.color, true);
             });
           }
           else {
-            debugger;
             tile_info = json.answer.other_tiles;
             _this.get('parentView').get('childViews')[tile_info[0]].set(tile_info[1], false);
             _this.get('parentView').get('childViews')[tile_info[0]].set(json.answer.color, true);

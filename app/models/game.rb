@@ -193,13 +193,7 @@ class Game < ActiveRecord::Base
   end
 
   def start_merger_turn(current_player, acquired_hotel)
-    players_w_shares = []
-    self.game_players.each do |player|
-      if player.stock_cards.where(hotel: acquired_hotel).count != 0
-        players_w_shares << player
-      end
-    end
-
+    byebug
     current_username = current_player.user.username
     current_num = 0
     self.game_players.each do |player|
@@ -213,24 +207,40 @@ class Game < ActiveRecord::Base
     else
       next_num = current_num + 1
     end
+
     next_player = self.game_players.where(turn_order: next_num).first
     self.merger_up_next = next_player.user.username
     self.save
-
-    # next player has no shares in acquired chain
-    if players_w_shares.include?(next_player)
-      self.has_shares = next_player.stock_cards.where(hotel: acquired_hotel).count 
-    else
-      self.has_shares = 0
-    end
-
+    byebug
     # if merger up next equals up_next then have gone full circle and call end merger turn
     if next_player.user.username == self.up_next
-      m_turn = false
+      if self.second_acquired_hotel != 'none'
+        self.acquired_hotel = self.second_acquired_hotel
+        self.second_acquired_hotel = 'none'
+        m_turn = true
+      else
+        m_turn = false
+      end
     else
       m_turn = true
     end
 
+    players_w_shares = []
+    self.game_players.each do |player|
+      if player.stock_cards.where(hotel: self.acquired_hotel).count != 0
+        players_w_shares << player
+      end
+    end
+
+    # next player has no shares in acquired chain
+    if players_w_shares.include?(next_player)
+      self.has_shares = next_player.stock_cards.where(hotel: self.acquired_hotel).count 
+    else
+      self.has_shares = 0
+    end
+
+    self.save
+    byebug
     [m_turn, self.has_shares]
   end
 
@@ -315,10 +325,13 @@ class Game < ActiveRecord::Base
     sur_tiles = get_surrounding_tiles(row, column, cell)
     placed_sur_tiles = get_placed_surrounding_tiles(sur_tiles, placed_tiles)
     merger = false
+    merger_three = false
     if placed_sur_tiles.length == 0
       color = "grey"
     elsif placed_sur_tiles.length == 1
+      byebug
       if placed_sur_tiles[0].hotel == 'none'
+        byebug
         if selected_hotel == 'none'
           # need input from user for new chain
           raise 'Ambiguous color'
@@ -342,6 +355,7 @@ class Game < ActiveRecord::Base
           tile.save
         end
       else
+        byebug
         # extending chain
         hotel = placed_sur_tiles[0].hotel
         color = HOTEL_COLORS[hotel]
@@ -358,7 +372,9 @@ class Game < ActiveRecord::Base
         tile.save
       end
     elsif placed_sur_tiles.length == 2
+      byebug
       if (placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none')
+        byebug
         #new chain with chain size 3
         if selected_hotel == 'none'
           # need input from user for new chain
@@ -386,19 +402,37 @@ class Game < ActiveRecord::Base
           tile.save
         end
       elsif (placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none')
-        #merger of 2 chains
-        response = execute_merger(placed_sur_tiles, false, tile)
-        other_tiles = convert_tiles_to_numbers(response[1])
-        color = response[0]
-        dominant_hotel = response[2]
-        acquired_hotel = response[3]
-        acquired_hotel_size = response[4]
-        # Update Game log
-        msg = player.username + ' caused a merger. ' + dominant_hotel.name + ' acquired ' + acquired_hotel.name + '.'
-        LogEntry.create(message: msg, game_id: self.id)
-        merger_stock(dominant_hotel, acquired_hotel, acquired_hotel_size)
-        merger = true
+        if (placed_sur_tiles[0].hotel == placed_sur_tiles[1].hotel)
+          byebug
+          # extension of chain by 1
+          hotel = placed_sur_tiles[0].hotel
+          color = HOTEL_COLORS[hotel]
+          hotel_chain = self.game_hotels.where(name: hotel).first
+          hotel_chain.chain_size += 1
+          hotel_chain.save
+          hotel_chain.update_share_price
+          tile.hotel = hotel
+          tile.save
+          # Update Game log
+          msg = player.username + ' extended ' + hotel + '.'
+          LogEntry.create(message: msg, game_id: self.id)
+        else
+          byebug
+          #merger of 2 chains
+          response = execute_merger(placed_sur_tiles, false, tile)
+          other_tiles = convert_tiles_to_numbers(response[1])
+          color = response[0]
+          dominant_hotel = response[2]
+          acquired_hotel = response[3]
+          acquired_hotel_size = response[4]
+          # Update Game log
+          msg = player.username + ' caused a merger. ' + dominant_hotel.name + ' acquired ' + acquired_hotel.name + '.'
+          LogEntry.create(message: msg, game_id: self.id)
+          merger_stock(dominant_hotel, acquired_hotel, acquired_hotel_size)
+          merger = true
+        end
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none'))
+        byebug
         #extend chain with 2
         if placed_sur_tiles[0].hotel != 'none'
           hotel = placed_sur_tiles[0].hotel
@@ -433,8 +467,10 @@ class Game < ActiveRecord::Base
         end
       end
     elsif placed_sur_tiles.length == 3
+      byebug
       # same options as with 2
       if (placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel == 'none')
+        byebug
         #new chain with chain size 4
         if selected_hotel == 'none'
           # need input from user for new chain
@@ -463,16 +499,23 @@ class Game < ActiveRecord::Base
           msg = player.username + ' founded ' + selected_hotel + '.'
           LogEntry.create(message: msg, game_id: self.id)
         end
-      elsif (placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none')
+      elsif (placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel != 'none')
+        byebug
         if [placed_sur_tiles[0].hotel, placed_sur_tiles[1].hotel, placed_sur_tiles[2].hotel].uniq.length == 1
+          byebug
           #extension of chain by 1
           hotel = placed_sur_tiles[0].hotel
           color = HOTEL_COLORS[hotel]
           tile.hotel = hotel
           tile.save
+          hotel_chain = self.game_hotels.where(name: hotel).first
+          hotel_chain.chain_size += 1
+          hotel_chain.save
+          hotel_chain.update_share_price
           msg = player.username + ' extended ' + hotel + '.'
           LogEntry.create(message: msg, game_id: self.id)
         elsif ([placed_sur_tiles[0].hotel, placed_sur_tiles[1].hotel].uniq.length == 1) || ([placed_sur_tiles[0].hotel, placed_sur_tiles[2].hotel].uniq.length == 1) || ([placed_sur_tiles[1].hotel, placed_sur_tiles[2].hotel].uniq.length == 1)
+          byebug
           # merger of 2 chains
           if ([placed_sur_tiles[0].hotel, placed_sur_tiles[1].hotel].uniq.length == 1)
             merger_tiles = [placed_sur_tiles[0], placed_sur_tiles[2]]
@@ -490,13 +533,26 @@ class Game < ActiveRecord::Base
           LogEntry.create(message: msg, game_id: self.id)
           merger_stock(dominant_hotel, acquired_hotel, acquired_hotel_size)
           merger = true
-        else 
+        else
+          byebug 
           #merger of 3 chains
           response = big_merger(placed_sur_tiles, tile)
           other_tiles = convert_tiles_to_numbers(response[1])
           color = response[0]
+          dominant_hotel = response[2]
+          acquired_hotel1 = response[3]
+          acquired_hotel1_size = response[4]
+          acquired_hotel2 = response[5]
+          acquired_hotel2_size = response[6]
+          # Update Game log
+          msg = player.username + ' caused a merger wit 3 chains. ' + dominant_hotel.name + ' acquired ' + acquired_hotel1.name + ' and ' + acquired_hotel1.name + '.'
+          LogEntry.create(message: msg, game_id: self.id)
+          merger_stock(dominant_hotel, acquired_hotel1, acquired_hotel1_size)
+          merger_stock(dominant_hotel, acquired_hotel2, acquired_hotel2_size)
+          merger_three = true
         end
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel != 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none'))
+        byebug
         # 1 orphan, 2 part of chains
         if ((placed_sur_tiles[0].hotel == placed_sur_tiles[1].hotel) || (placed_sur_tiles[0].hotel == placed_sur_tiles[2].hotel) || (placed_sur_tiles[2].hotel == placed_sur_tiles[1].hotel))
           # extension of chain by 2
@@ -538,6 +594,7 @@ class Game < ActiveRecord::Base
           hotel_chain.save
           hotel_chain.update_share_price
         else
+          byebug
           # merger with 2 chains and 1 orphan
           response = merger_and_orphan(placed_sur_tiles, tile)
           other_tiles = convert_tiles_to_numbers(response[1])
@@ -552,6 +609,7 @@ class Game < ActiveRecord::Base
           merger = true
         end
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none')) || ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel == 'none'))
+        byebug
         # extension of chain with 2 orphans
         if placed_sur_tiles[0].hotel != 'none'
           hotel = placed_sur_tiles[0].hotel
@@ -602,13 +660,55 @@ class Game < ActiveRecord::Base
         # Update Game log
         msg = player.username + ' extended ' + hotel + '.'
         LogEntry.create(message: msg, game_id: self.id)
-      end 
-    end
-
-    if !merger
-      return [color, other_tiles, merger]
+      end
+    elsif placed_sur_tiles.length == 4
+      if (placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel == 'none') && (placed_sur_tiles[3].hotel == 'none')
+        # 4 orphans, new chain of 5
+        byebug
+        if selected_hotel == 'none'
+          # need input from user for new chain
+          raise 'Ambiguous color'
+        else
+          # new chain
+          color = HOTEL_COLORS[selected_hotel]
+          orphan_tiles_info = [[placed_sur_tiles[0].tile.row, placed_sur_tiles[0].tile.column, 'grey'], [placed_sur_tiles[1].tile.row, placed_sur_tiles[1].tile.column, 'grey'], [placed_sur_tiles[2].tile.row, placed_sur_tiles[2].tile.column, 'grey'], [placed_sur_tiles[3].tile.row, placed_sur_tiles[3].tile.column, 'grey']]
+          other_tiles = convert_tiles_to_numbers(orphan_tiles_info)
+          #save game hotel chain size
+          chosen_game_hotel = self.game_hotels.where(name: selected_hotel).first
+          chosen_game_hotel.chain_size = 5
+          chosen_game_hotel.save
+          chosen_game_hotel.update_share_price
+          #save other tiles hotels
+          placed_sur_tiles[0].hotel = selected_hotel
+          placed_sur_tiles[1].hotel = selected_hotel
+          placed_sur_tiles[2].hotel = selected_hotel
+          placed_sur_tiles[3].hotel = selected_hotel
+          placed_sur_tiles[0].save
+          placed_sur_tiles[1].save
+          placed_sur_tiles[2].save
+          placed_sur_tiles[3].save
+          #save placed tile hotel
+          tile.hotel = selected_hotel
+          tile.save
+          # Update Game log
+          msg = player.username + ' founded ' + selected_hotel + '.'
+          LogEntry.create(message: msg, game_id: self.id)
+        end
+      end
     else
-      return [color, other_tiles, merger, acquired_hotel.name]
+      byebug
+      return false    
+    end
+    byebug 
+    if !merger && !merger_three
+      byebug
+      return [color, other_tiles, merger, merger_three]
+    else
+      if merger
+        return [color, other_tiles, merger, merger_three, acquired_hotel.name]
+      else
+        return [color, other_tiles, merger, merger_three, acquired_hotel1.name, acquired_hotel2.name]
+      end
     end
   end
 
@@ -740,8 +840,10 @@ class Game < ActiveRecord::Base
     game_hotel1 = self.game_hotels.where(name: hotel_name1).first
     game_hotel2 = self.game_hotels.where(name: hotel_name2).first
     game_hotel3 = self.game_hotels.where(name: hotel_name3).first
-    if (game_hotel1.chain_size > game_hotel2.chain_size) && (game_hotel1.chain_size > game_hotel3.chain_size)
+    if (game_hotel1.chain_size >= game_hotel2.chain_size) && (game_hotel1.chain_size >= game_hotel3.chain_size)
       dominant_hotel = game_hotel1.hotel
+      acquired_hotel1 = game_hotel2
+      acquired_hotel2 = game_hotel3
       color = dominant_hotel.color
       c2 = game_hotel2.hotel.color
       c3 = game_hotel3.hotel.color
@@ -768,8 +870,10 @@ class Game < ActiveRecord::Base
       game_hotel3.chain_size = 0
       game_hotel3.save
       game_hotel3.update_share_price
-    elsif (game_hotel2.chain_size > game_hotel1.chain_size) && (game_hotel2.chain_size > game_hotel3.chain_size)
+    elsif (game_hotel2.chain_size >= game_hotel1.chain_size) && (game_hotel2.chain_size >= game_hotel3.chain_size)
       dominant_hotel = game_hotel2.hotel
+      acquired_hotel1 = game_hotel1
+      acquired_hotel2 = game_hotel3
       color = dominant_hotel.color
       c1 = game_hotel1.hotel.color
       c3 = game_hotel3.hotel.color
@@ -796,8 +900,10 @@ class Game < ActiveRecord::Base
       game_hotel3.chain_size = 0
       game_hotel3.save
       game_hotel3.update_share_price
-    elsif (game_hotel3.chain_size > game_hotel1.chain_size) && (game_hotel3.chain_size > game_hotel2.chain_size)
+    elsif (game_hotel3.chain_size >= game_hotel1.chain_size) && (game_hotel3.chain_size >= game_hotel2.chain_size)
       dominant_hotel = game_hotel3.hotel
+      acquired_hotel1 = game_hotel1
+      acquired_hotel2 = game_hotel2
       color = dominant_hotel.color
       c1 = game_hotel1.hotel.color
       c2 = game_hotel2.hotel.color
@@ -826,7 +932,7 @@ class Game < ActiveRecord::Base
       game_hotel2.update_share_price
     end 
 
-    [color, other_tiles]  
+    [color, other_tiles, acquired_hotel1, acquired_hotel1_size, acquired_hotel2, acquired_hotel2_size]  
   end
 
   def execute_merger(placed_sur_tiles, orphan, placed_tile)
