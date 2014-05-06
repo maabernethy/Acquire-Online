@@ -2,6 +2,7 @@
 
 <script type="text/javascript">
 window.payload = <%= @payload.to_json.html_safe %>;
+// reloads page for players who are not playing their turn or dealing with merger
 setTimeout(function () {
   current_user = <%= current_user.username.to_json.html_safe %>
   if(current_user != payload.game.up_next && current_user != payload.game.merger_up_next) {
@@ -103,6 +104,7 @@ setTimeout(function () {
 </script>
 
 <script type="text/x-handlebars" id="components/game-board">
+{{! GAME BOARD }}
 <div class="board">
   <table class="table table-bordered lg" border="1">
     {{#each column in columns}}
@@ -118,7 +120,11 @@ setTimeout(function () {
     {{/each}}
   </table>
 </div>
+
+{{! EVERYTHING THAT FOLLOWS ARE HIDDEN DIALOG BOXES OR HIDDEN BUTTONS TO OPEN THEM }}
+
 <div>
+{{! DIALOG FOR NEW CHAIN OPTIONS }}
   {{#if errored}}
     <div class="overlay"></div>
     <div class="box text-center">
@@ -133,11 +139,15 @@ setTimeout(function () {
       <button {{action "resolveIssue"}} class="btn btn-large btn-success">Done</button>
     </div>
   {{/if}}
+
+  {{! BUTTON FOR TO BUY STOCKS }}
   {{#if buybutton}}
     <div>
       <button {{action "openStockOptions"}} class="btn btn-large btn-success">Buy Stocks</button>
     </div>
   {{/if}}
+
+  {{! DIALOG FOR BUYING STOCK OPTIONS }}
   {{#if open}}
     <div class="overlay"></div>
     <div class="box text-center">
@@ -162,9 +172,13 @@ setTimeout(function () {
       <button {{action "closeStockOptions"}} class="btn btn-large btn-success">Done</button>
     </div>
   {{/if}}
+
+  {{! BUTTON FOR TO HOLDING SELLING OR TRADING STOCKS IN ACQUIRED CHAIN }}
   {{#if merger_hold_sell_button}}
     <button {{action "openMergerOptions"}} class="btn btn-large btn-success" >Hold, Sell, Or Trade?</button>
   {{/if}}
+
+  {{! DIALOG FOR MERGER OPTIONS }}
   {{#if open_merger}}
     <div class="overlay"></div>
     <div class="box-big text-center">
@@ -185,6 +199,8 @@ setTimeout(function () {
       {{/ifShares}}
     </div>
   {{/if}}
+
+  {{! DIALOG FOR WHEN GAME IS OVER }}
   {{#if game_over}}
     <div class="overlay"></div>
     <div class="box-big text-center">

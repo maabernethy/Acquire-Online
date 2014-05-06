@@ -6,15 +6,6 @@ App.ApplicationRoute = Ember.Route.extend({
   },
 });
 
-Handlebars.registerHelper('ifCond', function(v1, v2, options) {
-  var p1 = this.get('controller.model.player.username')
-  var p2 = this.get('controller.model.game.merger_up_next')
-  if(p1 === p2) {
-    return options.fn(this);
-  }
-  return options.inverse(this);
-});
-
 Handlebars.registerHelper('ifShares', function(v1, options) {
   debugger;
   var v = this.get('controller.model.game.has_shares')
@@ -27,14 +18,6 @@ Handlebars.registerHelper('ifShares', function(v1, options) {
 Handlebars.registerHelper('ifEnough', function(v1, options) {
   var v = this.get('controller.model.hotels_w_enough_stock_cards').length
   if(v > 1) {
-    return options.fn(this);
-  }
-  return options.inverse(this);
-});
-
-Handlebars.registerHelper('ifBuyStocks', function(v1, options) {
-  var v = this.get('controller.model.game').buy_stocks
-  if(v == true) {
     return options.fn(this);
   }
   return options.inverse(this);
@@ -82,12 +65,12 @@ App.GameBoardComponent = Ember.Component.extend({
   },
   alert: '',
   actions: {
-    resolveIssue: function() {
+    resolveIssue: function() { // called when player is done selected hotel chain they want to found
       this.set('errored', false);
       console.log(this.get('selectedHotel').name);
       var _this = window.view;
       var cell = window.view.get('row') + window.view.get('column');
-      Ember.$.ajax({
+      Ember.$.ajax({ // request to server
         url: '/games/'+window.payload.game.id+'/place_piece',
         data: {
           num: window.view.get('row'),
@@ -95,8 +78,9 @@ App.GameBoardComponent = Ember.Component.extend({
           cell: cell,
           hotel: this.get('selectedHotel').name
         }
-      }).then(function(json) {
+      }).then(function(json) { // invoked upon successful response from server
         if (json.answer.legal) {
+          // changing color of necessary tiles
           if (json.answer.other_tiles.length > 1) {
             json.answer.other_tiles.forEach(function(tile_info){
             _this.get('parentView').get('childViews')[tile_info[0]].set(tile_info[1], false);
@@ -106,6 +90,7 @@ App.GameBoardComponent = Ember.Component.extend({
           else {
             _this.get('parentView').get('childViews')[json.answer.other_tiles].set(json.answer.color, true);
           };
+          // saving updated data in ember models so that template can update information
           _this.set(json.answer.color, true);
           _this.set('controller.model.game', json.game);
           _this.set('controller.model.game_hotels', json.game_hotels);
@@ -129,11 +114,12 @@ App.GameBoardComponent = Ember.Component.extend({
     openMergerOptions: function() {
       this.set('controller.open_merger', true);
     },
-    closeMergerOptions: function(shares) {
+    closeMergerOptions: function(shares) { // called when player has selected whether to hold sell or trade shares
       var hnum = this.get('holdNumber');
       var tnum = this.get('tradeNumber');
       var snum = this.get('sellNumber');
       var num_shares = this.get('controller.model.game.has_shares')
+      // determine whether user input is correct
       if (tnum == null) {
         var total = parseInt(hnum) + parseInt(snum)
       }
@@ -170,12 +156,13 @@ App.GameBoardComponent = Ember.Component.extend({
             sell: snum,
             trade: tnum,
           }
-        }).then(function(json) {
+        }).then(function(json) { // invoked when successful response from server
           if(json.game_over) {
             _this.set('controller.winner', json.winner);
             _this.set('controller.game_over', true);
           }
           else {
+            // updated data saved in ember models to that template updates information in view
             _this.set('controller.model.game', json.game);
             _this.set('controller.model.game_hotels', json.game_hotels);
             _this.set('controller.model.player', json.player);
@@ -196,7 +183,7 @@ App.GameBoardComponent = Ember.Component.extend({
     openStockOptions: function() {
       this.set('controller.open', true);
     },
-    closeStockOptions: function() {
+    closeStockOptions: function() { // called when player has selected what stock they want to purchase
       this.set('controller.open', false);
       this.set('controller.buybutton', false);
       console.log(this.get('selectedHotelStock1').name);
@@ -210,13 +197,13 @@ App.GameBoardComponent = Ember.Component.extend({
           hotel2: this.get('selectedHotelStock2').name,
           hotel3: this.get('selectedHotelStock3').name
         }
-      }).then(function(json) {
-          debugger;
+      }).then(function(json) { //invoked upon successful response from server
           if(json.game_over) {
             _this.set('controller.winner', json.winner);
             _this.set('controller.game_over', true);
           }
           else {
+            // updated data saved in ember models to that template updates information in view
             _this.set('controller.model.game', json.game);
             _this.set('controller.model.game_hotels', json.game_hotels);
             _this.set('controller.model.player', json.player);
@@ -271,8 +258,9 @@ App.GameBoardSquareView = Ember.View.extend({
         letter: this.get('column'),
         cell: cell
       }
-    }).then(function(json) {
+    }).then(function(json) { //invoked upon successful response from server when placing tile
       if (json.answer.legal) {
+        //changing color of necessary tiles
         _this.set(json.answer.color, true);
         if (json.answer.other_tiles != null) {
           if (json.answer.other_tiles[1] != 'grey') {
@@ -287,6 +275,7 @@ App.GameBoardSquareView = Ember.View.extend({
             _this.get('parentView').get('childViews')[tile_info[0]].set(json.answer.color, true);
           };
         };
+        // updated data saved in ember models to that template updates information in view
         _this.set('controller.model.game', json.game);
         _this.set('controller.model.game_hotels', json.game_hotels);
         _this.set('controller.model.player', json.player);
@@ -302,7 +291,7 @@ App.GameBoardSquareView = Ember.View.extend({
         none.name = 'none';
         json.hotels_w_enough_stock_cards.push(none);
         _this.set('controller.model.hotels_w_enough_stock_cards', json.hotels_w_enough_stock_cards);
-        if (json.answer.merger) {
+        if (json.answer.merger) { // if merger, then button should appear with options
           console.log('merger!');
           _this.set('controller.merger_hold_sell_button', true);
           if (!json.answer.has_shares) {
@@ -318,7 +307,7 @@ App.GameBoardSquareView = Ember.View.extend({
           }
         }
       }
-    }, function(json) {
+    }, function(json) { // invoked when unsuccessful response from server, this means need input from user on which hotel to found
       if (_this.get('controller.model.available_hotels').length != 0) {
         _this.set('controller.errored', true);
       }

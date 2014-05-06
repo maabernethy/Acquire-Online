@@ -47,6 +47,8 @@ class GamesController < ApplicationController
     game_state
   end
 
+  # called when user clicks of board game square
+  # determines if tile placement is legal and passes updated data to front end
   def place_piece
     @game = Game.find(params[:id])
     player = current_user.game_players.where(game_id: @game.id).first
@@ -66,14 +68,10 @@ class GamesController < ApplicationController
     @cell = params[:cell]
     num, letter = params[:num].to_i, params[:letter]
     @game_tile = @game.game_tiles.where(cell: @cell)
-    # if @game.merger == false && player.buy_stock == false
-    # if @game.is_current_players_turn?(current_user)
-    byebug
     if @game.merger != true && player.buy_stocks != true
-      byebug
       if @game.is_current_players_turn?(current_user)
-        byebug
         if @game.player_hand(current_user, @cell) 
+          # throws exception if tile is part of new chain because need input from user
           begin
             array = @game.choose_color(letter, num, @cell, selected_hotel, player)
           rescue
@@ -82,9 +80,9 @@ class GamesController < ApplicationController
           end
 
           if array == false
-            byebug
             answer = {legal: false}
           else
+            # updates hand of tiles of player
             available_tiles = @game.game_tiles.where(available: true)
             new_game_tile = available_tiles[rand(available_tiles.length)]
             new_game_tile.available = false
@@ -143,11 +141,14 @@ class GamesController < ApplicationController
     else
       answer = {legal: false}
     end
+    # gets updated state of game and parses data as json and passes to front end
     game_state
     @payload[:answer] = answer
     render :json => @payload
   end
 
+  # called when player has selected which hotel chains they want to purchase stock in
+  # deals with selection accordingly by determining current share price and subtracting that from player's cash supply
   def buy_stocks
     hotel1 = params[:hotel1]
     hotel2 = params[:hotel2]
@@ -203,6 +204,7 @@ class GamesController < ApplicationController
     end
   end
 
+  # called when a player's tile placement has caused a merger and they have selected what to do with their shares in the acquired hotel
   def merger_turn
     byebug
     shares = params[:shares]
@@ -244,6 +246,7 @@ class GamesController < ApplicationController
     end
   end
 
+  # deels with player's choice to hold, sell or trade their shares in acquired chain in event of merger
   def hold_sell_trade(hnum, snum, tnum, player, game, acquired_hotel)
     byebug
     snum = snum.to_i
@@ -292,6 +295,7 @@ class GamesController < ApplicationController
 
   private
 
+  # polls database for current state of game and saves information in hash object
   def game_state
     game = Game.find(params[:id])
     log_entries = game.log_entries
@@ -314,6 +318,7 @@ class GamesController < ApplicationController
     @payload = { game: game, players: game.game_players, tiles: tiles, player: player, stocks: stocks, game_hotels: game_hotels, available_hotels: available_hotels, board_colors: board_colors, founded_hotels: founded_hotels, hotels_w_enough_stock_cards: hotels_w_enough_stock_cards, log_entries: log_entries }
   end
 
+  # determines what color each tile on board should be by looking at what hotel chain they are part of
   def get_board_colors(game)
     board_colors = {}
     [1,2,3,4,5,6,7,8,9,10,11,12].each do |num|
