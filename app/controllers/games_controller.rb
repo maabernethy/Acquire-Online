@@ -27,9 +27,10 @@ class GamesController < ApplicationController
   end
 
   def destroy
-    @game = Game.find(params[:id])
     byebug
+    @game = Game.find(params[:id])
     if params[:user_deleted]
+      byebug
       @game.game_players.each do |player|
         unless player.user == current_user
           msg = current_user.username + ' deleted ' + @game.name
@@ -38,6 +39,7 @@ class GamesController < ApplicationController
       end
     end
     @game.destroy
+    byebug
     redirect_to game_center_path
   end
 
@@ -76,6 +78,7 @@ class GamesController < ApplicationController
         end
 
         if array == false
+          byebug
           answer = {legal: false}
         else
           available_tiles = @game.game_tiles.where(available: true)
@@ -178,9 +181,10 @@ class GamesController < ApplicationController
       end
     end
     @game.buy_stocks = false
-    if @game.game_over?
-      byebug
-      render :destroy
+    game_over = @game.game_over?
+    if game_over != false
+      @game.destroy
+      render :json => {game_over: true, winner: game_over}
     else
       @game.end_turn
       game_state
@@ -220,9 +224,10 @@ class GamesController < ApplicationController
       @payload[:merger] = false
     end
 
-    if @game.game_over?
+    game_over = game.game_over?
+    if game_over
       byebug
-      render :destroy
+      destroy
     else
       render :json => @payload
     end

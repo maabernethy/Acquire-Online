@@ -118,6 +118,10 @@ App.GameBoardComponent = Ember.Component.extend({
           _this.set('controller.model.founded_hotels', json.founded_hotels);
           _this.set('controller.model.log_entries', json.log_entries);
           _this.set('controller.model.acquired_hotel', json.answer.acquired_hotel);
+          none = new Object();
+          none.name = 'none';
+          json.hotels_w_enough_stock_cards.push(none);
+          _this.set('controller.model.hotels_w_enough_stock_cards', json.hotels_w_enough_stock_cards);
           _this.set('controller.buybutton', true)
         }
       });
@@ -167,19 +171,25 @@ App.GameBoardComponent = Ember.Component.extend({
             trade: tnum,
           }
         }).then(function(json) {
-          _this.set('controller.model.game', json.game);
-          _this.set('controller.model.game_hotels', json.game_hotels);
-          _this.set('controller.model.player', json.player);
-          _this.set('controller.model.stocks', json.stocks);
-          _this.set('controller.model.players', json.players);
-          _this.set('controller.model.available_hotels', json.available_hotels);
-          _this.set('controller.model.board_colors', json.board_colors);
-          _this.set('controller.model.founded_hotels', json.founded_hotels);
-          _this.set('controller.model.log_entries', json.log_entries);
-          _this.set('controller.merger_hold_sell_button', false);
-          _this.set('holdNumber', null);
-          _this.set('tradeNumber', null);
-          _this.set('sellNumber', null);
+          if(json.game_over) {
+            _this.set('controller.winner', json.winner);
+            _this.set('controller.game_over', true);
+          }
+          else {
+            _this.set('controller.model.game', json.game);
+            _this.set('controller.model.game_hotels', json.game_hotels);
+            _this.set('controller.model.player', json.player);
+            _this.set('controller.model.stocks', json.stocks);
+            _this.set('controller.model.players', json.players);
+            _this.set('controller.model.available_hotels', json.available_hotels);
+            _this.set('controller.model.board_colors', json.board_colors);
+            _this.set('controller.model.founded_hotels', json.founded_hotels);
+            _this.set('controller.model.log_entries', json.log_entries);
+            _this.set('controller.merger_hold_sell_button', false);
+            _this.set('holdNumber', null);
+            _this.set('tradeNumber', null);
+            _this.set('sellNumber', null);
+          }
         });
       }
     },
@@ -201,22 +211,29 @@ App.GameBoardComponent = Ember.Component.extend({
           hotel3: this.get('selectedHotelStock3').name
         }
       }).then(function(json) {
-          _this.set('controller.model.game', json.game);
-          _this.set('controller.model.game_hotels', json.game_hotels);
-          _this.set('controller.model.player', json.player);
-          _this.set('controller.model.stocks', json.stocks);
-          _this.set('controller.model.players', json.players);
-          _this.set('controller.model.available_hotels', json.available_hotels);
-          _this.set('controller.model.board_colors', json.board_colors);
-          _this.set('controller.model.founded_hotels', json.founded_hotels);
-          _this.set('controller.model.log_entries', json.log_entries);
-          _this.set('controller.buybutton', false);
-          none = new Object();
-          none.name = 'none';
-          json.hotels_w_enough_stock_cards.push(none);
-          _this.set('controller.model.hotels_w_enough_stock_cards', json.hotels_w_enough_stock_cards);
-          if(json.hotels_w_enough_stock_cards.length > 1) {
+          debugger;
+          if(json.game_over) {
+            _this.set('controller.winner', json.winner);
+            _this.set('controller.game_over', true);
+          }
+          else {
+            _this.set('controller.model.game', json.game);
+            _this.set('controller.model.game_hotels', json.game_hotels);
+            _this.set('controller.model.player', json.player);
+            _this.set('controller.model.stocks', json.stocks);
+            _this.set('controller.model.players', json.players);
+            _this.set('controller.model.available_hotels', json.available_hotels);
+            _this.set('controller.model.board_colors', json.board_colors);
+            _this.set('controller.model.founded_hotels', json.founded_hotels);
+            _this.set('controller.model.log_entries', json.log_entries);
             _this.set('controller.buybutton', false);
+            none = new Object();
+            none.name = 'none';
+            json.hotels_w_enough_stock_cards.push(none);
+            _this.set('controller.model.hotels_w_enough_stock_cards', json.hotels_w_enough_stock_cards);
+            if(json.hotels_w_enough_stock_cards.length > 1) {
+              _this.set('controller.buybutton', false);
+            }
           }
       });
     }

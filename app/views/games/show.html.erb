@@ -185,5 +185,12 @@ window.payload = <%= @payload.to_json.html_safe %>;
       {{/ifShares}}
     </div>
   {{/if}}
+  {{#if game_over}}
+    <div class="overlay"></div>
+    <div class="box-big text-center">
+      <h2> Game Over </h4>
+      <p> The winner is {{winner}} </p>
+    </div>
+  {{/if}}
 </div>
 </script>

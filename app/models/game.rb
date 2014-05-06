@@ -126,9 +126,9 @@ class Game < ActiveRecord::Base
       end
     end
     byebug
-    if safe_hotel_count = 7 || game_over = true
-      end_game_scoring
-      return true
+    if safe_hotel_count == 7 || game_over == true
+      winner = end_game_scoring
+      return winner
     else
       return false
     end
@@ -174,6 +174,8 @@ class Game < ActiveRecord::Base
         Notification.create(message: msg2, user_id: player.user.id)
       end
     end
+
+    return winner.username
   end
 
   def end_turn
@@ -324,6 +326,7 @@ class Game < ActiveRecord::Base
   end
 
   def choose_color(row, column, cell, selected_hotel, player)
+    byebug
     tile = self.game_tiles.where(cell: cell).first
     placed_tiles = []
     self.game_tiles.where(placed: true).each do |game_tile|
@@ -701,7 +704,50 @@ class Game < ActiveRecord::Base
           msg = player.username + ' founded ' + selected_hotel + '.'
           LogEntry.create(message: msg, game_id: self.id)
         end
-      end
+      elsif ([placed_sur_tiles[0].hotel, placed_sur_tiles[1].hotel, placed_sur_tiles[2].hotel].uniq.length == 1  && placed_sur_tiles[3].hotel == 'none') || ([placed_sur_tiles[0].hotel, placed_sur_tiles[1].hotel, placed_sur_tiles[3].hotel].uniq.length == 1  && placed_sur_tiles[2].hotel == 'none') || ([placed_sur_tiles[0].hotel, placed_sur_tiles[3].hotel, placed_sur_tiles[2].hotel].uniq.length == 1  && placed_sur_tiles[1].hotel == 'none') || ([placed_sur_tiles[3].hotel, placed_sur_tiles[1].hotel, placed_sur_tiles[2].hotel].uniq.length == 1  && placed_sur_tiles[0].hotel == 'none')
+        # extension of chain by 2
+        if placed_sur_tiles[0].hotel != 'none'
+          hotel = placed_sur_tiles[0].hotel
+          color = HOTEL_COLORS[hotel]
+          if placed_sur_tiles[1].hotel == 'none'
+            orphan_tile = placed_sur_tiles[1]
+          elsif placed_sur_tiles[2].hotel == 'none'
+            orphan_tile = placed_sur_tiles[2]
+          else
+            orphan_tile = placed_sur_tiles[3]
+          end
+          orphan_tile.hotel = hotel
+          orphan_tile.save
+          other_tiles = convert_tile_to_number({'row' => orphan_tile.tile.row, 'column' => orphan_tile.tile.column, 'current_color' => 'grey'})
+          tile.hotel = hotel
+          tile.save
+          # Update Game log
+          msg = player.username + ' extended ' + hotel + '.'
+          LogEntry.create(message: msg, game_id: self.id)
+        elsif placed_sur_tiles[1].hotel != 'none'
+          hotel = placed_sur_tiles[0].hotel
+          color = HOTEL_COLORS[hotel]
+          if placed_sur_tiles[0].hotel == 'none'
+            orphan_tile = placed_sur_tiles[0]
+          elsif placed_sur_tiles[2].hotel == 'none'
+            orphan_tile = placed_sur_tiles[2]
+          else
+            orphan_tile = placed_sur_tiles[3]
+          end
+          orphan_tile.hotel = hotel
+          orphan_tile.save
+          other_tiles = convert_tile_to_number({'row' => orphan_tile.tile.row, 'column' => orphan_tile.tile.column, 'current_color' => 'grey'})
+          tile.hotel = hotel
+          tile.save
+          # Update Game log
+          msg = player.username + ' extended ' + hotel + '.'
+          LogEntry.create(message: msg, game_id: self.id)
+        end
+        hotel_chain = self.game_hotels.where(name: hotel).first
+        hotel_chain.chain_size += 2
+        hotel_chain.save
+        hotel_chain.update_share_price
+      end       
     else
       byebug
       return false    
