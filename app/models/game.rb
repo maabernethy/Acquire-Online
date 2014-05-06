@@ -115,24 +115,29 @@ class Game < ActiveRecord::Base
   end
 
   def game_over?
+    byebug
     game_over = false
     safe_hotel_count = 0
     self.game_hotels.each do |hotel|
       if hotel.chain_size >= 41
         game_over = true
       elsif hotel.chain_size >= 11
-        safe_hotel.count = safe_hotel.count + 1
+        safe_hotel_count = safe_hotel_count + 1
       end
     end
-
+    byebug
     if safe_hotel_count = 7 || game_over = true
       end_game_scoring
+      return true
+    else
+      return false
     end
   end
 
   def end_game_scoring
+    byebug
     # for each founded hotel pay shareholders
-    self.hotel_chains.each do |hotel|
+    self.game_hotels.each do |hotel|
       if hotel.chain_size > 0
         find_shareholders(hotel, hotel.chain_size)
       end
@@ -143,34 +148,36 @@ class Game < ActiveRecord::Base
       player.stock_cards.each do |stock|
         hotel = self.game_hotels.where(name: stock.hotel).first
         player.cash = player.cash + hotel.share_price
+        player.save
       end
     end
-    player.save
-
+    
     # determine winner
     most_money = 0
+    winner = 0
     self.game_players.each do |player|
+      byebug
       if player.cash > most_money
         winner = player
+        most_money = player.cash
       end
     end
+    byebug
 
     #notify players of results
     msg2 = 'Player ' + winner.username + 'won ' + self.name 
     self.game_players.each do |player|
-      if player = winner
+      if player == winner
         msg1 = 'You won ' + self.name
         Notification.create(message: msg1, user_id: player.user.id)
       else
         Notification.create(message: msg2, user_id: player.user.id)
       end
     end
-
-    #delete game
-    render :destroy
   end
 
   def end_turn
+    byebug
     current_username = self.up_next
     current_num = 0
     self.game_players.each do |player|

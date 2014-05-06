@@ -178,9 +178,14 @@ class GamesController < ApplicationController
       end
     end
     @game.buy_stocks = false
-    @game.end_turn
-    game_state
-    render :json => @payload
+    if @game.game_over?
+      byebug
+      render :destroy
+    else
+      @game.end_turn
+      game_state
+      render :json => @payload
+    end
   end
 
   def merger_turn
@@ -215,7 +220,12 @@ class GamesController < ApplicationController
       @payload[:merger] = false
     end
 
-    render :json => @payload
+    if @game.game_over?
+      byebug
+      render :destroy
+    else
+      render :json => @payload
+    end
   end
 
   def hold_sell_trade(hnum, snum, tnum, player, game, acquired_hotel)
