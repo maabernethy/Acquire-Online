@@ -1,4 +1,4 @@
-# $ ->
+
 #   $('a.change_cell').bind("ajax:success", (event, data, status, xhr) ->
 #     if data.form?
 #       identifier = data.form

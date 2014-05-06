@@ -1,11 +1,29 @@
-%header
-  %h1 ACQUIRE ONLINE
-
-  %nav
-    %ul
-      %li{class: 'active'}
-        = link_to 'Home', root_path
-      %li= link_to 'About', page_path('about')
-      %li= link_to 'Rules', page_path('rules')
-      - if user_signed_in?
-        %li= link_to 'Game Center', game_center_path
+.navbar.navbar-default.navbar-static-top{:role => "navigation"}
+  .container
+    .navbar-header
+      %button.navbar-toggle{"data-target" => ".navbar-collapse", "data-toggle" => "collapse", :type => "button"}
+        %span.sr-only Toggle navigation
+        %span.icon-bar
+        %span.icon-bar
+        %span.icon-bar
+      %a.navbar-brand.pink{:href => "#"} ACQUIRE ONLINE
+    .navbar-collapse.collapse
+      %ul.nav.navbar-nav
+        %li.red
+          = link_to 'Home', root_path
+        %li.blue
+          = link_to 'About', page_path('about')
+        %li.green
+          = link_to 'Rules', page_path('rules')
+        - if user_signed_in?
+          %li.orange
+            = link_to 'Game Center', game_center_path
+      %ul.nav.navbar-nav.navbar-right
+        - if user_signed_in?
+          %li.purple
+            %a{:href => "#"} Welcome back, #{current_user.username}!
+          %li.yellow
+            = link_to 'Sign out', destroy_user_session_path, :method => :delete
+        - else
+          %li= link_to 'Sign in', new_user_session_path
+          %li= link_to 'Sign up', new_user_registration_path

@@ -26,10 +26,29 @@ class GamesController < ApplicationController
     end
   end
 
+  def destroy
+    byebug
+    @game = Game.find(params[:id])
+    if params[:user_deleted]
+      byebug
+      @game.game_players.each do |player|
+        unless player.user == current_user
+          msg = current_user.username + ' deleted ' + @game.name
+          Notification.create(message: msg, user_id: player.user.id)
+        end
+      end
+    end
+    @game.destroy
+    byebug
+    redirect_to game_center_path
+  end
+
   def show
     game_state
   end
 
+  # called when user clicks of board game square
+  # determines if tile placement is legal and passes updated data to front end
   def place_piece
     @game = Game.find(params[:id])
     player = current_user.game_players.where(game_id: @game.id).first
@@ -49,63 +68,93 @@ class GamesController < ApplicationController
     @cell = params[:cell]
     num, letter = params[:num].to_i, params[:letter]
     @game_tile = @game.game_tiles.where(cell: @cell)
-    # if @game.is_current_players_turn?(current_user)
-    if true
-      if @game.player_hand(current_user, @cell) 
-        begin
-          array = @game.choose_color(letter, num, @cell, selected_hotel)
-        rescue
-          render :json => @game, :status => :unprocessable_entity
-          return
-        end
+    if @game.merger != true && player.buy_stocks != true
+      if @game.is_current_players_turn?(current_user)
+        if @game.player_hand(current_user, @cell) 
+          # throws exception if tile is part of new chain because need input from user
+          begin
+            array = @game.choose_color(letter, num, @cell, selected_hotel, player)
+          rescue
+            render :json => @game, :status => :unprocessable_entity
+            return
+          end
 
-        available_tiles = @game.game_tiles.where(available: true)
-        new_game_tile = available_tiles[rand(available_tiles.length)]
-        new_game_tile.available = false
-        new_game_tile.save
-        new_tile = @game.tiles.where(id: new_game_tile.tile_id)
-        placed_tile = player.tiles.where(row: letter).where(column: num).first
-        placed_game_tile = @game.game_tiles.where(tile_id: placed_tile.id).first
-        placed_game_tile.placed = true
-        placed_game_tile.save
-        player.tiles.delete(placed_tile)
-        player.tiles << new_tile
+          if array == false
+            answer = {legal: false}
+          else
+            # updates hand of tiles of player
+            available_tiles = @game.game_tiles.where(available: true)
+            new_game_tile = available_tiles[rand(available_tiles.length)]
+            new_game_tile.available = false
+            new_game_tile.save
+            new_tile = @game.tiles.where(id: new_game_tile.tile_id)
+            placed_tile = player.tiles.where(row: letter).where(column: num).first
+            placed_game_tile = @game.game_tiles.where(tile_id: placed_tile.id).first
+            placed_game_tile.placed = true
+            placed_game_tile.save
+            player.tiles.delete(placed_tile)
+            player.tiles << new_tile
 
-        color = array[0]
-        other_tiles = array[1]
-        merger = array[2]
-        if merger
-          @game.acquired_hotel = array[3]
-          num_shares = player.stock_cards.where(hotel: @game.acquired_hotel).count
-          @game.has_shares = num_shares
+            color = array[0]
+            other_tiles = array[1]
+            merger = array[2]
+            merger_three = array[3]
+            if merger
+              @game.acquired_hotel = array[4]
+              num_shares = player.stock_cards.where(hotel: @game.acquired_hotel).count
+              byebug
+              @game.has_shares = num_shares
+              @game.merger_up_next = player.username
+              byebug
+            else
+              if merger_three
+                byebug 
+                merger = true
+                @game.acquired_hotel = array[4]
+                num_shares = player.stock_cards.where(hotel: @game.acquired_hotel).count
+                @game.has_shares = num_shares
+                @game.second_acquired_hotel = array[5]
+                @game.merger_up_next = player.username
+              else
+                @game.acquired_hotel = 'none'
+              end
+            end
+            founded_hotels = @game.game_hotels.where('chain_size > 0')
+            if founded_hotels.length == 0 
+              @game.end_turn
+            else
+              byebug
+              player.buy_stocks = true
+            end
+
+            @game.save
+            player.save
+            byebug
+            answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: player.tiles, merger: merger, has_shares: @game.has_shares, acquired_hotel: @game.acquired_hotel}
+          end      
         else
-          @game.acquired_hotel = 'none'
+          answer = {legal: false}
         end
-        founded_hotels = @game.game_hotels.where('chain_size > 0')
-        if founded_hotels.length == 0 
-          @game.end_turn
-        end
-        byebug
-        @game.save
-        answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: player.tiles, merger: merger, has_shares: @game.has_shares, acquired_hotel: @game.acquired_hotel}
       else
         answer = {legal: false}
       end
     else
       answer = {legal: false}
     end
+    # gets updated state of game and parses data as json and passes to front end
     game_state
     @payload[:answer] = answer
     render :json => @payload
   end
 
+  # called when player has selected which hotel chains they want to purchase stock in
+  # deals with selection accordingly by determining current share price and subtracting that from player's cash supply
   def buy_stocks
     hotel1 = params[:hotel1]
     hotel2 = params[:hotel2]
     hotel3 = params[:hotel3]
     @game = Game.find(params[:id])
     player = current_user.game_players.where(game_id: @game.id).first
-    byebug
     if hotel1 != 'none'
       game_hotel1 = @game.game_hotels.where(name: hotel1).first
       price1 = game_hotel1.share_price
@@ -142,24 +191,36 @@ class GamesController < ApplicationController
         player.save
       end
     end
-    @game.end_turn
-    game_state
-    render :json => @payload
+    player.buy_stocks = false
+    player.save
+    game_over = @game.game_over?
+    if game_over != false
+      @game.destroy
+      render :json => {game_over: true, winner: game_over}
+    else
+      @game.end_turn
+      game_state
+      render :json => @payload
+    end
   end
 
+  # called when a player's tile placement has caused a merger and they have selected what to do with their shares in the acquired hotel
   def merger_turn
     byebug
-    selected_option = params[:option]
+    shares = params[:shares]
+    hnum = params[:hold]
+    tnum = params[:trade]
+    snum = params[:sell]
     acquired_hotel = params[:acquired_hotel]
     game = Game.find(params[:id])
     game.acquired_hotel = acquired_hotel
     game.save
     player = current_user.game_players.where(game_id: game.id).first
-    if selected_option != 'none'
-      hold_sell_trade(selected_option, player, game, acquired_hotel)
+    if shares
+      hold_sell_trade(hnum, snum, tnum, player, game, acquired_hotel)
     end
     response = game.start_merger_turn(player, acquired_hotel)
-    byebug
+
     if response[0] == true
       game.merger = 2
       game.save
@@ -171,29 +232,73 @@ class GamesController < ApplicationController
     end
 
     game_state
-    byebug
+
     if response[0] == false
       @payload[:merger] = false
     end
 
-    render :json => @payload
+    game_over = game.game_over?
+    if game_over
+      byebug
+      destroy
+    else
+      render :json => @payload
+    end
   end
 
-  def hold_sell_trade(selected_option, player, game, acquired_hotel)
+  # deels with player's choice to hold, sell or trade their shares in acquired chain in event of merger
+  def hold_sell_trade(hnum, snum, tnum, player, game, acquired_hotel)
     byebug
-    if selected_option == 'Hold'
-      # do nothing
-    elsif selected_option == 'Sell'
-      # give player money according to share price 
-    elsif selected_option == 'Trade'
-      # don't know yet
+    snum = snum.to_i
+    tnum = tnum.to_i
+    # do nothing when holding shares
+    # deal with selling of shares
+    if (snum > 0)
+      byebug
+      # give player money
+      acquired_game_hotel = game.game_hotels.where(name: acquired_hotel).first
+      acquired_hotel_share_price = acquired_game_hotel.share_price
+      player.cash = player.cash + (acquired_hotel_share_price * snum)
+      # remove shares from stock cards and return to game pool
+      snum.times do
+        card = player.stock_cards.where(hotel: acquired_hotel).first
+        player.stock_cards.delete(card)
+        game.stock_cards << card
+      end
+      byebug
+
+      player.save
+      game.save
+    end
+
+    # deal with trading of shares
+    if (tnum > 0)
+      byebug
+      dominant_hotel = game.dominant_hotel
+      num_of_trades = tnum/2
+      num_of_trades.times do
+        2.times do
+          a_card = player.stock_cards.where(hotel: acquired_hotel).first
+          player.stock_cards.delete(a_card)
+          game.stock_cards << a_card
+        end
+        d_card = game.stock_cards.where(hotel: dominant_hotel).first
+        game.stock_cards.delete(d_card)
+        player.stock_cards << d_card
+      end
+
+      byebug 
+      player.save
+      game.save
     end
   end
 
   private
 
+  # polls database for current state of game and saves information in hash object
   def game_state
     game = Game.find(params[:id])
+    log_entries = game.log_entries
     player = current_user.game_players.where(game: game).first
     tiles = player.tiles
     stocks = player.stock_cards_by_name_payload
@@ -210,9 +315,10 @@ class GamesController < ApplicationController
     available_hotels = game_hotels.where(chain_size: 0)
     board_colors = get_board_colors(game)
 
-    @payload = { game: game, users: game.users, tiles: tiles, player: player, stocks: stocks, game_hotels: game_hotels, available_hotels: available_hotels, board_colors: board_colors, founded_hotels: founded_hotels, hotels_w_enough_stock_cards: hotels_w_enough_stock_cards }
+    @payload = { game: game, players: game.game_players, tiles: tiles, player: player, stocks: stocks, game_hotels: game_hotels, available_hotels: available_hotels, board_colors: board_colors, founded_hotels: founded_hotels, hotels_w_enough_stock_cards: hotels_w_enough_stock_cards, log_entries: log_entries }
   end
 
+  # determines what color each tile on board should be by looking at what hotel chain they are part of
   def get_board_colors(game)
     board_colors = {}
     [1,2,3,4,5,6,7,8,9,10,11,12].each do |num|

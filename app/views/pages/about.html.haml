@@ -1,1 +1,9 @@
-%h1 ABOUT PAGE
+%body
+  .container
+    .jumbotron
+      %h1 About the Acquire Online Project
+      %p My name is Marin Abernethy and I am a senior at Trinity College of Hartford, Connecticut. I am an Interdisciplinary Computing and Economics major here at Trinity, and as such have to complete a senior project. Acquire Online is my project. The economic strategy of the board game, Acquire, has always drawn me to the game and I wanted to create a place where I could have access to the fun anytime! 
+
+      %p If you want to learn more about the game and how to sign up click below
+      = button_to('Rules', page_path('rules'), :method => :get, :class => 'btn btn-large btn-primary')
+

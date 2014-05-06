@@ -12,6 +12,40 @@
  *= require_tree ./application
  */
 
+@import "bootstrap"
+
+.html 
+  background-size: cover
+
+.body
+  background-color: #E8E8E8
+  opacity: 0.8
+
+.inline
+  display: inline
+
+.jumbotron
+  padding: 14px 24px
+  .btn 
+    padding: 0.5em
+
+.table
+  background-color: white
+  border-radius: 5px
+
+.block
+  background: #CCC
+  filter: alpha(opacity=60)
+  -moz-opacity: 0.6
+  opacity: 0.6
+  width: 100%
+  height: 100%
+
+.navbar
+  background-color: gray
+  .nav > li > a 
+    color: #ddd
+
 .is-hover
   background-color: #8888FF
   cursor: pointer
@@ -40,19 +74,88 @@
 .pink
   background-color: pink
 
-.modal
-  margin: 10px auto
-  width: 300px
-  background-color: #fff
-  padding: 1em
+.lg
+  background-color: white
 
-.overlay
-  height: 100%
-  width: 100%
+.text-white
+  color: black
+
+.text-red
+  color: red
+
+.font-white
+  color: white
+
+.log-box 
+  height: 300px !important
+  overflow: scroll
+  border-radius: 5px
+
+.scroll-box-green
+  height: 250px !important
+  overflow: scroll
+  background-color: #F0F0F0
+  border-radius: 5px
+  color: green
+
+.scroll-box-blue
+  height: 250px !important
+  overflow: scroll
+  background-color: #F0F0F0
+  border-radius: 5px
+  color: blue
+
+.scroll-box
+  height: 250px !important
+  overflow: scroll
+  background-color: white
+  border-radius: 5px
+
+.top-buffer
+  margin-top: 20px
+
+.box 
+  width: 400px
+  height: 200px
+  line-height: 100%
+  position: fixed
+  top: 50% 
+  left: 50%
+  margin-top: -100px
+  margin-left: -150px
+  background-color: white
+  border-radius: 5px
+  text-align: center
+  z-index: 11
+
+.box-big 
+  width: 400px
+  height: 300px
+  line-height: 100%
+  position: fixed
+  top: 50% 
+  left: 50%
+  margin-top: -100px
+  margin-left: -150px
+  background-color: white
+  border-radius: 5px
+  text-align: center
+  z-index: 11
+
+.overlay 
   position: fixed
   top: 0
   left: 0
-  background-color: rgba(0, 0, 0, 0.2)
+  height: 100%
+  width: 100%
+  z-index: 10
+  background-color: rgba(0,0,0,0.5)
+
+.border-box
+  box-sizing: border-box
+  background-color: grey
+  width: 40px
+
 
 .flush--top
   margin-top: 0

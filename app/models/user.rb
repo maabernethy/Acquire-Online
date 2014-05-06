@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable, authentication_keys: [:username]
   has_many :game_players
   has_many :games, through: :game_players
+  has_many :notifications
 
   def online?
     updated_at > 10.minutes.ago

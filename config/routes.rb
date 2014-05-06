@@ -4,6 +4,8 @@ Acquire::Application.routes.draw do
 
   get 'game_center' => 'game_center#show'
 
+  resources :notifications
+  
   resources :games do
     member do
       get :place_piece
