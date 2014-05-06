@@ -101,7 +101,6 @@ class Game < ActiveRecord::Base
   # checks whether its the current users turn in the game
   # called when a player attempts to place a tile
   def is_current_players_turn?(current_player)
-    byebug
     if self.up_next == current_player.username
       true
     else
@@ -128,7 +127,6 @@ class Game < ActiveRecord::Base
   # Determines if the game is over: if 11 safe hotels or hotel with chain size >= 41
   # returns the winner if game is over, returns false otherwise
   def game_over?
-    byebug
     game_over = false
     safe_hotel_count = 0
     self.game_hotels.each do |hotel|
@@ -138,7 +136,6 @@ class Game < ActiveRecord::Base
         safe_hotel_count = safe_hotel_count + 1
       end
     end
-    byebug
     if safe_hotel_count == 7 || game_over == true
       winner = end_game_scoring
       return winner
@@ -151,7 +148,6 @@ class Game < ActiveRecord::Base
   # pays shareholders in every hotel chain on board and sells each players stock in hotel at current share price
   # determines winner of game and returns winner's username
   def end_game_scoring
-    byebug
     # for each founded hotel pay shareholders
     self.game_hotels.each do |hotel|
       if hotel.chain_size > 0
@@ -172,13 +168,11 @@ class Game < ActiveRecord::Base
     most_money = 0
     winner = 0
     self.game_players.each do |player|
-      byebug
       if player.cash > most_money
         winner = player
         most_money = player.cash
       end
     end
-    byebug
 
     #notify players of results
     msg2 = 'Player ' + winner.username + ' won ' + self.name 
@@ -197,7 +191,6 @@ class Game < ActiveRecord::Base
   # ends players turn and determines who is up next
   # alerts players accordingly
   def end_turn
-    byebug
     current_username = self.up_next
     current_num = 0
     self.game_players.each do |player|
@@ -221,7 +214,6 @@ class Game < ActiveRecord::Base
 
   # Determines who is up next in event of a merger and whether they have shares in acquired hotel
   def start_merger_turn(current_player, acquired_hotel)
-    byebug
     current_username = current_player.user.username
     current_num = 0
     self.game_players.each do |player|
@@ -239,7 +231,6 @@ class Game < ActiveRecord::Base
     next_player = self.game_players.where(turn_order: next_num).first
     self.merger_up_next = next_player.user.username
     self.save
-    byebug
 
     # if merger up next equals up_next then have gone full circle and call end merger turn
     if next_player.user.username == self.up_next
@@ -269,7 +260,6 @@ class Game < ActiveRecord::Base
     end
 
     self.save
-    byebug
     [m_turn, self.has_shares]
   end
 
@@ -350,7 +340,6 @@ class Game < ActiveRecord::Base
   # returns color placed tile should be and what other tiles should change color too
   # if merger, returns acquired hotel too
   def choose_color(row, column, cell, selected_hotel, player)
-    byebug
     tile = self.game_tiles.where(cell: cell).first
     placed_tiles = []
     self.game_tiles.where(placed: true).each do |game_tile|
@@ -364,9 +353,7 @@ class Game < ActiveRecord::Base
       # placed tile is an orphan tile
       color = "grey"
     elsif placed_sur_tiles.length == 1 # 1 surrounding tile
-      byebug
       if placed_sur_tiles[0].hotel == 'none' # surrounding tile is an orphan
-        byebug
         if selected_hotel == 'none'
           # need input from user for new chain
           raise 'Ambiguous color'
@@ -390,7 +377,6 @@ class Game < ActiveRecord::Base
           tile.save
         end
       else
-        byebug
         # extending chain
         hotel = placed_sur_tiles[0].hotel
         color = HOTEL_COLORS[hotel]
@@ -407,9 +393,7 @@ class Game < ActiveRecord::Base
         tile.save
       end
     elsif placed_sur_tiles.length == 2 # 2 surrounding tiles
-      byebug
       if (placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none') # both surrounding tiles are orphan
-        byebug
         #new chain with chain size 3
         if selected_hotel == 'none'
           # need input from user for new chain
@@ -438,7 +422,6 @@ class Game < ActiveRecord::Base
         end
       elsif (placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') # both surrounding tiles are part of a chain
         if (placed_sur_tiles[0].hotel == placed_sur_tiles[1].hotel) # both surrounding tiles are part of the same chain
-          byebug
           # extension of chain by 1
           hotel = placed_sur_tiles[0].hotel
           color = HOTEL_COLORS[hotel]
@@ -452,7 +435,6 @@ class Game < ActiveRecord::Base
           msg = player.username + ' extended ' + hotel + '.'
           LogEntry.create(message: msg, game_id: self.id)
         else
-          byebug
           #merger of 2 chains
           response = execute_merger(placed_sur_tiles, false, tile)
           other_tiles = convert_tiles_to_numbers(response[1])
@@ -467,7 +449,6 @@ class Game < ActiveRecord::Base
           merger = true
         end
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none'))
-        byebug
         # one surrounding tile is part of hotel chain and the other is an orphan
         # extend chain by 2
         if placed_sur_tiles[0].hotel != 'none'
@@ -503,9 +484,7 @@ class Game < ActiveRecord::Base
         end
       end
     elsif placed_sur_tiles.length == 3 # 3 surrounding tiles
-      byebug
       if (placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel == 'none') # all surrounding tiles are orphans
-        byebug
         #new chain with chain size 4
         if selected_hotel == 'none'
           # need input from user for new chain
@@ -535,9 +514,7 @@ class Game < ActiveRecord::Base
           LogEntry.create(message: msg, game_id: self.id)
         end
       elsif (placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel != 'none') # all surrounding tiles are part of hotel chains
-        byebug
         if [placed_sur_tiles[0].hotel, placed_sur_tiles[1].hotel, placed_sur_tiles[2].hotel].uniq.length == 1 # all surrounding tiles are part of same hotel chain
-          byebug
           #extension of chain by 1
           hotel = placed_sur_tiles[0].hotel
           color = HOTEL_COLORS[hotel]
@@ -550,7 +527,6 @@ class Game < ActiveRecord::Base
           msg = player.username + ' extended ' + hotel + '.'
           LogEntry.create(message: msg, game_id: self.id)
         elsif ([placed_sur_tiles[0].hotel, placed_sur_tiles[1].hotel].uniq.length == 1) || ([placed_sur_tiles[0].hotel, placed_sur_tiles[2].hotel].uniq.length == 1) || ([placed_sur_tiles[1].hotel, placed_sur_tiles[2].hotel].uniq.length == 1)
-          byebug
           # 2 of the surrounding tiles are part of the same hotel chain
           # merger of 2 chains
           if ([placed_sur_tiles[0].hotel, placed_sur_tiles[1].hotel].uniq.length == 1)
@@ -570,7 +546,6 @@ class Game < ActiveRecord::Base
           merger_stock(dominant_hotel, acquired_hotel, acquired_hotel_size)
           merger = true
         else
-          byebug 
           #merger of 3 chains
           response = big_merger(placed_sur_tiles, tile)
           other_tiles = convert_tiles_to_numbers(response[1])
@@ -588,7 +563,6 @@ class Game < ActiveRecord::Base
           merger_three = true
         end
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel != 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none'))
-        byebug
         # 1 of the surrounding tiles is an orphan and the other 2 are part of hotel chains
         if ((placed_sur_tiles[0].hotel == placed_sur_tiles[1].hotel) || (placed_sur_tiles[0].hotel == placed_sur_tiles[2].hotel) || (placed_sur_tiles[2].hotel == placed_sur_tiles[1].hotel))
           # 2 of the surrounding tiles are part of the same hotel chain and the other is an orphan
@@ -631,7 +605,6 @@ class Game < ActiveRecord::Base
           hotel_chain.save
           hotel_chain.update_share_price
         else
-          byebug
           # 2 surrounding tiles are from different hotel chains and the other is an orphan
           # merger of 2 chains and 1 orphan
           response = merger_and_orphan(placed_sur_tiles, tile)
@@ -647,7 +620,6 @@ class Game < ActiveRecord::Base
           merger = true
         end
       elsif ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel != 'none')) || ((placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel != 'none') && (placed_sur_tiles[2].hotel == 'none')) || ((placed_sur_tiles[0].hotel != 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel == 'none'))
-        byebug
         # 1 of the surrounding tiles is part of a hotel chain and the others are orphans
         # extension of chain with 2 orphans
         if placed_sur_tiles[0].hotel != 'none'
@@ -704,7 +676,6 @@ class Game < ActiveRecord::Base
       if (placed_sur_tiles[0].hotel == 'none') && (placed_sur_tiles[1].hotel == 'none') && (placed_sur_tiles[2].hotel == 'none') && (placed_sur_tiles[3].hotel == 'none')
         # all surrounding tiles are orphans
         # new chain of 5
-        byebug
         if selected_hotel == 'none'
           # need input from user for new chain
           raise 'Ambiguous color'
@@ -781,12 +752,10 @@ class Game < ActiveRecord::Base
       end       
     else
       # tile placement not valid
-      byebug
       return false    
     end
-    byebug 
+
     if !merger && !merger_three
-      byebug
       return [color, other_tiles, merger, merger_three]
     else
       if merger

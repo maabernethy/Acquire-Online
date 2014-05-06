@@ -27,10 +27,8 @@ class GamesController < ApplicationController
   end
 
   def destroy
-    byebug
     @game = Game.find(params[:id])
     if params[:user_deleted]
-      byebug
       @game.game_players.each do |player|
         unless player.user == current_user
           msg = current_user.username + ' deleted ' + @game.name
@@ -39,7 +37,6 @@ class GamesController < ApplicationController
       end
     end
     @game.destroy
-    byebug
     redirect_to game_center_path
   end
 
@@ -102,13 +99,10 @@ class GamesController < ApplicationController
             if merger
               @game.acquired_hotel = array[4]
               num_shares = player.stock_cards.where(hotel: @game.acquired_hotel).count
-              byebug
               @game.has_shares = num_shares
               @game.merger_up_next = player.username
-              byebug
             else
               if merger_three
-                byebug 
                 merger = true
                 @game.acquired_hotel = array[4]
                 num_shares = player.stock_cards.where(hotel: @game.acquired_hotel).count
@@ -123,13 +117,11 @@ class GamesController < ApplicationController
             if founded_hotels.length == 0 
               @game.end_turn
             else
-              byebug
               player.buy_stocks = true
             end
 
             @game.save
             player.save
-            byebug
             answer = {legal: true, color: color, other_tiles: other_tiles, new_tiles: player.tiles, merger: merger, has_shares: @game.has_shares, acquired_hotel: @game.acquired_hotel}
           end      
         else
@@ -206,7 +198,6 @@ class GamesController < ApplicationController
 
   # called when a player's tile placement has caused a merger and they have selected what to do with their shares in the acquired hotel
   def merger_turn
-    byebug
     shares = params[:shares]
     hnum = params[:hold]
     tnum = params[:trade]
@@ -238,9 +229,9 @@ class GamesController < ApplicationController
     end
 
     game_over = game.game_over?
-    if game_over
-      byebug
-      destroy
+    if game_over != false
+      game.destroy
+      render :json => {game_over: true, winner: game_over}
     else
       render :json => @payload
     end
@@ -248,13 +239,11 @@ class GamesController < ApplicationController
 
   # deels with player's choice to hold, sell or trade their shares in acquired chain in event of merger
   def hold_sell_trade(hnum, snum, tnum, player, game, acquired_hotel)
-    byebug
     snum = snum.to_i
     tnum = tnum.to_i
     # do nothing when holding shares
     # deal with selling of shares
     if (snum > 0)
-      byebug
       # give player money
       acquired_game_hotel = game.game_hotels.where(name: acquired_hotel).first
       acquired_hotel_share_price = acquired_game_hotel.share_price
@@ -265,7 +254,6 @@ class GamesController < ApplicationController
         player.stock_cards.delete(card)
         game.stock_cards << card
       end
-      byebug
 
       player.save
       game.save
@@ -273,7 +261,6 @@ class GamesController < ApplicationController
 
     # deal with trading of shares
     if (tnum > 0)
-      byebug
       dominant_hotel = game.dominant_hotel
       num_of_trades = tnum/2
       num_of_trades.times do
@@ -287,7 +274,6 @@ class GamesController < ApplicationController
         player.stock_cards << d_card
       end
 
-      byebug 
       player.save
       game.save
     end

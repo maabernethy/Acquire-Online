@@ -7,7 +7,6 @@ App.ApplicationRoute = Ember.Route.extend({
 });
 
 Handlebars.registerHelper('ifShares', function(v1, options) {
-  debugger;
   var v = this.get('controller.model.game.has_shares')
   if(v > 0) {
     return options.fn(this);
